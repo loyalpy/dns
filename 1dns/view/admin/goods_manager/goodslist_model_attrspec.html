@@ -1,0 +1,238 @@
+{block main}
+<div class="main-nav">
+  <div class="name" style="width:260px;">图文模型-规格/属性配置</div>
+  <div class="navbtn0">
+  
+  </div>
+  <div class="navbtn">
+  <!--button-->
+  <button type="button" data-url="/goods_manager/goodslist_model_attrspec?do=refresh&model_id={$model_id}" class="btn btn-default btn-sm t-ajax-button" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button>
+  <!--end button-->
+  <!--button-->
+  <a href="javascript:void(0)" data-url="{url /goods_manager/goodslist_model_attrspec?do=edit&model_id=$model_id}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增规格/属性</a>
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form action=""></form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+    <col width="30px" />
+	<col width="220px" />
+	<col width="70px" />
+	<col />
+	<col width="190px" />
+	<col width="100px" />
+	<thead>
+	<tr>
+	<th>ID</th>
+	<th>属性/规格名称</th>
+	<th>标识</th>
+	<th>可选值</th>
+	<th>可用</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+</form>
+<!-- end list box -->
+{/block}
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class="font-gray">${data.id}</td>
+    <td class="font-blue f14">${data.space}${data.name} <#if ($.is_empty(data.enname))> <#else><font class="font-gray">(${data.enname})</font></#if> <font class="font-gray">[${data.sort}]</font></td>
+    <td class="font-gray"><#if ($.is_empty(data.ident))> - <#else>${data.ident}</#if></td>
+    <td class="font-black">
+       <#if (data.has_children>0)> <font class="font-gray">仅作为组名 <#if (data.is_only == 1)>(多选一)</#if></font><#else>
+           <font class="font-blue">[${$.show_dataconfig('modeltype',data.type)}]</font>${data.all_val}
+       </#if>
+    </td>
+    <td>
+        <#if (data.has_children == 0)>
+        <#if (data.is_attr == 1)><font class="font-green">[属性]</font></#if>
+        <#if (data.is_spec == 1)><font class="font-green">[规格]</font></#if>
+        <#if (data.is_search == 1)><font class="font-green">[搜索]</font></#if>
+        </#if>
+    </td>
+    <td>
+	<p class="table-item-op">
+	<a href="javascript:void(0);" class="editbtn" data-url="{url /goods_manager/goodslist_model_attrspec?do=edit&model_id=$model_id&id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a> 
+	<a href="javascript:void(0);" class="copybtn" data-url="{url /goods_manager/goodslist_model_attrspec?do=copy&model_id=$model_id&id=}${data.id}"><span class="glyphicon glyphicon-repeat"></span></a> 
+	<a href="javascript:void(0);" class="delbtn" data-url="{url /goods_manager/goodslist_model_attrspec?do=del&model_id=$model_id&id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a> 
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /goods_manager/goodslist_model_attrspec?do=edit&model_id=$model_id}" method="post" class="theform form form-2" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var formdata = {
+	pid:{type:"select",label:"分组",name:"pid",value:"",data_sr:{echo JSON::encode($catlist)},css:"",require:"",desc:"",item_css:"col-md-4"},
+	is_only:{type:"checkbox",label:"多选一",name:"is_only",value:"",data_sr:[{key:"1",v:"选中组下多选一"}],css:"",require:"",desc:"",item_css:"col-md-4"},
+	sort:{type:"text",label:"显示序号",name:"sort",value:"",data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	name:{type:"text",label:"属性/规格",name:"name",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-4"},
+	ident:{type:"text",label:"标识",name:"ident",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-4"},
+	
+	description:{type:"text",label:"描述",name:"description",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-4"},
+	min_val:{type:"text",label:"最小值",name:"min_val",value:"",data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+    max_val:{type:"text",label:"最大值",name:"max_val",value:"",data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	unit:{type:"text",label:"单位",name:"unit",value:"",data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	type:{type:"select",label:"类型",name:"type",value:"",data_sr:dataConfig_A['modeltype'],css:"",require:"",desc:"",item_css:"col-md-4"},
+    add_val:{type:"text",label:"步长",name:"add_val",value:"",data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	html_space2:{type:"html",value:"<h5>&nbsp;</h5>"},
+	html_space6:{type:"html",value:"<div style='padding-left:120px;'><p style='padding-bottom:8px;'><button type='button' class='btnadd_attrspec btn btn-xs btn-info'>增加新值</button></p><div class='attrspec_valbox'><table class='table table-bordered' cellpadding='0' cellspacing='0' style='width:400px;'><thead><tr class='active'><th>值</th><th style='width:80px;'>索引</th><th style='width:80px;'>-</th></tr></thead><tbody></tbody></table></div></div>"},
+	html_space1:{type:"html",value:"<h5>&nbsp;</h5>"},
+    
+	is_attr:{type:"checkbox",label:"属性",name:"is_attr",value:"1",data_sr:[{key:"1",v:"属性可用"}],css:"",require:"",desc:"",item_css:"font-red col-md-4"},
+	is_spec:{type:"checkbox",label:"规格",name:"is_spec",value:"1",data_sr:[{key:"1",v:"规格可用"}],css:"",require:"",desc:"",item_css:"font-red col-md-4"},
+	is_search:{type:"checkbox",label:"搜索",name:"is_search",value:"1",data_sr:[{key:"1",v:"搜索可用"}],css:"",require:"",desc:"",item_css:"font-red col-md-4"},
+	
+	html_space7:{type:"html",value:"<h5>&nbsp;</h5>"},
+    id:{type:"hidden",label:"-",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+var add_trrow = function(key,val){
+	var size = $('.attrspec_valbox tbody tr').size();
+	var row = '<tr class="td_c"><td><input name="vals[]" class="form-control" type="text" value="'+val+'" /></td>'
+	        + '<td><input name="keys[]" class="form-control" type="text" value="'+key+'" /></td>'
+			+ '<td><p class="table-item-op"><span class="glyphicon glyphicon-arrow-up"></span><span class="glyphicon glyphicon-arrow-down"></span><span class="glyphicon glyphicon-remove"></span></p>'
+			+ '</td></tr>';
+	$('.attrspec_valbox tbody').append(row);
+	init_button(size,'.attrspec_valbox');
+}
+var init_button = function(indexValue,idstr){
+	//功能操作按钮
+	$(idstr).find('tbody tr:eq('+indexValue+') .table-item-op .glyphicon').each(
+		function(i){
+			var tr_obj = $(this).parent().parent().parent();
+			switch(i){
+				//向上排序
+				case 0:
+				$(this).click(
+					function(){
+						var insertIndex = tr_obj.prev().index();
+						if(insertIndex >= 0){
+							$(idstr).find('tbody tr:eq('+insertIndex+')').before(tr_obj);
+						}
+					}
+				)
+				break;
+				//向下排序
+				case 1:
+				$(this).click(
+					function(){
+						var insertIndex = tr_obj.next().index();
+						$(idstr).find('tbody tr:eq('+insertIndex+')').after(tr_obj);
+					}
+				)
+				break;
+				//删除排序
+				case 2:
+				$(this).click(
+					function(){
+						tr_obj.remove();
+					}
+				)
+				break;
+			}
+		}
+	)
+}
+var load_list = function(){
+	$.loadlist([],function(res){
+		$(".editbtn").click(function(){
+			edit_func(this);
+		});
+		$(".copybtn").click(function(){
+			copy_func(this);
+		});
+		$(".delbtn").click(function(){
+			del_func(this);
+		});
+	},"{url /goods_manager/goodslist_model_attrspec?do=get&model_id=$model_id}");
+}
+var copy_func = function(obj){
+	var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		});
+}
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改模块"});
+	$("#myModal").find(".modal-dialog").width(1112);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 load_list();
+		 return true;
+	},function(res){
+		for(var i in res.all_val){
+			add_trrow(i,res.all_val[i]);
+		}
+		
+		//添加属性按钮(点击绑定)
+		  $(".theform").find('.btnadd_attrspec').unbind().bind('click',
+				function(){
+			  		add_trrow('','');
+				}
+		  );
+	},".theform");
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		});
+	}
+}
+$(function(){
+	 load_list();
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+	 
+})
+</script>
+{/block}

@@ -1,0 +1,298 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/index}"  class="showtype cur">全部域名&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/transfer}"  class="showtype">域名转入&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/template}"  class="showtype">信息模板&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/order}"  class="showtype"> 我的订单&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">我的域名</span> <span class="list_tit_count am-text-sm am-text-success">(0)</span></h1>
+    </div>
+    <div class="am-g">
+        <div class="am-btn-group">
+            <a href="{url /ucenter/index}" type="button" class="am-btn am-btn-default am-btn-sm am-radius"><i class="am-icon-align-justify"></i> 服务期域名</a>
+            <a href="{url /ucenter/index_need}" type="button" class="am-btn  am-btn-success am-btn-sm am-radius"><i class="am-icon-align-center"></i> 续费期域名</a>
+            <a href="{url /ucenter/index_repay}" type="button" class="am-btn am-btn-default am-btn-sm am-radius"><i class="am-icon-align-right"></i> 赎回期域名</a>
+        </div>
+
+        <div class="quickserch" style="float: right;width: 200px;">
+            <input type="text" class="am-form-field am-radius am-input-sm am-serch-domains" placeholder="快速查找域名" />
+        </div>
+
+        <div class="am-dropdown" data-am-dropdown style="margin-left: 20px">
+            <button class="am-btn am-btn-default am-dropdown-toggle am-radius am-btn-sm" data-am-dropdown-toggle>更多操作 <span class="am-icon-caret-down"></span></button>
+            <ul class="am-dropdown-content">
+                <li class="am-dropdown-header">选择后操作</li>
+                <li><a href="javascript:void (0)" class="domainTransfer">转移用户</a></li>
+                <li><a href="javascript:void (0)" class="domainBatch">批量续费</a></li>
+                <li><a href="{url /ucenter/register_domain_export}">域名列表导出</a></li>
+            </ul>
+        </div>
+
+    </div>
+    <div class="dis10"></div>
+    <div class="listbody" style="position: relative;">
+    </div>
+</div>
+<div class="my-domian-transfer"></div>
+<div class="my-domian-upgrade"></div>
+{/block}
+
+{block javascript}
+<!--域名列表-->
+<script type="text/template" id="tpl_domain_list">
+    <#macro rowedit data>
+        <table class="am-table am-table-hover domain-register-table">
+            <col width="30px"/>
+            <col  />
+            <col width="100px" />
+            <col width="100px" />
+            <col width="130px" />
+            <col width="130px" />
+            <col width="130px" />
+            <col width="180px" />
+            <thead>
+            <tr>
+                <th><input type="checkbox" data-name="domainId[]" class="checkall"/></th>
+                <th>域名</th>
+                <th>域名所有者</th>
+                <th>域名类型</th>
+                <th>注册日&nbsp;<a href="javascript:void(0)" class="orderby" data-item="reg_time" data-desc=""><cite></cite></a></th>
+                <th>到期日&nbsp;<a href="javascript:void(0)" class="orderby" data-item="exp_time" data-desc=""><cite></cite></a></th>
+                <th>服务状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="tpl am-form">
+            <#if (data.list.length > 0)>
+                <#list data.list as domain>
+                        <tr>
+                            <td><input type="checkbox" name="domainId[]"  value="${domain.id}"/></td>
+                            <td class="d"><span>${domain.domain}</span></td>
+                            <td class="d">${domain.domain_name}</td>
+                            <td class="am-font-gray"><#if (domain.type == 0)>国际域名<#else>国内域名</#if></td>
+                            <td>${domain.reg_time}</td>
+                            <td>${domain.exp_time}</td>
+                            <td class="am-font-gray">急需续费</td>
+                            <td class="c">
+                                <a href="javascript:;" class="domain-renew" data-domain_id="${domain.id}">续费</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </td>
+                        </tr>
+                </#list>
+                <#else>
+                    <tr>
+                        <td class="am-text-sm" colspan="8">
+                            <a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="#" class="am-font-gray">没有符合条件的结果?</a></td>
+                    </tr>
+            </#if>
+            </tbody>
+        </table>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<!--域名列表-->
+<!--加入购物车成功-->
+<script type="text/template" id="tpl_domain_cart">
+    <#macro rowedit data>
+        <div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-2">
+            <div class="am-modal-dialog">
+                <div class="am-modal-hd">
+                    <i class="am-icon-check-circle" style="color: #5EB95E;"></i>&nbsp;&nbsp;加入购物车成功！
+                    <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+                </div>
+                <div class="dis20"></div>
+                <div class="am-modal-bd">
+                    <a href="javascript: void(0)" data-am-modal-close><button type="button" class="am-btn am-btn-default">继续续费</button></a>&nbsp;&nbsp;&nbsp;
+                    <a href="{url domain@/cart/cart}"><button type="button" class="am-btn am-btn-warning">去购物车结算</button></a>
+                </div>
+                <div class="dis15"></div>
+            </div>
+        </div>
+    </#macro>
+</script>
+{include ucenter/order_tpl}
+<script type="text/javascript">
+    $(function () {
+        //加载域名列表
+        load_domains_list(1,"","need",'');
+        //搜索功能
+        $("input.am-serch-domains").keyup(function(){
+            var keyword = $(this).val();
+            if (!$.is_empty(keyword)){
+                load_domains_list(1,keyword,"need",'');
+            }
+        });
+
+        //域名用户转移
+        $(".domainTransfer").click(function(){
+            domain_transfer_op();
+        });
+        //域名批量续费
+        $(".domainBatch").click(function () {
+            domain_batch_op();
+        });
+    });
+    var load_domains_list = function(page,keyword,type,orderby){
+        var keyword  = $.is_empty(keyword)?'':keyword;
+        var orderby  = $.is_empty(orderby)?'':orderby;
+        $.ui.loading($(".listbody"),0);
+        $.ajaxPassport({
+            url:"{url /ucenter/get_list_domain}",
+            success:function(res){
+                $.ui.close_loading($(".listbody"));
+                var listhtml = ""+ easyTemplate($("#tpl_domain_list").html(),res);
+                $(".listbody").html(listhtml);
+
+                $(".listbody").find("input.checkall").unbind("click").bind("click",function(){
+                    $.check_all(this);
+                });
+                $("a").bind("focus",function(){
+                    $(this).blur();
+                });
+                $(".list_tit_count").html("("+res.total+")");
+                //域名续费
+                $(".domain-renew").click(function () {
+                    var domain_id = $(this).data("domain_id");
+                    batch_domain_detial_op(0,domain_id);
+                });
+                //排序
+                var orderby_arr = res.orderby.split("!");
+                $(".domain-register-table").find("a.orderby").each(function () {
+                    var obj = this;
+                    var or_item = $(obj).attr("data-item");
+                    var or_v = "DESC";
+                    $(obj).attr("data-desc", or_v);
+                    $(obj).find("cite").attr("class", "am-icon-arrow-down");
+                    if (or_item == orderby_arr[0]) {
+                        or_v = orderby_arr[1];
+                        $(obj).attr("data-desc", or_v);
+                        if (or_v == "ASC") {
+                            $(obj).find("cite").attr("class", "am-icon-arrow-up");
+                        }
+                    }
+                    $(obj).unbind("click").bind("click", function () {
+                        load_domains_list(1, keyword,"need",(or_item + "!" + (or_v == "ASC" ? "DESC" : "ASC")));
+                    });
+                });
+            },
+            data:{page:page,keyword:keyword,type:type,orderby:orderby},
+        });
+    }
+    var batch_op = {data:{type:2}};
+    var ids= new Array();
+    var domain_batch_op = function() {
+        var ids_tmp  = $.fetch_ids("domainId[]");
+        ids = ids_tmp.split(",");
+        if (ids == "") {
+            $.ui.error('请选择要续费的域名！');
+            return false;
+        }
+        batch_domain_detial_op(0,'');
+    }
+    num = 0;
+    var batch_domain_detial_op = function(i,domain_id){
+        if (domain_id) {
+            ids[0] = domain_id;
+            batch_op.data.domain_id = domain_id;
+        }else{
+            batch_op.data.domain_id=ids[i];
+            if( i >= ids.length || typeof ids[i] == "undefined"){
+                num = 0;
+                return false;
+            }
+        }
+        $.ajaxPassport({
+            url: "{url /ucenter/domain_renew}",
+            success: function (res) {
+                if (res.error == 0) {
+                    num++;
+                }
+                //执行最后一次时提示操作结果
+                if (i == (ids.length - 1)) {
+                    if (num >0) {
+                        setTimeout(function () {
+                            var html3 = "" + easyTemplate($("#tpl_domain_cart").html());
+                            $(".my-domian-upgrade").html(html3);
+                            $(".my-domian-upgrade").find('#doc-modal-2').modal({width: 300});
+
+                            domain_register_tips();
+                        },100);
+                    }else{
+                        $.ui.error(res.message);
+                    }
+                }
+                batch_domain_detial_op(i+1,'');
+            },
+            data: batch_op.data,
+        });
+    }
+</script>
+<!--域名转移用户开始-->
+<script type="text/template" id="tpl_domain_transfer">
+    <#macro rowedit domain>
+        <div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1-t">
+            <div class="am-modal-dialog">
+                <div class="am-modal-hd" style="border-bottom: 1px solid silver;text-align: left;color:black;padding-bottom: 16px;">
+                    <i class="am-icon-share-square-o" style="color: #EB8500;"></i>&nbsp;&nbsp;域名用户转移&nbsp;&nbsp;<span style="font-size: 12px;color: grey">小贴士：转移后域名将不再属于您，请选择操作！</span>
+                    <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+                </div>
+                <div class="dis10"></div>
+                <div class="am-modal-bd" style="font-size: 14px;text-align: left;padding: 30px 30px 60px 30px;text-align: center;">
+                    <span style="font-weight: 600;font-size: 16px">转移对象：</span>
+                    <input type="text" class="am-form-field am-radius am-input-sm" name="email" style="width: 280px;display: inline-block;height: 32px"/><br/>
+                    <small style="color: gray;margin-left: 15px">请输入域名转移的对象,对象格式为邮箱</small><br/>
+                    <div class="dis15"></div>
+                    <span style="font-weight: 600;font-size: 16px">登录密码：</span>
+                    <input type="password" class="am-form-field am-radius am-input-sm" name="password" placeholder="" style="width: 280px;display: inline-block;height: 32px"/><br/>
+                    <small style="color: gray;margin-left: -85px;">请输入账户登录密码</small>
+                    <div class="dis30"></div>
+                    <button type="button" class="am-btn am-btn-warning transfer-domain">确定</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="am-btn am-btn-default" data-am-modal-close>返回</button>
+                </div>
+                <div class="dis30"></div>
+            </div>
+        </div>
+    </#macro>
+</script>
+<script language="javascript">
+    var domain_transfer_op = function () {
+        var ids_tmp  = $.fetch_ids("domainId[]");
+        ids = ids_tmp.split(",");
+        if (ids == "") {
+            $.ui.error('请选择要转移的域名！');
+            return false;
+        }
+        var html = "" + easyTemplate($("#tpl_domain_transfer").html());
+        $(".my-domian-transfer").html(html);
+        $(".my-domian-transfer").find('#doc-modal-1-t').modal({width: 600});
+
+        $(".transfer-domain").click(function () {
+            var email = $(this).parent().find("input[name='email']").val();
+            var password = $(this).parent().find("input[name='password']").val();
+            $.ui.loading($("#doc-modal-1-t"));
+            $.ajaxPassport({
+                url:"{url /ucenter/domain_transfer}",
+                success:function (res) {
+                    $.ui.close_loading($("#doc-modal-1-t"));
+                    if (res.error == 0) {
+                        $.ui.success(res.message);
+                        setTimeout(function () {
+                            $.redirect("{url ucenter/index}");
+                        },500)
+                    }else{
+                        $.ui.error(res.message);
+                    }
+                    return false;
+                },
+                data:{email:email,password:password,domain_id:ids.join(",")}
+            });
+        });
+    }
+</script>
+<!--域名转移用户结束-->
+{/block}

@@ -1,0 +1,602 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/safety_center}" class="cur">安全设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_basic}">个人资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_basic_com}">企业资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_msg}">系统通知&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_passwd}">修改密码&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="am-uc-right"></div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_safety_center">
+    <#macro rowedit data>
+        <div>
+            <h1><span class="list_tit_name">安全中心</span></h1>
+        </div>
+        <hr/>
+        <div class="dis20"></div>
+        <div class="am-msg-content">
+            <table class="am-table am-table-bordered am-table-radius am-table-striped am-table-safety">
+                <col width="200px"/>
+                <col />
+                <tbody>
+                <tr>
+                    <td  class="td-left">
+                        {if $userinfo['emailrz']==1}<i class="am-icon-sm am-icon-check" style="color: #75BB4E;"></i>{else}<i class="am-icon-sm am-icon-exclamation-triangle" style="color: #F37B1D;"></i>{/if}&nbsp;&nbsp;邮箱验证
+                    </td>
+                    <td class="td-right">
+                        <span class="span-left email">
+                            {if $userinfo['emailrz']==1}
+                            您已验证邮箱 &nbsp;<i>{$this->userinfo['email']}</i>
+                            {else}
+                            验证邮箱，快速找回帐号密码，实时接收信息提示。
+                            {/if}
+                        </span>
+                        {if $userinfo['emailrz'] == 0}
+                        <span class="span-right">
+                            <i style="display: none;">{$this->userinfo['email']}</i>
+                            <button class="am-btn am-btn-warning am-radius am-btn-xs lj-email">验证邮箱</button>
+                        </span>
+                        {/if}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td  class="td-left">
+                        {if $userinfo['mobilerz']==1}<i class="am-icon-sm am-icon-check" style="color: #75BB4E;"></i>{else}<i class="am-icon-sm am-icon-exclamation-triangle" style="color: #F37B1D;"></i>{/if}&nbsp;&nbsp;手机验证
+                    </td>
+                    <td class="td-right">
+                        <span class="span-left mobile">
+                            {if $userinfo['mobilerz']==1}
+                            您已验证手机：<i>{$userinfo['mobile']}</i> 若已丢失或停用，请立即更换
+                            {else}
+                            验证手机，快速找回帐号密码，实时接收解析信息提示。
+                            {/if}
+                        </span>
+                        <span class="span-right">
+                            <button class="am-btn {if $userinfo['mobilerz']==1}am-btn-default{else}am-btn-warning{/if} am-radius am-btn-xs safety-mobile">{if $userinfo['mobilerz']==1}修改{else}验证手机{/if}</button>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                {set $wxbd = M("@user_bd")->get_wxbd($uid)}
+                    <td class="td-left">
+                    {if $wxbd['status'] == 2}
+                    <i class="am-icon-sm am-icon-check" style="color: #75BB4E;"></i>&nbsp;&nbsp;已经绑定微信
+                    {else}
+                    <i class="am-icon-sm am-icon-sm am-icon-exclamation-triangle" style="color: #F37B1D;"></i>&nbsp;&nbsp;微信绑定
+                    {/if}
+                    </td>
+                    <td class="td-right">
+                        <span class="span-left">绑定微信账号，快速扫描登录。</span>
+                        <span class="span-right">
+                        {if $wxbd['status'] == 2}
+                        <a class="am-btn am-btn-default am-radius am-btn-xs btn-unbdwx" href="javascript:void(0)}">解除</a>
+                        {else}
+                        <a class="am-btn am-btn-warning am-radius am-btn-xs" href="{url /ucenter/wxbd}">立即绑定</a>
+                        {/if}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-left">
+                        {if isset($ips['uid'])}<i class="am-icon-sm am-icon-check" style="color: #75BB4E;"></i>{else}<i class="am-icon-sm am-icon-exclamation-triangle" style="color: #F37B1D;"></i>{/if}&nbsp;&nbsp;授权IP
+                    </td>
+                    <td class="td-right">
+                        <span class="span-left">
+                            {if isset($ips['uid']) && !empty($ips['ips'])}
+                            您已设置授权IP <font color="#75BB4E"><strong>{$ips['ips']}</strong></font>
+                            {else}
+                            设置授权IP后，只允许授权IP地址登陆用户中心。
+                            {/if}
+                        </span>
+                        <span class="span-right">
+                            <button class="am-btn {if isset($ips['uid'])}am-btn-default{else}am-btn-warning{/if} am-radius am-btn-xs safety-ip">{if isset($ips['uid'])}修改{else}立即授权{/if}</button>
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    $(function(){
+        safety_center();
+        $(".lj-email").unbind("click").bind("click",function(){
+            safety_center_email();
+        });
+        $(".safety-ip").unbind("click").bind("click",function(){
+            safety_center_ip();
+        });
+        $(".safety-mobile").unbind("click").bind("click",function(){
+            safety_center_mobile();
+        });
+        $(".safety-weixin").unbind("click").bind("click",function(){
+            safety_center_weixin();
+        });
+        $(".btn-unbdwx").unbind("click").bind("click",function(){
+            unbdwx_op();
+        });
+    });
+    //安全中心
+    function safety_center(){
+        var edit_c = "" + easyTemplate($("#tpl_safety_center").html());
+        $(".am-uc-right").html(edit_c);
+        plusemailX(3,2);
+        plusphoneX(3,4);
+    }
+    //设置邮箱部分显示以星号代替
+    function plusemailX (frontLen,endLen) {
+        var str = $(".email i").html();
+        if (typeof str=="undefined") {
+
+        }else{
+            str = str.split("@");
+            var len = str[0].length-frontLen-endLen;
+            var xing = '';
+            for (var i=0;i<len;i++) {
+                xing+='*';
+            }
+            var newStr = str[0].substr(0,frontLen)+xing+str[0].substr(str[0].length-endLen)+"@"+str[1];
+            $(".email i").html(newStr);
+        }
+    }
+    //设置手机部分显示以星号代替
+    function plusphoneX (frontLen,endLen) {
+        var str = $(".mobile i").html();
+        if (typeof str=="undefined") {
+
+        }else{
+            var len = str.length-frontLen-endLen;
+            var xing = '';
+            for (var i=0;i<len;i++) {
+                xing+='*';
+            }
+            var newStr = str.substr(0,frontLen)+xing+str.substr(str.length-endLen);
+            $(".mobile i").html(newStr);
+        }
+    }
+</script>
+<!--安全中心授权mobile-->
+<script type="text/template" id="tpl_safety_center_email">
+    <#macro rowedit data>
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">邮箱验证</strong></div>
+        </div>
+        <hr/>
+        <div class="dis20"></div>
+        <div class="am-msg-content">
+            <div class="am-u-lg-6 am-u-md-9">
+                <form class="am-form am-form-horizontal">
+                    <div class="am-form-group">
+                        <div class="am-form-group">
+                            <label class="am-u-sm-4">验证邮箱:</label>
+                            <div class="am-u-sm-8">
+                                <input type="text" name="email" class="am-form-field am-radius" {if !empty($userinfo['email'])}disabled="disabled"{/if} value="{$userinfo['email']}" placeholder="请输入需要验证的邮箱"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <label class="am-u-sm-4"></label>
+                        <div class="am-u-sm-8">
+                            <span class="span-right">
+                                <button class="am-btn am-btn-warning am-radius safety-email">立即验证</button>
+                            </span>
+                            <a href="{url /ucenter/safety_center}"><button type="button" class="am-btn am-btn-default am-radius">返回</button></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </#macro>
+</script>
+<script language="JavaScript">
+    function safety_center_email(){
+        var edit_c = "" + easyTemplate($("#tpl_safety_center_email").html());
+        $(".am-uc-right").html(edit_c);
+
+        $(".safety-email").click(function(){
+            var obj = $(this);
+            var email = $("input[name='email']").val();
+            if ($.is_empty(email)) {
+                $.ui.error("请输入正确的邮箱格式");
+                return false;
+            }
+
+            $.ui.loading();
+            $.ajaxPassport({
+                type:"POST",
+                url:"{url /ucenter/rz_email?hash=}{hash}",
+                success:function(res){
+                    $.ui.close_loading();
+                    if(res.error == 1){
+                        $.ui.error(res.message);
+                    }else{
+                        $.ui.success("邮件已发送至您的邮箱，请验证！");
+                        obj.attr("disabled",true);
+                    }
+                },
+                data:{email:email}
+            });
+            return false;
+        });
+    }
+</script>
+<!--安全中心授权ip-->
+<script type="text/template" id="tpl_safety_center_ip">
+    <#macro rowedit data>
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">授权IP</strong></div>
+        </div>
+        <hr/>
+        <div class="dis20"></div>
+        <div class="am-msg-content">
+            <form class="am-form am-form-horizontal">
+                <div class="am-form-group">
+                    <label  class="am-u-sm-1" style="margin-right: -30px;">授权IP:</label>
+                    <div class="am-u-sm-9">
+                        <textarea  id="ips" rows="5">{if isset($ips['uid'])}{echo str_replace(";",'\n',$ips['ips'])}{/if}</textarea>
+                        <small>授权IP列表，多IP以一行一个IP隔开;设置后只允许列表中IP登陆此帐号</small>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-1" style="margin-right: -30px;"></label>
+                    <div class="am-u-sm-9">
+                        <button type="button" class="am-btn am-btn-warning am-radius ip-save">立即授权</button>
+                        <a href="{url /ucenter/safety_center}"><button type="button" class="am-btn am-btn-default am-radius">返回</button></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </#macro>
+</script>
+<script language="JavaScript">
+    function safety_center_ip(){
+        var edit_c = "" + easyTemplate($("#tpl_safety_center_ip").html());
+        $(".am-uc-right").html(edit_c);
+        $(".ip-save").click(function(){
+            var ips = $('#ips').val();
+            $.ajaxPassport({
+                url:"{url /ucenter/rz_ip}",
+                success:function(res){
+                    if (res.error == 1) {
+                        $.ui.error(res.message);
+                    } else {
+                        $.ui.success(res.message);
+                        window.location.replace("{url ucenter/safety_center}");
+                    }
+                },
+                data:{ips:ips}
+            });
+        });
+    }
+</script>
+<!--安全中心授权mobile-->
+<script type="text/template" id="tpl_safety_center_mobile">
+    <#macro rowedit data>
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">手机验证</strong></div>
+        </div>
+        <hr/>
+        <div class="dis20"></div>
+        <div class="am-msg-content">
+            <div class="am-u-lg-6 am-u-md-9">
+            <form class="am-form am-form-horizontal">
+                <div class="am-form-group" id="valid-after" style="display: none">
+                    <div class="am-form-group">
+                        <label class="am-u-sm-4">旧号码:</label>
+                        <div class="am-u-sm-8">
+                            <span id="old-mobile" style="color:gray;"></span>&nbsp;<font color="gray">验证成功</font>
+                        </div>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <div class="am-form-group">
+                        <label class="am-u-sm-4">手机号码:</label>
+                        <div class="am-u-sm-8 ld-mobile">
+                            <input type="text" name="mobile" value="{$userinfo['mobile']}"  {if !empty($userinfo['mobile'])}disabled="disabled"{/if} class="am-form-field am-radius"/>
+                            <small id="small-show">{if $userinfo['mobilerz']==1}请先验证原手机号码{else}验证手机号码{/if}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="am-form-group" id="btnSendCodeShow" style="display: none;">
+                    <div class="am-form-group">
+                        <label class="am-u-sm-4">验证码:</label>
+                        <div class="am-u-sm-3">
+                            <input type="text" name="rzcode" class="am-form-field am-radius" />         
+                        </div>
+                        <div class="am-u-sm-5">
+                        <small id="btnSendCode"></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label class="am-u-sm-4"></label>
+                    <div class="am-u-sm-8">
+                        {if $userinfo['mobilerz']==1}<input type="hidden" name="oldmobile" value="{$userinfo['mobile']}"/>{/if}
+                        <button type="button" class="am-btn am-btn-warning am-radius mobile-sh {if $userinfo['mobilerz']==1}mobile-send-old{else}mobile-send{/if}">发送手机验证码</button>
+                        <button type="button" class="am-btn am-btn-warning am-radius three-mobile" style="display: none">发送手机验证码</button>
+                        <button type="button" class="am-btn am-btn-warning am-radius save-sh {if $userinfo['mobilerz']==1}mobile-save-change{else}mobile-save-add{/if}" style="display: none">立即验证</button>
+                        <button type="button" class="am-btn am-btn-warning am-radius three-save" style="display: none">立即验证</button>
+                        <a href="{url /ucenter/safety_center}"><button type="button" class="am-btn am-btn-default am-radius">返回</button></a>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+    </#macro>
+</script>
+<script language="JavaScript">
+    function safety_center_mobile(){
+        var edit_c = "" + easyTemplate($("#tpl_safety_center_mobile").html());
+        $(".am-uc-right").html(edit_c);
+
+        var mobileOld = $("input[name='oldmobile']").val();
+        if (typeof mobileOld=="undefined") {
+            mobileOld = 0;
+        }
+        //发送旧手机验证码
+        $(".mobile-send-old").click(function(){
+            var mobile = $("input[name='mobile']").val();
+            var valid = validMobile(mobile,mobileOld,'modify');
+            if (valid) {
+                sendMessage(mobile,"modify",1);
+            }
+        });
+        // 发送新手机验证码
+        $(".mobile-send").click(function(){
+            var mobile = $("input[name='mobile']").val();
+            var valid = validMobile(mobile,mobileOld,"reg");
+            if (valid) {
+                sendMessage(mobile,"reg",2);
+            }
+        });
+        //第三次发送更改后的手机验证码
+        $(".three-mobile").click(function(){
+            var mobile = $("input[name='mobile']").val();
+            var valid = validMobile(mobile,mobileOld,"three-modify");
+            if (valid) {
+                sendMessage(mobile,"modify",3);
+            }
+        });
+        //添加手机验证
+        $(".mobile-save-add").click(function(){
+            var mobile = $("input[name='mobile']").val();
+            var rzcode = $("input[name='rzcode']").val();
+            if(!rzcode.match(/^\d{6}$/)) {
+                $.ui.error("验证码格式错误！");
+                return false;
+            }
+            saveMobile(mobile,rzcode,'reg',1);
+        });
+        //修改手机验证
+        $(".mobile-save-change").click(function(){
+            var mobile = $("input[name='mobile']").val();
+            var rzcode = $("input[name='rzcode']").val();
+            if(!rzcode.match(/^\d{6}$/)) {
+                $.ui.error("验证码格式错误！");
+                return false;
+            }
+            saveMobile(mobile,rzcode,'modify',2);
+        });
+        //修改新手机验证
+        $(".three-save").click(function(){
+            var mobile = $("input[name='mobile']").val();
+            var rzcode = $("input[name='rzcode']").val();
+            if(!rzcode.match(/^\d{6}$/)) {
+                $.ui.error("验证码格式错误！");
+                return false;
+            }
+            saveMobile(mobile,rzcode,'modify',1);
+        });
+    }
+    //向后台发送处理数据，保存验证后的手机
+    function saveMobile(mobile,rzcode,type,num){
+        $.ajaxPassport({
+            url:"{url /ucenter/rz_mobile}{echo tHash::uri(array('dateline'=>$timestamp))}",
+            success:function(res){
+                if (res.error == 1) {
+                    $.ui.error(res.message);
+                } else {
+                    if (num == 1) {
+                        $.ui.success(res.message);
+                        window.location.replace("{url ucenter/safety_center}");
+                    }else{
+                        $.ui.success("验证成功");
+                        $("#valid-after").show();
+                        $("#old-mobile").html(mobile);
+                        $("#small-show").html("请输入新手机号码");
+                        $("#btnSendCodeShow").hide();
+                        $("input[name='mobile']").val('');
+                        $(".am-form-field").focus();
+                        $(".save-sh").hide();
+                        $(".mobile-sh").hide();
+                        $(".three-mobile").show();
+
+                        $(".ld-mobile input").attr("disabled",false);
+                        window.clearInterval(InterValObj);//停止计时器
+                    }
+                }
+            },
+            data:{mobile:mobile,rzcode:rzcode,type:type}
+        });
+    }
+    //验证手机号码正确性
+    function validMobile(mobile,mobileOld,type){
+        if ($.is_empty(mobile)) {
+            $.ui.error("请输入手机号码！");
+            $(".am-form-field").focus();
+            return false;
+        }
+        if (!mobile.match(/^1[3|4|5|8][0-9]\d{4,8}$/)) {
+            $.ui.error("手机号码格式不正确！");
+            $(".am-form-field").focus();
+            return false;
+        }
+        if (type == "modify") {
+            if (mobile != mobileOld) {
+                $.ui.error("原手机号码不正确！");
+                $(".am-form-field").focus();
+                return false;
+            }
+        }
+        if (type == "three-modify") {
+            if (mobile == mobileOld) {
+                $.ui.error("新手机号码与原手机号码相同！");
+                $(".am-form-field").focus();
+                return false;
+            }
+        }
+        return true;
+    }
+    var InterValObj; //timer变量，控制时间
+    var count = 120; //间隔函数，1秒执行
+    var curCount;//当前剩余秒数
+    //发送短信验证码
+    function sendMessage(mobile,type,num) {
+        $.ui.loading();
+        $.ajaxPassport({
+            url:"{url /ucenter/send_mobile}",
+            success:function(res){
+                $.ui.close_loading();
+                if (res.error == 1) {
+                    $.ui.error(res.message);
+                } else {
+                    curCount = count;
+                    //设置button效果，开始计时
+                    $("input[name='rzcode']").val('');
+                    $("#btnSendCodeShow").show();
+                    $(".mobile-sh").hide();
+                    $(".three-mobile").hide();
+                    $(".save-sh").show();
+                    $("#btnSendCode").html("请在" + curCount + "秒内输入验证码");
+                    InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+                    if (num == 3){
+                        $(".save-sh").hide();
+                        $(".three-save").show();
+                    }
+                }
+            },
+            data:{mobile:mobile,type:type}
+        });
+    }
+    //timer处理函数
+    function SetRemainTime() {
+        if (curCount == 0) {
+            window.clearInterval(InterValObj);//停止计时器
+            setTimeout(function () {
+                window.location.replace("{url ucenter/safety_center}");
+            },1000)
+            $("#btnSendCode").html("请重新发送验证码");
+            $(".mobile-sh").show();
+            $(".save-sh").hide();
+            $(".three-save").hide();
+        }
+        else {
+            curCount--;
+            $("#btnSendCode").html("请在" + curCount + "秒内输入验证码");
+        }
+    }
+</script>
+<!--安全中心授权weixin-->
+<script type="text/template" id="tpl_safety_center_weixin">
+    <#macro rowedit data>
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">微信绑定</strong></div>
+        </div>
+        <hr/>
+        <div class="dis20"></div>
+        <div class="am-msg-content">
+            <div class="weixin-img"><img src="{url /ucenter/qrcode}" width="300"></div>
+            <div class="weixin-intro">请使用微信扫描图中二维码<br/>
+                关注后账号即自动绑定成功<br/>
+                如果您已经关注“八戒DNS”，请再次扫描二维码完成绑定<br/>
+                如果您的微信号已经绑定平台其他账号,请先解除绑定，或者重新关注
+            </div>
+        </div>
+    </#macro>
+</script>
+<script language="JavaScript">
+    function safety_center_weixin(){
+        var edit_c = "" + easyTemplate($("#tpl_safety_center_weixin").html());
+        $(".am-uc-right").html(edit_c);
+        $(".weixin-save").click(function(){
+            $.ajaxPassport({
+                url:"{url /ucenter/weixinRz}",
+                success:function(res){
+                    if (res.error == 1) {
+                        $.ui.error(res.message);
+                    } else {
+                        $.ui.success(res.message);
+                    }
+                },
+                data:{ips:ips}
+            });
+        });
+    }
+</script>
+
+
+<!--微信绑定解除-->
+<script type="text/template" id="tpl_unbdwx">
+    <#macro rowedit domain>
+        <div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1-t">
+            <div class="am-modal-dialog">
+                <div class="am-modal-hd" style="border-bottom: 1px solid silver;text-align: left;color:black;padding-bottom: 16px;">
+                    <i class="am-icon-share-square-o" style="color: #EB8500;"></i>&nbsp;&nbsp;解除绑定&nbsp;&nbsp;<span style="font-size: 12px;color: grey">小贴士：解除绑定后您的微信将不再接收我们的信息！</span>
+                    <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+                </div>
+                <div class="dis10"></div>
+                <div class="am-modal-bd" style="font-size: 14px;text-align: left;padding: 30px 30px 60px 30px;text-align: center;">
+                    
+                    <div class="dis15"></div>
+                    <span style="font-weight: 600;font-size: 16px">密码：</span>
+                    <input type="password" class="am-form-field am-radius am-input-sm" name="password" placeholder="" style="width: 280px;display: inline-block;height: 32px"/><br/>
+                    <small style="color: gray;margin-left: -85px;">请输入账户登录密码</small>
+                    <div class="dis30"></div>
+                    <button type="button" class="am-btn am-btn-warning unbdwx-submit">确定</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="am-btn am-btn-default" data-am-modal-close>返回</button>
+                </div>
+                <div class="dis30"></div>
+            </div>
+        </div>
+    </#macro>
+</script>
+<div class="my-unbdwx"></div>
+<script language="javascript">
+    var unbdwx_op = function () {
+        var html = "" + easyTemplate($("#tpl_unbdwx").html());
+        $(".my-unbdwx").html(html);
+        $(".my-unbdwx").find('.am-modal').modal({width: 600});
+
+        $(".unbdwx-submit").unbind("click").click(function () {
+            var password = $(this).parent().find("input[name='password']").val();
+            $.ui.loading($(".my-unbdwx").find('.am-modal'));
+            $.ajaxPassport({
+                url:"{url /ucenter/wxbd}",
+                success:function (res) {
+                    $.ui.close_loading($(".my-unbdwx").find('.am-modal'));
+                    if (res.error == 0) {
+                        $.ui.success(res.message);
+                        setTimeout(function () {
+                            $.redirect("{url /ucenter/safety_center}");
+                        },500)
+                    }else{
+                        $.ui.error(res.message);
+                    }
+                },
+                data:{"do":"unbd","password":password}
+            });
+        });
+    }
+</script>
+<!--域名过户结束-->
+{/block}

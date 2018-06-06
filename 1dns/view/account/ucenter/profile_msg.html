@@ -1,0 +1,208 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/safety_center}"  >安全设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_basic}">个人资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_basic_com}">企业资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_msg}" class="cur">系统通知&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_passwd}"  >修改密码&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">系统通知</span></h1>
+    </div>
+    <div class="am-btn-group" style="float: left">
+        <button type="button" class="am-btn am-btn-default am-radius am-btn-sm viewInformation all-infor" data-status="0">全部信息({$all_infor})</button>
+        <button type="button" class="am-btn am-btn-default am-radius am-btn-sm viewInformation view-infor" data-status="1" view-infor="{$view_infor}">已读信息({$view_infor})</button>
+        <button type="button" class="am-btn am-btn-default am-radius am-btn-sm viewInformation no-view-infor" data-status="2" no-view-infor="<?php echo $all_infor-$view_infor?>">未读信息(<?php echo $all_infor-$view_infor?>)</button>
+    </div>
+    <div class="batch_information" style="position: relative;float: left;left: 30px;">
+        <button type="button" class="am-btn am-btn-success am-radius am-btn-sm inforOption" data-do="mark">批量标记已读</button>
+        <button type="button" class="am-btn am-btn-danger am-radius am-btn-sm inforOption" data-do="del">删除</button>
+    </div>
+    <div class="am-u-lg-6" style="float: right;width: 300px;margin-right: -15px;">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text"  class="am-form-field infor-keyword" placeholder="请输入关键词">
+            <span class="am-input-group-btn">
+                <button class="am-btn keyword" type="button"><span class="am-icon-search"></span></button>
+            </span>
+        </div>
+    </div>
+    <div class="dis10"></div>
+    <div class="dis10"></div>
+    <div class="am-information-content">
+        <div class="listbody"></div>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_information_list">
+    <#macro rowedit data>
+        <table class="am-table">
+            <col width="30"/>
+            <col width="20"/>
+            <col />
+            <col width="200"/>
+            <thead>
+            <tr>
+                <th><input type="checkbox" data-name="inforId[]" class="checkall"/></th>
+                <th></th>
+                <th>详情</th>
+                <th>创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#if (data.list.length > 0)>
+            <#list data.list as infor>
+                <tr class="click-d information_${infor.id}" <#if (infor.status==1)>style="color: gray;"</#if> data-infor="${infor.id}">
+                    <td><input type="checkbox" name="inforId[]" value="${infor.id}"/></td>
+                    <td><#if (infor.status==0)><i class="am-icon-bell" style="color: #3BB4F2"></i></#if></td>
+                    <td>
+                        ${infor.title}<br/>
+                        <span style="font-size: 14px">${infor.content}</span>
+                    </td>
+                    <td>${$.time_to_string(infor.dateline,'Y-m-d H:i')}</td>
+                </tr>
+            </#list>
+                <#else>
+                    <tr><td colspan="4"><a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">没有符合条件的结果?</a></td></tr>
+            </#if>
+            </tbody>
+        </table>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    $(function(){
+        // 搜索内容事件
+        $("button.keyword").click(function(){
+            var keyword = $(".infor-keyword").val();
+            if (!$.is_empty(keyword)){
+                load_information_list(1,keyword);
+            }else{
+                load_information_list(1);
+            }
+        });
+        // 未读信息，已读信息，全部信息
+        $(".viewInformation").click(function(){
+            var condition = $(this).attr("data-status");
+            load_information_list(1,'',condition);
+        });
+        //批量操作
+        $(".inforOption").click(function(){
+            batch_infromation_op(this);
+        });
+        load_information_list(1);
+    });
+    //加载通知列表
+    var load_information_list = function(page,keyword,condition){
+        var url = "{url /ucenter/profile_msg?do=get}";
+        var keyword  = $.is_empty(keyword)?'':keyword;
+        var condition  = $.is_empty(condition)?'':condition;
+        $.ajaxPassport({
+            url:url,
+            success:function(res){
+                if (!$.is_empty(keyword) && !$.is_array(res.data.list)) {
+                    res.data.list = "没有包含"+" '"+keyword+"' "+"的消息，请重新输入搜索内容";
+                }
+                var listhtml = ""+ easyTemplate($("#tpl_information_list").html(),res.data);
+
+                $(".listbody").html(listhtml);
+                $(".listbody").find("input.checkall").unbind("click").bind("click",function(){
+                    $.check_all(this);
+                });
+                $("button,a").bind("focus",function(){
+                    $(this).blur();
+                });
+                //单击已读
+                $(".click-d").click(function () {
+                    var infor_id = $(this).data("infor");
+                    $.ajaxPassport({
+                        url:"{url ucenter/profile_msg_batch}",
+                        success:function (res) {
+                            if (res.error == 0) {
+                                $.ui.success("已读");
+                                load_information_list(1);
+                            }else{
+                                return false;
+                            }
+                        },
+                        data:{id:infor_id,do:"mark"}
+                    });
+                });
+            },
+            data:{page:page,keyword:keyword,condition:condition},
+        });
+    }
+    //批量操作
+    var batch_op = {
+        url: "{url ucenter/profile_msg_batch}",
+        data:{},
+    };
+    var ids= new Array();
+    var batch_infromation_op = function(obj) {
+        var infor_do = $(obj).data("do");
+        var ids_tmp = $.fetch_ids("inforId[]");
+        ids = ids_tmp.split(",");
+        if (ids == "") {
+            $.ui.error('请选择要操作的信息！')
+            return;
+        }
+        var infor_confirm = "";
+        if (infor_do == "mark") {
+            infor_confirm = "你确定要标记为已读吗？";
+            batch_op.data.do = infor_do;
+        }else if (infor_do == "del") {
+            infor_confirm = "你确定要删除通知吗？";
+            batch_op.data.do = infor_do;
+        }
+        $.ui.confirm(function(){
+            batch_infor_detial_op(0);
+            load_information_list(1);
+        },infor_confirm) ;
+    }
+    var num = 0;
+    var batch_infor_detial_op = function(i){
+        batch_op.data.id=ids[i];
+        if( i>=ids.length || typeof ids[i] == "undefined"){
+            num = 0;
+            return false;
+        }
+        $.ui.success("操作中..");
+        $.ajaxPassport({
+            url: batch_op.url,
+            success: function (res) {
+                if (res.error == 0) {
+                    num++;
+                    var informationId = ".information_"+ids[i];
+                    if (batch_op.data.do == 'del') {
+                        setTimeout(function () {
+                            $(informationId).remove();
+                        }, 50);
+                    }else{
+                        //改变状态为已读信息
+                        $(informationId).find("i").remove();
+                        $(informationId).attr("style","color:gray");
+                    }
+                }
+                //执行最后一次时提示操作结果
+                if (i == (ids.length - 1)) {
+                    if (num >0) {
+                        $.ui.success("成功操作"+num+"条信息");
+                        load_information_list(1);
+                    }else{
+                        $.ui.error(res.message);
+                    }
+                }
+                $('#my-confirm').modal("close");
+                batch_infor_detial_op(i+1);
+            },
+            data: batch_op.data,
+        });
+    }
+</script>
+{/block}

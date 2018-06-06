@@ -1,0 +1,62 @@
+{block title}{if $data['seo_title']}{$data['seo_title']}{else}{$data['name']}-{$site['seo_title']}{/if}{/block}
+{block seo}
+<meta name="keywords" content="{if $data['seo_keyword']}{$data['seo_keyword']}{else}{$site_config['seo_keyword']}{/if}"/>
+<meta name="description" content="{if $data['seo_description']}{$data['seo_description']}{else}{$site_config['seo_description']}{/if}"/>
+{/block}
+{block header}{/block}
+{block main}
+<div class="aps">
+    <div class="container">
+        <ul class="other-left l">
+            {foreach items=$catlist}
+            <li class="{if $c == $item['ident']}{/if}">
+                <a href="{url /cms/onepage/i/$i/c/$item[ident]}"><span>{$item['name']}</span></a>
+            </li>
+            {/foreach}
+            <li class="{if $act == 'links'}selected{/if}">
+                <a href="{url /cms/links}"><span>友情链接</span></a>
+            </li>
+        </ul>
+        <div class="other-right ">
+            <div class="other-right-wrap">
+                <div id="pjax-container">
+                    <div class="others">
+                        <h1>
+                            友情链接
+                        </h1>
+                        <table style="margin-top: -20px">
+                            <col width="30px"/>
+                            <col />
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <p style="color: #000">友情链接：</p>
+                                    {set $link1 = tCache::read("cms_friendlink_link1");}
+                                    {foreach items=$link1}
+                                    {if $item['cat_id'] == 'link1'}
+                                    <a href="{$item['link']}" target="_blank" style="color: #666">{$item['name']}</a>&nbsp;&nbsp;&nbsp;
+                                    {/if}
+                                    {/foreach}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <p style="color: #000">合作伙伴：</p>
+                                    <div style="margin-top: -25px;">
+                                    {set $link2 = tCache::read("cms_friendlink_link2");}
+                                    {foreach items=$link2}
+                                    <a href="{$item['link']}" target="_blank"><img style="border: 1px solid #EEEEEE;margin-top: 25px" src="{url static@/}{$item['logo']}"/>&nbsp;&nbsp;&nbsp;</a>
+                                    {/foreach}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block friendlink}{/block}

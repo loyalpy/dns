@@ -1,0 +1,220 @@
+{block main}
+<div class="am-uc-top">
+    <i class="am-icon-wordpress"></i>&nbsp;
+    {$domain}
+</div>
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav" style="padding-top: 20px">
+        <ul>
+            <li><a href="{url /ucenter/basic?domain=}{$domain}"   class="showtype ">基本信息&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_edit?domain=}{$domain}"   class="showtype ">域名信息修改&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_rz?domain=}{$domain}"  class="showtype cur">域名实名认证&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_transfer?domain=}{$domain}"  class="showtype">域名过户&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_dns?domain=}{$domain}"   class="showtype ">DNS修改创建&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_zs?domain=}{$domain}"   class="showtype">域名证书&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_status?domain=}{$domain}"   class="showtype">安全设置&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right basic-rz" style="padding-top: 25px">
+    <div class="basic-top">&nbsp;&nbsp;&nbsp;域名实名认证</div>
+    <div class="dis20"></div>
+    <div class="fabu-stepbox" style="margin-left:80px;">
+        <ul class="clear">
+            <li class="{if $type == 1}current{/if}"><i class="i1">1</i><span>上传认证资料</span><b></b></li>
+            <li class="{if in_array($type,array(2,4))}current{/if}"><i class="i2">2</i><span>等待审核(两个工作日完成)</span><b></b></li>
+            <li  class="{if in_array($type,array(3,5))}current{/if}"><i class="i3">3</i><span>查看实名认证结果</span></li>
+        </ul>
+    </div>
+    <div class="dis10"></div>
+    <!--实名认证第一步 -->
+    <table class="am-table basic-rz-table basic-rz-1" {if $type != 1}style="display:none"{/if}>
+        <col {if $result['reg_type'] == 1}width="200px"{else}width="300px"{/if}/>
+        <col />
+        <thead>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="l">域名所有者：</td>
+            <td>{$list_info['aller_name_cn']}</td>
+        </tr>
+        <tr>
+            <td class="l">用户类型：</td>
+            <td>{if $result['reg_type'] == 1}个人用户{else}企业用户{/if}</td>
+        </tr>
+        <tr>
+            <td class="l">{if $result['reg_type'] == 1}所有者身份证号码：{else}企业营业执照或组织机构代码证号：{/if}</td>
+            <td>
+                <input type="text" name="sfz" value="" class="am-form-field am-radius"  placeholder=""><i class="i">请填写正确的身份证号码</i>
+                <div class="am-font-gray sfz-tips">{if $result['reg_type'] == 1}请填写和域名所有者一致的身份证号码{else}请填写企业营业执照或组织机构代码证号{/if}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="l">{if $result['reg_type'] == 1}上传实名认证资料：{else}企业营业执照或组织机构代码扫面件：{/if}</td>
+            <td>
+                <div class="am-form-group am-form-file">
+                    <form action="{url /ucenter/upload_sfz}" class="uploadform" method="post" enctype="multipart/form-data">
+                        <button type="button" class="am-btn am-btn-default am-btn-sm am-btn-uploadzj">
+                            <i class="am-icon-cloud-upload"></i> 上传证件扫描件</button>
+                        <input id="doc-form-file" type="file" name="attach_file" value="">
+                        <input type="hidden" name="hash" value="{hash}" />
+                        <input type="hidden" name="domain" value="{$domain}" />
+                    </form>
+                </div>
+
+                <div id="file-list" style="position:relative;width: 200px" >
+                    <img src="{url static@$imgurl}" width="200" id="Dcompany_zj" {if $imgurl}{else}style="display:none"{/if} />
+                    <a href="javascript:void (0);" class="del-domain-ups" {if $imgurl}{else}style="display:none"{/if}>删除</a>
+                </div>
+
+
+                {if $result['reg_type'] == 1}
+                <span id="exm" class="am-font-gray sfz-tips {if $imgurl}sfz-tips-1{/if}">域名所有者身份证正面扫描件 <i class="am-icon-twitch" data-am-popover="{theme: 'default sm',content: '需上传不大于1M清晰，完整JPG格式图片', trigger: 'hover focus'}"></i></span>
+                <div id="exm1" class="{if $imgurl}sfz-tips-1{/if}">
+                    <span>如图实例：</span><br/>
+                    <img src="{skin images/card_id.png}">
+                </div>
+                {/if}
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="basic-rz-sub basic-rz-1" {if $type != 1}style="display:none"{/if}>
+        <button type="button" class="am-btn am-btn-warning am-radius edit-sub">提交</button>
+    </div>
+    <!--实名认证第二步 -->
+    <div class="basic-rz-sub-2" {if !in_array($type,array(2,4))}style="display:none"{/if}>
+        <div class="sub-2-l">
+            {if $type == 4}
+
+            {else}
+            <i class="am-icon-check-circle-o"></i>
+            {/if}
+
+        </div>
+        <div class="sub-2-r">
+            {if $type == 4}
+            <p style="font-size: 16px">审核失败</p>
+            <p><a href="{url /ucenter/basic_rz?domain=}{$domain}&ch=1">重新上传认证资料</a></p>
+            {else}
+            <p style="font-size: 16px">上传资料成功</p>
+            <p>域名所有者实名认证上传资料成功，我们将在2个工作日内完成审核，请您耐心等待审核结果。</p>
+            {/if}
+        </div>
+        <div class="dis60"></div>
+    </div>
+    <!--实名认证第三步 -->
+    <div class="basic-rz-sub-3" {if !in_array($type,array(3,5))}style="display:none"{/if}>
+        <div class="sub-3-l">
+            <i class="am-icon-check-circle-o"></i>
+        </div>
+        <div class="sub-3-r">
+            {if $type == 5}
+            <p style="font-size: 16px">国际域名，无需认证，域名所有者已认证成功</p>
+            <p>国内域名注册成功后，必须在5天内完成域名所有者实名认证后才能正常使用</p>
+            {else}
+            <p style="font-size: 16px">认证成功</p>
+            <p>恭喜您，您域名所有者实名认证成功！     </p>
+            {/if}
+        </div>
+        <div class="dis60"></div>
+    </div>
+
+    <div class="dis30"></div>
+    <div class="now-dns-bot">
+        <div class="dis10"></div>
+        <dl>
+            {set $register_type = tCache::read("data_config")}
+            {set $register_type =  isset($register_type['domain_register_type'])?implode("/",$register_type['domain_register_type']):'';}
+            <dt>温馨提示：</dt>
+            <dd>• 根据注册局规定，{$register_type}域名注册成功后，必须实名认证才能正常使用，否则域名将被注册局锁定。</dd>
+            <dd>• 如域名所有者为公司，请提交组织机构代码证；如域名所有者为个人，请提交身份证正面扫描件。</dd>
+            <dd>• 上传图片须为清晰、完整，无遮挡、涂抹，图片格式为：JPG，图片大小不超过1M。</dd>
+        </dl>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+    var domain = "{$domain}";
+    var reg_type = "{$result['reg_type']}";
+    $(function() {
+        //提交认证资料
+        $(".edit-sub").click(function () {
+            var cart_id = $("input[name='sfz']").val();
+
+            //正则匹配身份证号码
+            if (reg_type == 1) {
+                var pattern = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/i;
+                if (!pattern.test(cart_id)) {
+                    $("input[name='sfz']").parent().find("i.i").show();
+                    return false;
+                }else{
+                    $("input[name='sfz']").parent().find("i.i").hide();
+                }
+            }else{
+
+            }
+
+            $.ui.loading();
+            $.ajaxPassport({
+                url:"{url /ucenter/basic_rz}",
+                success:function (res) {
+                    $.ui.close_loading();
+                    if (res.error == 1) {
+                       $.ui.error(res.message);
+                    }else{
+                        $.ui.success("上传资料成功！");
+                        $(".basic-rz-1").hide();
+                        $(".basic-rz-sub-2").show();
+                        $(".fabu-stepbox").find(".i2").parent().addClass("current");
+                    }
+                },
+                data:{cart_id:cart_id,do:"edit",domain:domain}
+            });
+        });
+
+        //删除已上传照片
+        $(".del-domain-ups").click(function () {
+            $.ui.loading();
+            $.ajaxPassport({
+                url:"{url /ucenter/del_upload_sfz}",
+                success:function (res) {
+                    $.ui.close_loading();
+                    if (res.error == 1) {
+                        $.ui.error(res.message);
+                    }else{
+                        $.ui.success(res.message);
+                        window.location.reload();
+                    }
+                },
+                data:{domain:domain}
+            });
+        });
+
+        //上传认证附件
+        $("form.uploadform").data("success",function(res,formobj){
+            if(res.error == 1){
+                $.ui.error(res.message);
+            }else{
+                var imgobj = $("#Dcompany_zj");
+                imgobj.show();
+                $(".del-domain-ups").show();
+                $("#exm1").hide();
+                $("#exm").hide();
+                imgobj.attr("src",res.path+"?"+Math.random());
+                $(".sfz-tips-1").hide();
+            }
+            $.ui.close_loading($("#Dcompany_zj").parent());
+        }).submit(function(){
+            $.ui.loading($("#Dcompany_zj").parent());
+            return $.ajaxForm(this,100);
+        }).find("input[type='file']").unbind("change").bind("change",function(){
+            var obj = this;
+            $(obj).parent().submit();
+        });
+    });
+</script>
+{/block}

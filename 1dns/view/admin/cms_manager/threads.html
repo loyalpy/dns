@@ -1,0 +1,241 @@
+{block head_menu}
+<div class="menu">
+ <ul>
+	 {if $this->check_purview('/cms_manager/threads')}
+ <li><a href="{url /cms_manager/threads}" class="{if '/'.$inc.'/'.$act == '/cms_manager/threads'}cur{/if}">内容列表</a></li>
+	 {/if}
+	 {if $this->check_purview('/cms_manager/threads_forums')}
+ <li><a href="{url /cms_manager/threads_forums}" class="{if '/'.$inc.'/'.$act == '/cms_manager/threads_forums'}cur{/if}">内容分类</a></li>
+	 {/if}
+ </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+  <div class="name">内容列表</div>
+  <div class="navbtn">
+  <!--button-->
+  {if $this->check_purview("/cms_manager/threads_edit")}
+  <a href="{url /cms_manager/threads_edit}" class="btn btn-primary btn-sm">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增文章</a>
+  {/if}
+  <!--end button-->
+
+
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+
+<form class="the_searchform form" method="POST" action="?do=get_url">
+<div class="tpl"></div>
+</form>
+
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+ <!--1-->   <col width="45px" />
+ <!--2-->   
+ <!--3-->   <col />
+            <col width="110px" />
+            <col width="180px" />
+ <!--4-->   <col width="38px" />
+ <!--5-->   <col width="38px" />
+	
+ <!--6-->	<col width="60px" />
+            <col width="150px" />
+            <col width="60px" />
+	<thead>
+	<tr>
+ <!--1-->	<th>编号</th>
+ <!--2-->	<th>文章标题</th>
+            <th>回复/点击</th>
+ <!--3-->	<th>文章分类</th>
+ <!--4-->	<th>推荐</th>
+ <!--5-->	<th>热帖</th>
+ <!--6-->	<th>状态</th>
+            <th>时间</th>
+ <!--7-->	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+
+<!-- -->
+<div class="pagebar"></div>
+
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+
+{include tpl/form}
+<!--编辑按钮-->
+<script language="javascript" src="{webroot cache/static/areadata.js}"></script>
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+   
+    <td class="font-gray">${data.tid}</td>      
+    <td class="font-blue f14">${data.subject}</td>
+    <td class=" f14"><font class="font-org">${data.replies}</font> <font class="font-gray f12">/ ${data.views}</font></td>
+    <td class="font-blue f14">${data.catname}</td>
+    <td class="font-gray"><#if (data.intui==1)><cite class="glyphicon glyphicon-ok-sign font-green"></cite><#else><cite class="glyphicon glyphicon-ok-sign font-gray"></cite></#if></td>
+    <td class="font-gray"><#if (data.inhot==1)><cite class="glyphicon glyphicon-ok-sign font-green"></cite><#else><cite class="glyphicon glyphicon-ok-sign font-gray"></cite></#if></td>
+    <td class="font-gray"><#if (data.status==1)><cite class="glyphicon glyphicon-exclamation-sign font-red"></cite> 已锁<#else><cite class="glyphicon glyphicon-ok-sign font-green"></cite> 正常</#if></td>
+
+
+    <td>${data.dateline}</td>
+    <td>
+	<p class="table-item-op">
+		{if $this->check_purview('/cms_manager/threads_edit')}
+	<a href="{url /cms_manager/threads_edit?tid=}${data.tid}" ><span class="glyphicon glyphicon-edit"></span></a>
+		{/if}
+		{if $this->check_purview('/cms_manager/threads_del')}
+	<a href="javascript:void(0);" class="delbtn" data-url="{url /cms_manager/threads_del?tid=}${data.tid}"><span class="glyphicon glyphicon-remove"></span></a> 
+		{/if}
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+
+
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /cms_manager/threads_edit}" method="post" class="theform form form-1" role="form">
+<div class="tpl"></div>
+
+</form>
+</div>
+</#macro>
+</script>
+
+
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var search_formdata = {
+	fid:{type:"select",label:"分类",name:"fid",value:"{$condi['fid']}",disabled:0,data_sr:{echo JSON::encode($catlist)},css:"low",require:"",desc:"",item_css:"item-100"},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"{$condi['keyword']}",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var formdata = {
+    fid:{type:"select",label:"分类",name:"fid",value:"",data_sr:{echo JSON::encode($catlist)},css:"",require:"datatype='*'",desc:"",item_css:""},
+	subject:{type:"text",label:"文章名称",name:"subject",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"文章标题不可不填",item_css:""},
+	uname:{type:"text",label:"发布者",name:"uname",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"发布者不可不填",item_css:""},
+	soure:{type:"text",label:"文章来源",name:"soure",value:"",data_sr:[],css:"",require:"",desc:"选填",item_css:""},
+    seo_title:{type:"text",label:"SEO标题",name:"seo_title",value:"",data_sr:[],css:"",require:"",desc:"选填",item_css:""},
+	seo_keyword:{type:"text",label:"SEO关键词",name:"seo_keyword",value:"",data_sr:[],css:"",require:"",desc:"选填",item_css:""},
+	seo_description:{type:"text",label:"SEO描述",name:"seo_description",value:"",data_sr:[],css:"",require:"",desc:"选填",item_css:""},
+	status:{type:"checkbox",label:"锁定",name:"status",value:"1",disabled:0,data_sr:[{v:"锁定",key:1}],css:"",require:"",desc:"",item_css:""},
+	intop:{type:"checkbox",label:"是否置顶",name:"intop",value:"1",disabled:0,data_sr:[{v:"置顶",key:1}],css:"",require:"",desc:"",item_css:""},
+	inhot:{type:"checkbox",label:"热帖",name:"inhot",value:"1",disabled:0,data_sr:[{v:"热帖",key:1}],css:"",require:"",desc:"",item_css:""},
+    description:{type:"textarea",label:"描述",name:"description",value:"",data_sr:[],css:"wide",require:"",desc:"",item_css:""},
+
+    tid:{type:"hidden",label:"-",name:"tid",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+var load_list = function(){
+	$.loadlist([],function(res){
+		$(".editbtn").click(function(){
+			edit_func(this);
+		});
+		$(".delbtn").click(function(){
+			del_func(this);
+		});
+	},pageurl);
+}
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改文章"});
+	$("#myModal").find(".modal-dialog").width(760);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 load_list();
+		 return true;
+	},function(res){
+        setTimeout(function(){
+        KindEditor.basePath = "/common/kindeditor-4.1.7/";
+		var KE_workform_content = KindEditor.create("textarea[name='description']",{
+											uploadJson : '/interface_editor/upload_kindeditor',
+											fileManagerJson : '/interface_editor/file_manager_kindeditor',
+											allowFileManager : true,
+											items : [
+						'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+						'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+						'insertunorderedlist', '|', 'emoticons', 'image','link']
+											});
+                                            },50);
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		});
+	}
+}
+
+// 搜索
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_func(this);
+		 });
+		$(".delbtn").click(function(){
+			del_func(this);
+		 });
+	});
+}
+$(function(){
+	  //加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 
+	 loadlist(1);
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+//文档加载后执行
+$(function(){
+     //加载所有单页
+	 load_list(1);
+
+     //新增单页按钮
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+</script>
+{/block}

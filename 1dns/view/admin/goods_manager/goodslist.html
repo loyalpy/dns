@@ -1,0 +1,181 @@
+{block main}
+<div class="main-nav">
+  <div class="name">图文管理</div>
+  <div class="navbtn0">
+  </div>
+  <div class="navbtn">
+  <!--button-->
+  {if $this->check_purview("/goods_manager/goodslist_edit")}
+  <a href="{url /goods_manager/goodslist_edit}" class="btn btn-primary btn-sm">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增图文</a>
+  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /goods_manager/goodslist?idc=$idc&do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+	<col width="60px" />
+	<col />
+	<col width="180px" />
+    <col width="100px" />
+	<col width="260px" />
+	<col width="60px" />
+	<col width="150px" />
+	<col width="60px" />
+	<thead>
+	<tr>
+	<th>图片</th>
+	<th>图文名称</th>
+	<th>图文编号</th>		
+	<th>图文类型</th>
+	<th>序号</th>
+	<th>状态</th>	
+	<th>添加时间</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+<div class="dis20"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{ramote img@/cache/static/areadata.js}"></script>
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class=""><#if (data.fm)><a href="/goods/detail/${data.id}.html" target="_blank"><img src="{ramote img@}${data.fm.replace('SIZE','50-50')}" width="50" height="50" /></a><#else> - </#if></td>
+    <td><a href="/goods/detail/${data.id}.html" class="font-green f14" target="_blank">${data.name}</a></td>
+    <td>${data.goods_no}</td>
+    <td class="font-black">${data.catname}</td>
+    <td class="">
+  
+    <font class="f12 font-gray"> / ${data.sort}</font>
+
+    </td>
+    <td class="font-black"><#if (data.status == 1)><font class="font-red">隐藏</font><#else><font class="font-green">正常</font></#if></td>
+    <td class="font-gray"><font class='font-gray2'>${data.dateline}</font></td>
+    <td>
+	<p class="table-item-op">
+	<a href="{url /goods_manager/goodslist_edit?do=edit&id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a> 
+	<a href="javascript:void(0);" class="delbtn" data-url="{url /goods_manager/goodslist_del?id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a> 
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /goods_manager/goodslist_edit}" method="post" class="theform form form-1 form-2" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var search_formdata = {
+	fid:{type:"select",label:"分类",name:"fid",value:"{$condi['fid']}",disabled:0,data_sr:{echo JSON::encode($catlist)},css:"low",require:"",desc:"",item_css:"item-100"},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var formdata = {
+	//idc:{type:"select",label:"所在机房",name:"idc",value:"",disabled:0,data_sr:MyIdc,css:"",require:"datatype='n1-3'",desc:"",item_css:""},
+	goods_no:{type:"text",label:"产品编号",name:"goods_no",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"产品编号必须填写",item_css:"col-md-6"},
+	name:{type:"text",label:"产品名称",name:"name",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"产品名称必须填写",item_css:"col-md-6"},
+	goods_cat:{type:"select",label:"产品分类",name:"goods_cat",value:"",data_sr:{echo JSON::encode($catlist)},css:"",require:"",desc:" ",item_css:"col-md-6"},
+	unit:{type:"text",label:"单位",name:"unit",value:"",disabled:0,data_sr:["件","个","台","根"],css:"low",require:"",desc:"",item_css:"col-md-6"},
+	html_space2:{type:"html",value:"<h5>&nbsp;</h5>"},
+	price1:{type:"text",label:"月付价格",name:"price1",value:"",data_sr:[],css:"low",require:"",desc:" 元",item_css:"col-md-6"},
+	price3:{type:"text",label:"季付价格",name:"price3",value:"",data_sr:[],css:"low",require:"",desc:" 元",item_css:"col-md-6"},
+	price6:{type:"text",label:"半年付价格",name:"price6",value:"",data_sr:[],css:"low",require:"",desc:" 元",item_css:"col-md-6"},
+	price12:{type:"text",label:"年付价格",name:"price12",value:"",data_sr:[],css:"low",require:"",desc:" 元",item_css:"col-md-6"},
+    bz:{type:"textarea",label:"备注",name:"bz",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+    id:{type:"hidden",label:"-",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+    idc:{type:"hidden",label:"-",name:"idc",value:"{$idc}",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+    {if $this->check_upurview(1)}
+	//company:{type:"select",label:"合作公司",name:"company",value:"",disabled:0,data_sr:companyConfig_A,css:"",require:"datatype='n1-8'",desc:"",item_css:""},
+	{/if}
+	html_space3:{type:"html",value:"<h5>&nbsp;</h5>"},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+// 搜索
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_func(this);
+		 });
+		$(".delbtn").click(function(){
+			del_func(this);
+		 });
+	});
+}
+var edit_func = function(obj,edit){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改产品"});
+	$("#myModal").find(".modal-dialog").width(1120);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 loadlist(1);
+		 return true;
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				$.exeJS(res.js);
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					loadlist(1);
+				}
+			}
+		});
+	}
+}
+$(function(){
+	  //加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 
+	 loadlist(1);
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+</script>
+{/block}

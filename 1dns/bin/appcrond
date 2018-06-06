@@ -1,0 +1,40 @@
+#!/usr/bin/php
+<?php
+//yum install php5-cli  yum install php-posix
+error_reporting(E_ALL);
+ini_set('display_errors', 'on');
+ini_set('limit_memory','512M');
+if(0 === strpos(strtolower(PHP_OS), 'win')){
+    exit("can not run on Windows operating system\n");
+}
+if(empty($argv[1])){
+    echo "Usage: appcrond {start|stop|restart|reload|kill|status}".PHP_EOL;
+    exit;
+}
+$cmd = $argv[1];
+define('__ROOT__', realpath(__DIR__."/../")."/");
+require(__ROOT__."app/App.php");
+App::start("cli");
+
+switch($cmd){
+    case 'start':
+        tCli::start();
+        break;
+    case 'stop':
+        tCli::stop();
+        break;
+    case 'restart':
+        tCli::stop();
+        sleep(1);
+        tCli::start();
+        break;
+    case 'reload':
+        echo "Reload\n";
+        break;
+    case 'status':
+        echo "Nostatus: \n";
+        break;
+    default:
+        echo "Usage: appcrond {start|stop|restart|reload|kill|status}\n";
+        exit;        
+}

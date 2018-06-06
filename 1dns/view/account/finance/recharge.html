@@ -1,0 +1,257 @@
+{block main}
+<div class="am-uc-left">
+	<div class="leftnav" id="Leftnav">
+		<ul>
+			<li><a href="{url /finance/index}">账户首页&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/recharge}" class="cur">在线充值&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="javascript:void(0);"  class="sms_recharge_btn">短信充值&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/recharge_detail}"  >收支明细&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/coupon}">代金券&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/tg}">推广中心&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+		</ul>
+	</div>
+</div>
+<div class="am-uc-right" style="margin-top: -10px;">
+	<div class="records-nav profile_information" >
+		<ul>
+			<li class="alipay {if $type == 1}cur{/if}"><a href="{url /finance/recharge?type=1}">在线充值</a></li>
+			<li class="ebank {if $type == 2}cur{/if}"><a href="{url /finance/recharge?type=2}">充值记录</a></li>
+		</ul>
+	</div>
+	{if $type == 2}
+	<div class="dis30"></div>
+	<div class="am-form-group am-finance-list-key" style="margin: 0px;">
+		<div class="am-form-group am-form-icon">
+			<input type="text"  class="am-form-field am-input-sm" name="startdate" onclick="laydate()" class="am-form-field" placeholder=" 开始日期">
+			<i class="am-icon-calendar"></i>
+		</div>
+	</div>
+	<div class="am-finance-list-key">
+		<div class="am-form-group am-form-icon">
+			<input type="text"  class="am-form-field am-input-sm" name="enddate" onclick="laydate()" class="am-form-field" placeholder=" 结束日期">
+			<i class="am-icon-calendar"></i>
+		</div>
+	</div>
+	<div class="am-finance-list-key" style="margin-left: 80px;">
+		<input type="text"  name="keyword" class="am-form-field  am-input-sm" placeholder="请输入关键词" size="35"/>
+	</div>
+	<div class="am-finance-list-key">
+		<button type="button" class="am-btn am-btn-success am-radius am-btn-sm finance-serch">搜索</button>
+	</div>
+	<div class="dis10" style="margin-bottom: -10px;"></div>
+	{/if}
+	<div class="am-finance-content">	</div>
+</div>
+<!--支付提示-->
+<div class="am-modal am-modal-no-btn" id="my-recharge-show" tabindex="-1" id="doc-modal-1">
+	<div class="am-modal-dialog">
+		<div class="am-modal-hd" style="border-bottom: 1px solid silver;text-align: left;font-size: 15px;padding-bottom: 5px;">
+			<span>在线充值</span>
+			<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+		</div>
+		<div class="am-modal-bd" style="margin-top: 10px;">
+			<div style="float: left;margin-left: 30px;margin-top: 45px;">
+				<a href="##" class="am-icon-btn am-warning am-icon-warning"></a>
+			</div>
+			<div style="position:relative;left:-30px;line-height: 30px;text-align: center;">
+				<span>请您在新打开的网上银行页面进行支付</span><br/>
+				<span style="font-size: 13px;color: gray;position: relative;left: -45px;">付款完成前，请不要关闭此窗口</span><br/>
+				<span style="font-size: 13px;color: gray;position: relative;left: -6px;">付款完成后，请根据您的情况点击下面的按钮</span><br/>
+				<a href="{url finance/recharge?type=2}"><button type="button" class="am-btn am-btn-success am-btn-sm" style="position: relative;left: -35px;">已完成支付</button></a>&nbsp;&nbsp;
+				<a href="{url finance/recharge}"><button type="button" class="am-btn am-btn-default am-btn-sm" style="position: relative;left: -10px;">稍后支付</button></a><br/>
+				<a href="{url finance/recharge}" style="font-size: 13px;position: relative;left: -32px;">返回选择其他支付方式</a>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block javascript}
+{include finance/sms_recharge}
+<script type="text/javascript">
+	var inpay    = "{$inpay}";
+	var order_no = "{$order_no}";
+	var order_type = "{$order_type}";
+	$(function(){
+		$(".am-close-spin").click(function(){
+			window.location.reload();
+		});
+		{if $type == 1}
+		payByAlipay();
+		{else}
+		load_recharge_list(1);
+		{/if}
+	});
+</script>
+<!--支付宝充值-->
+<script type="text/template" id="tpl_alipay">
+	<#macro rowedit data>
+		<div class="dis20"></div>
+		<div class="finance-tip">
+			<span>账户余额：</span><span style="font-size:28px;color: #FF6600;font-weight: 600">{$this->userinfo['account']['balance']}</span> 元
+			<br><div class="dis10"></div>
+			<span style="color: gray;font-size: 13px;">小贴士：充值成功后仅账户余额增多，不会自动结算订单，如果您有未付款订单，请结算。<a href="{url account@/order/order}">我的订单</a></span>
+		</div>
+		<div class="dis20"></div>
+		<div class="am-cf am-padding">
+			<!--<form id="Frecharge_form" action="{url /finance/recharge_submit}" method="GET"  class="form" >-->
+			<div class="am-form-group">
+				<label class="am-u-sm-2" style="margin-right: -70px;">充值金额：</label>
+				<div class="am-u-sm-7">
+					<div class="am-input-group" style="width: 230px;">
+						<input type="text" class="am-form-field" id="Mrecharge" name="recharge" value="{$balance}">
+						<span class="am-input-group-label">元</span>
+					</div>
+					<small class="am-font-gray">1,填写时请核对您的充值金额是否正确,以防充值失败</small><br/>
+					<small class="am-font-gray">2,通过信用卡的快捷支付有500元限制，超过500元时您可以选择其他方式支付。</small>
+				</div>
+				<div class="am-cf"></div>
+			</div>
+			<div class="am-form-group">
+				<label class="am-u-sm-2" style="margin-right: -70px;margin-top: 12px">支付方式：</label>
+				<div class="am-u-sm-7">
+					{set $payment_list = C("payment")->get_payment();}
+					<ul class="paysel">
+					{foreach items=$payment_list}
+					{if $item['id']!=7}
+					<li><input type="radio" value="{$item['id']}" name="pay_id"  {if $item['id'] == 10}checked="checked"{/if}/> &nbsp;&nbsp;<img src="{url static@/public/images}{$item['logo']}" alt="{$item['name']}" /> </li>
+					{/if}
+					{/foreach}
+					</ul>
+				</div>
+				<div class="am-cf"></div>
+			</div>
+			<div class="am-form-group">
+				<label class="am-u-sm-2" style="margin-right: -70px;"></label>
+				<div class="am-u-sm-7 am-text-left">
+					<input name="hash"  value="{hash}" type="hidden" />
+					<input name="recharge_id" type="hidden" value="0" />
+					<input name="type" id="Mrecharge_type" type="hidden" value="1" />
+					<input name="timestamp" value="{$timestamp}" type="hidden" />
+					<input name="order_no" value="{$order_no}" type="hidden" />
+					<input name="inpay" value="{$inpay}" type="hidden" />
+					<input name="in_ajax" value="1" type="hidden" />
+					<input name="do" value="submit" type="hidden" />
+					<a class="am-btn am-btn-warning am-radius company-save" href="###">充值</a>
+				</div>
+				<div class="am-cf"></div>
+			</div>
+			<div class="dis20"></div>
+			<!--</form>-->
+		</div>
+	</#macro>
+</script>
+<script language="JavaScript">
+	function payByAlipay(){
+		var edit_c = "" + easyTemplate($("#tpl_alipay").html());
+		$(".am-finance-content").html(edit_c);
+		//提交充值
+		$(".company-save").unbind("click").bind("click",function(){
+			var v = $("#Mrecharge").val();
+			var do1 = $("input[name='do']").val();
+			var recharge_id = $("input[name='recharge_id']").val();
+			var pay_id = $("input[name='pay_id']:checked").val();
+			return payRecharge(v,do1,recharge_id,pay_id);
+		});
+	}
+	var payRecharge = function(v,do1,recharge_id,pay_id){
+		if (isNaN(v) || !$.isNumeric(v)) {
+			$.ui.error("请您输入正确的金额");
+			$("#Mrecharge").focus();
+			return false;
+		}
+		if( v <= 0 ){
+			$.ui.error("充值金额不能少于0");
+			$("#Mrecharge").focus();
+			return false;
+		}
+		if (typeof pay_id == "undefined") {
+			$.ui.error("请选择支付方式！");
+			return false;
+		}
+		$("#my-recharge-show").modal({closeViaDimmer:false});
+
+		var url = "{url finance/recharge_submit?do=submit&recharge_id=}"+recharge_id+"&pay_id="+pay_id+"&recharge="+parseFloat(v)+"&inpay="+inpay+"&order_no="+order_no+"&order_type="+order_type;
+		$(".company-save").attr("href",url);
+		$(".company-save").attr("target","_blank");
+		return true;
+	};
+</script>
+<!--充值记录-->
+<script type="text/template" id="tpl_ebank">
+	<#macro rowedit data>
+		<table class="am-table">
+			<col width="200"/>
+			<col width="120"/>
+			<col />
+			<col width="180"/>
+			<col width="120"/>
+			<thead>
+			<tr>
+				<th>充值单号</th>
+				<th>充值金额(元)</th>
+				<th>充值类型</th>
+				<th>充值时间</th>
+				<th>状态</th>
+			</tr>
+			</thead>
+			<tbody>
+			<#if (data.list.length > 0)>
+			<#list data.list as rechar>
+				<tr>
+					<td style="color: gray;">${rechar.recharge_no}</td>
+					<td style="color: <#if (rechar.status==1)>green<#else>red</#if>">
+					<span class="am-text-warning">${rechar.amount}</span></td>
+					<td  style="color: gray;">${rechar.payment_name}</td>
+					<td style="color: gray;">${$.time_to_string(rechar.dateline,"Y-m-d H:i:s")}</td>
+					<td style="color: <#if (rechar.status==1)>green<#else>red</#if>"><#if (rechar.status==1)>充值成功<#else>未成功</#if></td>
+				<tr>
+			</#list>
+				<#else>
+					<tr>
+						<td colspan="5">
+							<a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">没有符合条件的结果?</a>
+						</td>
+					</tr>
+			</#if>
+
+			</tbody>
+		</table>
+		<div class="pagebar">${data.pagebar}</div>
+	</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/laydate/laydate.js}"></script>
+<script language="JavaScript">
+	var load_recharge_list = function(page,keyword,startdate,enddate,condition){
+		var url = "{url /finance/recharge_list?do=get}";
+		var keyword  = $.is_empty(keyword)?'':keyword;
+		var startdate  = $.is_empty(startdate)?'':startdate;
+		var enddate  = $.is_empty(enddate)?'':enddate;
+		var condition  = $.is_empty(condition)?'':condition;
+		$.ui.loading($(".am-table"));
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				$.ui.close_loading($(".am-table"));
+
+				var edit_c = "" + easyTemplate($("#tpl_ebank").html(),res.data);
+				$(".am-finance-content").html(edit_c);
+
+				$("button,a").bind("focus",function(){
+					$(this).blur();
+				});
+
+				//搜索事件
+				$(".finance-serch").unbind("click").bind("click",function(){
+					var startdate = $("input[name='startdate']").val();
+					var enddate  = $("input[name='enddate']").val();
+					var keyword  = $("input[name='keyword']").val();
+					load_recharge_list(1,keyword,startdate,enddate);
+				});
+
+			},
+			data:{page:page,keyword:keyword,startdate:startdate,enddate:enddate,condition:condition},
+		});
+	}
+</script>
+{/block}

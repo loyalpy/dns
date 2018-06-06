@@ -1,0 +1,5 @@
+<?php
+return array (
+  'page' => 'ÆÕÍ¨µ¥Ò³',
+);
+?>

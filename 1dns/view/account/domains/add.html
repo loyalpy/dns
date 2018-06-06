@@ -1,0 +1,282 @@
+{block left}{/block}
+{block main}
+{set $domain=R('domain','string');}
+<div class="add-domain-box">
+	<div class="am-container-domain">
+		<div class="fabu-stepbox">
+        <ul class="clear">
+		<li class="current"><i class="i1">1</i><span>添加域名</span><b></b></li>
+		<li><i class="i2">2</i><span>设置解析</span><b></b></li>
+		<li><i class="i3">3</i><span>完成</span></li>
+		</ul>
+        </div>
+
+		<div class="dis30"></div>
+		<!--添加域名-->
+		<div class="am-centered-diy1">
+			<form method="post" class="am-form" id="Fadddomain">
+				<fieldset>
+					<div class="am-form-group">
+						<textarea placeholder="使用回车键，添加多个域名，一次最多允许100个" rows="3" id="Mdomains" name="domains" class="add_domain" style="height:32px;">{$domain}</textarea>
+					</div>
+					<div class="dis15"></div>
+					<table class="new_add_domainlist am-table-bordered am-table-radius am-table-striped">
+					    <col width="20px"  />
+	            		<col width="180px"  />
+	            		<col />
+						<thead></thead><tbody></tbody>
+					</table>
+					<div class="dis15"></div>
+					<div class="am-cf am-text-right">
+						<input value="{hash}" name="hash" type="hidden"/>
+						<button type="submit" data-am-loading="{loadingText: '处理中...'}" id="Msubmit" class="am-btn  am-radius am-btn-success">添加</button>
+						<button type="button" data-am-loading="{loadingText: '处理中...'}" id="Dsubmit" class="am-btn  am-radius am-btn-success">下一步</button>
+					</div>
+					<div class="dis60"></div>
+				</fieldset>
+			</form>
+		</div>
+
+		<!--设置域名-->
+		<div class="am-centered-diy2">
+			<form method="post" class="am-form" id="Fsetdomain">
+				<fieldset>
+					<div class="am-g">
+						<div class="am-diy-acion">
+							<a href="javascript:void (0);" class="am-icon-btn am-icon-globe am-font-gray"></a>
+						</div>
+						<div class="am-diy-domains"></div>
+					</div>
+					<div class="am-g">
+						<div class="am-diy-acion">
+							<a href="javascript:void (0);" class="am-icon-btn am-icon-book am-font-gray"></a>
+						</div>
+						<div class="am-diy-record">
+							<div class="am-diy-record-l"><span>记录值</span></div>
+							<div class="am-diy-record-m">
+								<input type="text" class="am-form-field am-radius am-input-sm" id="domain-ip"/>
+								<p class="am-font-gray">系统新增域名添加'www'及'@'记录。</p>
+							</div>
+							<div class="am-diy-record-m2"><span>类型</span></div>
+							<div class="am-diy-record-r ">
+								<select id="domain-type">
+									<option value="A" selected>A</option>
+									<option value="CNAME">CNAME</option>
+								</select>
+							</div>
+							<div class="am-cf"></div>
+							<div class="dis15"></div>
+						</div>
+						<div class="am-cf"></div>
+						<div class="dis15"></div>
+					</div>
+					<div class="am-cf am-text-right">
+						<input value="{hash}" name="hash" type="hidden"/>
+						<a href="{url /domains}" class="">返回域名列表</a>&nbsp;&nbsp;
+						<button type="submit" data-am-loading="{loadingText: '处理中...'}" 
+						class="am-btn am-radius am-btn-success">添加</button>
+					</div>
+					<div class="dis10"></div>
+				</fieldset>
+			</form>
+		</div>
+		<!--完成-->
+		<div class="am-centered-diy3">
+			<div class="domain-left">
+				<i class="am-icon-btn am-success am-icon-check"></i><br/>
+				<span class="am-text-success">添加成功</span>
+			</div>
+			<div class="domain-right">
+				<div class="domain-right-text">
+					<p >
+						<span>还差最后一步，即可使用bajiedns.com</span><br/>
+						请到域名注册的地方，将dns修改为<br/>
+						<div class="domain-ns-group">
+					    {set $ns_group = M("@domain_ns_group")->get_cache_by_ns('free');}
+                        {if isset($ns_group['ns'])}
+					    {echo str_replace(';',"<br/>",$ns_group['ns']);}
+						{else}
+						g1ns1.8jdns.net<br/>
+						g1ns2.8jdns.net
+						{/if}
+				       </div>
+						<div class="dis20"></div>
+						<span class="am-text-xs am-font-gray">修改 DNS 服务器需要最长 72 小时的全球生效时间，<br/>请耐心等待
+						遇到困难？<a href="{url home@/helper/index}" class="am-text-xs">寻找技术支持 »</a>
+						</span>
+					</p>
+				</div>
+				<div class="dis30"></div>
+				<div class="am-cf am-text-left">
+					<input value="{hash}" name="hash" type="hidden"/>					
+					<a type="button" onclick="javascript:window.location='{url /domains/add}';" value="" class="am-btn am-radius am-btn-default ">继续添加</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a  href='{url /domains}'class="am-btn am-radius am-btn-success ">返回域名列表</a>					
+				</div>
+			</div>
+			<div class="am-cf"></div>
+			
+		</div>
+		<div class="dis60"></div>
+		<div class="dis60"></div>
+	</div>
+</div>
+<div class="my-domian-find"></div>
+{/block}
+{block javascript}
+{include domains/domains_tpl}
+<!--第一步 添加域名-->
+<script type="text/javascript">
+	var supper_domain = '{echo "(".implode(")|(",tValidate::support_domain()).")"}';
+	var get_domains = function() {
+		var inputArr = $('#Mdomains').val().trim().split('\n');
+		var domains  = [];
+		inputArr = $.remove_array_item(inputArr,'');
+		for (i = 0; i < inputArr.length; i++) {
+			inputArr[i] = inputArr[i].trim();
+			if (inputArr[i] && $.dns.is_domain(inputArr[i])) {
+				domains.push(inputArr[i]);
+			}
+		}
+		return domains;
+	};
+	var domains = new Array();
+	$.autoTextarea($("#Mdomains").get(0),6,640);
+	$('#Fadddomain').validator({
+			submit:function(){
+				var formValidity = this.isFormValid();
+				if(formValidity === true){
+					domains = get_domains();
+					if(domains.length == 0){
+						$.ui.error("请检查添加域名的合法性");
+						$('#Mdomains').focus();
+						return false;
+					}
+					if(domains.length > 10){
+						$.ui.error("一次最多添加10个域名");
+						$('#Mdomains').focus();
+						return false;
+					}
+					$("#Msubmit").button('loading');
+					setTimeout(function(){
+						$('.new_add_domainlist tbody').empty();
+						add_domain_step(0);
+					},100)
+				}
+				return false;
+			}
+		});
+	var num = 0;
+	var add_domain_step = function(i){
+		if( i>=domains.length || typeof domains[i] == "undefined"){
+			return false;
+		}
+		$.ajaxPassport({
+			url:U("/api/Domain.AddByUid"),
+			success:function(res){
+				$("#Msubmit").button('reset');
+				$(".am-table-striped").addClass('am-table');
+				if(res.status == 1){
+					var html = '<tr class="success" data-domain="'+res.data.domain+'" data-domain_id="'+res.data.domain_id+'">'
+						    + '<td><i class="am-icon-check-square-o am-text-success"></i></td>'
+							+ '<td id="am-domain-domains">'+res.data.domain+'</td>'
+							+ '<td class="am-text-success am-text-sm">添加成功</td>'
+							+ '</tr>'
+					$('.new_add_domainlist tbody').append(html);
+					num++;
+				}else{
+					if (!$.is_empty(res.data.email)) {
+						var tips_error = "域名已被其他用户添加，点击<a href=\"javascript:;\" class=\"domainFind\">取回</a>";
+					}else{
+						tips_error = res.msg;
+					}
+					var html = '<tr class="danger '+res.data.domain.split(".")[0]+'">'
+							+ '<td><i class="am-text-danger am-icon-exclamation-circle"></i></td>'
+							+ '<td>'+res.data.domain+'</td>'
+							+ '<td class="am-text-danger am-text-sm">'+'添加失败,'+tips_error+'</td>'
+							+ '</tr>'
+					$('.new_add_domainlist tbody').append(html);
+					//域名找回
+					$('.new_add_domainlist tbody').find("."+res.data.domain.split(".")[0]+" .domainFind").unbind("click").bind("click",function () {
+						domain_find_op(res.data.domain);
+					});
+				}
+				if(num >= 1){
+					$('#Msubmit').hide();
+					$('#Dsubmit').show();
+				}
+				add_domain_step(i+1);
+			},
+			data:{domain:domains[i]},
+		})
+	}
+</script>
+<!--第二步 设置域名-->
+<script type="text/javascript">
+	$('#Dsubmit').click(function(){
+		var arrDomain    =  [];
+		var arrDomainId =  [];
+		$(this).parent().parent().find('tbody tr.success').each(function(){
+			var obj=this;
+			arrDomain.push($(obj).data("domain"));
+			arrDomainId.push($(obj).data("domain_id"))
+		});
+		for (i = 0; i < arrDomain.length; i++) {
+			if(i==6){
+				var brr = '<br/>';
+			}else{
+				var brr = '';
+			}
+			$('.am-diy-domains').append(
+					'<span>' +arrDomain[i]+'</span>&nbsp;&nbsp;'+brr
+					+ '<div id="domain-id" style="display: none">'+arrDomainId[i]+'</div>'
+			);
+		}
+		//设置引导步骤
+		$(".i1").parent().parent().find(".current").removeClass("current");
+		$(".i2").parent().addClass("current");
+
+		$('.am-centered-diy1').hide();
+		$('.am-centered-diy2').show();
+		$('.am-btn-add').removeClass('am-btn-warning').addClass('am-btn-default am-disabled');
+		$('.am-btn-set').removeClass('am-btn-default am-disabled').addClass('am-btn-warning');
+	})
+	$('#Fsetdomain').validator({
+		submit:function(){
+			var formValidity = this.isFormValid();
+			if(formValidity === true){
+				var domainIdArr = [];
+				$('.am-diy-domains #domain-id').each(function(){
+					var obj=this;
+					domainIdArr.push($(obj).html());
+				});
+				var ip = $('#domain-ip').val().trim();
+				var type = $('#domain-type').val().trim();
+				var count = 0;
+				if(type == "A"){
+					if(!$.dns.is_ip(ip)){
+						$.ui.error("IP非法！");
+						return false;
+					}
+				}else if(type == "CNAME"){
+					if(!$.dns.is_domain2(ip)){
+						$.ui.error("CNAME 值非法！");
+						return false;
+					}
+				}
+
+				//设置引导步骤
+				$(".i2").parent().parent().find(".current").removeClass("current");
+				$(".i3").parent().addClass("current");
+
+				$('.am-centered-diy1').hide();
+				$('.am-centered-diy2').hide();
+				$('.am-centered-diy3').show();
+				$('.am-btn-set').removeClass('am-btn-warning').addClass('am-btn-default am-disabled');
+				$('.am-btn-finish').removeClass('am-btn-default am-disabled').addClass('am-btn-warning');
+				$.exeJS(U("/domains/quick_addrecord?domain_ids="+ domainIdArr.join(",")+"&RRvalue="+ip+"&RRtype="+type));
+			}
+			return false;
+		}
+	});
+</script>
+{/block}

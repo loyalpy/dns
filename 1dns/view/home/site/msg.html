@@ -1,0 +1,56 @@
+{block header}{/block}
+{block main}
+		{code
+	        
+		    $type  = R("type","string");
+		    $type  = $type?$type:"error";
+
+		    $title = R("title","string");
+		    $info    = R("info","string");
+
+		    $callback = R("callback","string");
+
+		    $info  = $info?$info:"系统提示,页面稍后自动跳转...";
+		    $callback = $callback?$callback:U("home@/");
+			$exejs  = R("exejs","string");
+	    }
+	    {/code}
+	    
+	    <div class="uc-msg msg-{$type}">
+	    	   <div class="dis60"></div>
+	     	   <!--提示信息-->
+			   <div class="uc-msg-box">			      
+			      <div class="title">
+			      <cite class="icon"></cite>
+			      <span class="{if $type == 'success'}success{else}error{/if} f18 txt">{$title}</span>
+			      </div>
+			      {if $info}
+			      <div class="dis15"></div>
+			      <div class="info"><font class="font-gray f12">{$info}</font></div>
+			      {/if}
+			   </div>
+			   <div class="cl"></div>
+			   {if $callback}
+			   <div class="dis30"></div>
+			   <div class="uc-msg-btn">
+
+				</div>
+			   {/if}
+			   <div class="dis60"></div>
+			   <!--end提示信息-->
+		</div>
+{/block}
+{block javascript}
+<script language="javascript">
+	$(function(){
+		{if !empty($exejs)}
+		$.exeJS("{$exejs}");
+		{/if}
+		setTimeout(function(){
+			window.location.replace("{$callback}");
+		},3000);
+	});
+</script>
+{/block}
+{block footer}
+{/block}

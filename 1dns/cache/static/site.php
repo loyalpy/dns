@@ -1,0 +1,25 @@
+<?php
+return array (
+  'site_name' => '八戒DNS',
+  'site_domain' => '八戒DNS',
+  'site_dir' => '/',
+  'seo_title' => '免费智能DNS解析|电信_联通_教育网_多线路|安全_稳定|最快最好的DNS解析',
+  'seo_keyword' => '免费智能解析,免费DNS,智能DNS解析,高防DNS,DNS服务,递归DNS,抗攻击,防DDOS,安全稳定，电信,联通,移动,教育网,多线路,分省',
+  'seo_description' => '八戒DNS是速联科技旗下的DNS服务平台，国内最早的免费智能DNS解析服务商，提供稳定高速的电信、联通/网通 、教育网、移动、等多线或分省智能DNS解析，支持免费URL显性隐性转发，服务器宕机检测及智能切换',
+  'style' => 'default',
+  'top_tel' => '-',
+  'tel' => '400-096-3600',
+  'qq' => '613988298',
+  'qq1' => '613988298',
+  'qq2' => '613988298',
+  'kh' => '免费智能DNS',
+  'shui' => '6',
+  'copyright' => '©2016 BAJIEDNS, Inc.杭州速联信息科技有限公司, All rights reserved.',
+  'icp' => '浙B2-20110098-2',
+  'licence' => '浙B2-20110098',
+  'online_qq' => '122',
+  'reg_captcha' => '1',
+  'log_captcha' => '0',
+  'is_close' => '0',
+);
+?>

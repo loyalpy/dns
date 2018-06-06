@@ -1,0 +1,75 @@
+{block main}
+<div class="main-nav">
+  <div class="name">图集编辑</div>
+  <div class="navbtn0"></div>
+  <div class="navbtn">
+  <!--button-->
+  {if $this->check_purview("/photos_manager/photoslist")}
+  <a href="{url /photos_manager/photoslist}" class="btn btn-default btn-sm">
+  返回列表</a>
+  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<div class="form-content">
+    <form id="form_edit" action="{url /photos_manager/photoslist_edit}" method="post" class="form-horizontal my-ajax-form form" role="form">
+    <div class="tab-content">
+    <div style="padding:12px 0 0 0;background:#f9f9f9;border:solid 1px #efefef;margin-bottom:20px;">
+    <div class="form-group">
+    	<label class="col-sm-1 control-label" for="Mname">名称:</label>
+		<div class="col-sm-4">
+		<input type="text" class="form-control" name="data[name]" value="{$data['name']}" maxlength="30" id="Mname" placeholder="" />
+		</div>		  
+		<label class="col-sm-1 control-label" for="Mfid">分类:</label>
+		<div class="col-sm-4">
+		<select name="fid" class="form-control" id="Mfid">
+		{echo C('category','photos_cate')->get(0,$data['fid'],1)}
+		</select>
+		</div>		    
+	</div>
+	</div>
+    <!--baseic info-->
+    <div class="tab-pane fade in active" id="home">    
+		<div id="Pattrs"></div>
+        <!--产品图片-->
+		<div class="form-group">
+		<div class="col-sm-12">
+		{echo X('front_attach')->photos_upload(0,$data);}
+		</div>
+		</div>
+		<!--end 产品图片-->
+   </div>
+   <div class="dis20"></div>
+   <div class="form-group">
+		<label class="col-sm-1 control-label"></label>
+		<div class="col-sm-6">
+		<input name="hash" value="{hash}" type="hidden" />
+		<input type="hidden" name="id" value="{$data['id']}" />
+		<input type="hidden" name="old_fid" value="{$data['fid']}" />
+        <button type="submit" class="btn btn-success btn-lg" tabindex="4" data-loading-text="处理中……" >{if isset($data['id']) && $data['id']}保存{else}保存{/if}数据</button>&nbsp;
+        <a class="btn btn-default btn-lg" href="{url /photos_manager/photoslist}" >返回列表</a>
+		</div>
+  </div>
+  </div>
+  </form>
+</div>
+{/block}
+
+{block css}
+<link href="{webroot common/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{javascript bootstrap-datetimepicker/bootstrap-datetimepicker.min.js,bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}
+{include tpl/form}
+<script language="javascript" src="{webroot cache/static/dataconfig.js}"></script>
+<script language="javascript">
+//页面加载完之后
+$(function(){
+	$.valid_form($("form.my-ajax-form"),function(res){
+		return true;	
+	});
+})
+</script>
+{/block}

@@ -1,0 +1,240 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /monitor/monitor}">实时监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/warning}">报警信息&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_set}" class="cur">监控设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_option_domain}">添加监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">监控设置<font size="4px" color="#5AB65A"> ({$monitor_set})</font></span></h1>
+    </div>
+    <a href="{url /monitor/monitor_option_domain}" type="button" class="am-btn am-btn-success am-radius am-btn-sm">添加监控</a>&nbsp;&nbsp;&nbsp;
+    <div class="am-dropdown" data-am-dropdown>
+        <button class="am-btn am-btn-default am-dropdown-toggle am-radius am-btn-sm" data-am-dropdown-toggle>更多操作 <span class="am-icon-caret-down"></span></button>
+        <ul class="am-dropdown-content">
+            <li class="am-dropdown-header">请先选择监控项</li>
+            <li><a href="javascript:void (0)" class="monitorOption" data-do="stop">暂停</a></li>
+            <li><a href="javascript:void (0)" class="monitorOption" data-do="start">启用</a></li>
+            <li class="am-divider"></li>
+            <li><a href="javascript:void (0)" class="monitorOption" data-do="del">删除</a></li>
+        </ul>
+    </div>
+    <div class="am-u-lg-6" style="float: right;width: 300px;margin-right: -15px;">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text"  class="am-form-field infor-keyword" placeholder="请输入关键词">
+            <span class="am-input-group-btn">
+                <button class="am-btn keyword" type="button"><span class="am-icon-search"></span></button>
+            </span>
+        </div>
+    </div>
+    <div class="dis20"></div>
+    <div class="am-information-content">
+        <div class="listbody"></div>
+    </div>
+</div>
+<div class="am-cf"></div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_monitor_set_list">
+    <#macro rowedit data>
+        <table class="am-table am-table-hover monitor-list" >
+            <col width="30px"/>
+            <col />
+            <col width="260px"/>
+            <col width="100px"/>
+            <col width="100px"/>
+            <thead>
+            <tr>
+                <th><input type="checkbox" data-name="set[]" class="checkall"/></th>
+                <th>监控项目</th>
+                <th>监控记录数</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#if (data.list.length > 0)>
+                <#list data.list as monitor_set>
+                    <tr class="domain_${monitor_set.monitor_id}">
+                        <td><input type="checkbox" name="set[]" value="${monitor_set.monitor_id}"/></td>
+                        <td><a href="{url /monitor/monitor_detail?do=set&RRname=}${monitor_set.RRname}&domain=${monitor_set.domain}&record_id=${monitor_set.monitor_item['0'].record_id}">${monitor_set.RRname}.${monitor_set.domain}</a>
+                            <#if (monitor_set.monitor_type == 2)>
+                    <span class="am-badge am-round am-badge-warning" title="SOCKET监控">S</span>
+                    <#elseif ((monitor_set.monitor_type == 3))>
+                    <span class="am-badge am-round am-badge-warning" title="PING监控">P</span>
+                    <#else>
+                    </#if>
+
+                        </td>
+                        <td>${monitor_set.monitor_item.length}</td>
+                        <td class="monitor-status"><#if (monitor_set.status == 0)><font color="#5AB65A">启用</font><#else><font color="gray">暂停</font></#if></td>
+                        <td><a href="{url /monitor/monitor_detail?do=set&RRname=}${monitor_set.RRname}&domain=${monitor_set.domain}&record_id=${monitor_set.monitor_item['0'].record_id}" type="button" class="am-btn am-btn-default am-radius am-btn-xs">设置</a></td>
+                    </tr >
+                </#list>
+                <#else>
+                    <tr>
+                        <td colspan="4">
+                            <a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">没有符合条件的结果?</a>
+                        </td>
+                    </tr>
+            </#if>
+            </tbody>
+        </table>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    $(function(){
+        // 搜索内容事件
+        $("button.keyword").click(function(){
+            var keyword = $(".infor-keyword").val();
+            if (!$.is_empty(keyword)){
+                load_monitor_list(1,keyword);
+            }else{
+                load_monitor_list(1);
+            }
+        });
+        load_monitor_list(1);
+        //监控项目批量操作
+        $(".monitorOption").click(function(){
+            batch_domain_op(this);
+        });
+    });
+    //加载域名监控列表
+    var load_monitor_list = function(page,keyword,condition){
+        var url = "{url /api/DomainMonitor.Monitor}";
+        var keyword  = $.is_empty(keyword)?'':keyword;
+        var condition  = $.is_empty(condition)?'':condition;
+        $.ui.loading($(".monitor-list"));
+        $.ajaxPassport({
+            url:url,
+            success:function(res){
+                $.ui.close_loading($(".monitor-list"));
+                var listhtml = ""+ easyTemplate($("#tpl_monitor_set_list").html(),res.data);
+                $(".listbody").html(listhtml);
+
+                $("button,a").bind("focus",function(){
+                    $(this).blur();
+                });
+
+                //全选，全不选
+                $(".monitor-list").find("input.checkall").unbind("click").bind("click",function(){
+                    $.check_all(this);
+                });
+            },
+            data:{page:page,keyword:keyword,condition:condition},
+        });
+    }
+    //监控项目批量操作
+    var batch_op = {
+        url: U("/api/DomainMonitor."),
+        exe_url:"",
+        data:{},
+    };
+    var ids= new Array();
+    var batch_domain_op = function(obj) {
+        var domain_do = $(obj).data("do");
+        var ids_tmp  = $.fetch_ids("set[]");
+        ids = ids_tmp.split(",");
+        if (ids == "") {
+            $.ui.error('请选择要操作的监控域名！')
+            return;
+        }
+        var domain_confirm = "";
+        if (domain_do == "stop") {
+            domain_confirm = "你确定要暂停域名监控吗？";
+            batch_op.exe_url =batch_op.url + "MonitorOption";
+            batch_op.data.status = 1;
+        } else if (domain_do == "start") {
+            domain_confirm = "你确定要开启域名监控吗？";
+            batch_op.exe_url =batch_op.url + "MonitorOption";
+            batch_op.data.status = 0;
+        } else {
+            domain_confirm = "你确定要删除域名监控吗？";
+            batch_op.exe_url =batch_op.url + "Del";
+        }
+        $.ui.confirm(function(){
+            batch_domain_monitor_op(0);
+        },domain_confirm) ;
+    }
+    var num = 0;
+    var monitor_queue = new Array();
+    var batch_domain_monitor_op = function(i){
+        batch_op.data.monitor_id=ids[i];
+        if( i >= ids.length || typeof ids[i] == "undefined"){
+            num = 0;
+            return false;
+        }
+        $.ui.loading();
+        $.ajaxPassport({
+            url: batch_op.exe_url,
+            success: function (res) {
+                if (res.status == 1) {
+                    monitor_queue.push(res.data);
+                    num++;
+                    var domainId = ".domain_"+ids[i];
+                    if (batch_op.exe_url.split(".")[1] == 'Del') {
+                        setTimeout(function () {
+                            $(domainId).remove();
+                        }, 50);
+                    }else {
+                        if(batch_op.data.status==1){
+                            //暂停操作
+                            $(domainId).find(".monitor-status").html("<font color=\"gray\">暂停</font>");
+                        }else{
+                            //开启操作
+                            $(domainId).find(".monitor-status").html("<font color=\"#5AB65A\">启用</font>");
+                        }
+                    }
+
+                }
+                //执行最后一次时提示操作结果
+                if (i == (ids.length - 1)) {
+                    if (num >0) {
+                        $.ui.close_loading();
+                        $.ui.success("成功操作"+num+"个监控项目");
+
+                        //如果是删除,重新加载
+                        if (batch_op.exe_url.split(".")[1] == 'Del') {
+                            load_monitor_list(1);
+                        }
+                        //根据频率执行域名监控
+                        var monitorNum = uniQueue(monitor_queue);
+                        for (j=0;j<monitorNum.length;j++) {
+                            if (monitorNum[j] != 0) {
+                                $.exeJS("{url /monitor/update_rate_queue?rate=}"+monitorNum[j]);
+                            }
+                        }
+                        monitor_queue = [];
+
+                    }else{
+                        $.ui.close_loading();
+                        $.ui.error(res.msg);
+                    }
+                }
+                batch_domain_monitor_op(i+1);
+            },
+            data: batch_op.data,
+        });
+    }
+    //数组去重
+    var uniQueue = function(array){
+        var arr=[];
+        var m;
+        while(array.length>0){
+            m=array[0];
+            arr.push(m);
+            array=$.grep(array,function(n,i){
+                return n==m;
+            },true);
+        }
+        return arr;
+    }
+</script>
+{/block}

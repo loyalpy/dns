@@ -1,0 +1,108 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/index}"  class="showtype ">全部域名&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/transfer}"  class="showtype cur">域名转入&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/template}"  class="showtype ">信息模板&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/order}"  class="showtype"> 我的订单&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div class="domain-transfer">
+        <div class="nav">
+            <ul>
+                <li class="un-use use1">
+                    <div class="icon">
+                        <span class="s cur">1</span>
+                        <font class="cur">填写域名密码</font>
+                        <span class="cart_icon_right"></span>
+                    </div>
+                </li>
+                <li class="un-use use2">
+                    <div class="icon">
+                        <span  class="s cur">2</span>
+                        <font class="cur">支付订单</font>
+                        <span class="cart_icon_right"></span>
+                    </div>
+                </li>
+                <li class="un-use use3">
+                    <div class="icon">
+                        <span class="s cur">3</span>
+                        <font class="cur">转入处理</font>
+                        <span class="cart_icon_right"></span>
+                    </div>
+                </li>
+                <li class="un-use use4">
+                    <div class="icon">
+                        <span class="s cur">4</span>
+                        <font class="cur">邮箱验证,转入成功</font>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="transfer-pay">
+        <div class="dis60"></div>
+        <div style="text-align: center">
+            <a href="javascript:void (0);" class="am-icon-btn am-success am-icon-check"></a>&nbsp;
+            <font color=""><strong>欢迎转入，系统已向您邮箱发送一份邮件，请查看并完成验证！</strong></font>
+            <input type="hidden" name="hash" value="{hash}">
+            <input type="hidden" name="domain" value="{$domain}">
+        </div>
+        <div class="dis30"></div>
+    </div>
+    <div class="dis30"></div>
+    <div class="now-dns-bot">
+        <div class="dis10"></div>
+        <dl>
+            <dt>没收到邮件：</dt>
+            <dd>• 请您查看邮箱的垃圾箱或广告箱，邮件有可能被误认为垃圾邮件。</dd>
+            <dd>• 系统邮件发送可能会有延迟，请您耐心等候。</dd>
+            <dd>• 如果您确定没有收到邮件，<button type="button" class="am-btn am-btn-default am-btn-xs"><span id="timers">180</span>秒后点击重新发送</button></dd>
+        </dl>
+    </div>
+</div>
+
+
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+    $(function () {
+        timedCount();
+    });
+    var timedCount = function () {
+        var time=parseInt($("#timers").html());
+        if(time==1){
+            $("#timers").parent().addClass("resend-email");
+            $("#timers").parent().html("点击重新发送");
+
+            $(".resend-email").click(function () {
+                var hash = $("input[name='hash']").val();
+                var domain = $("input[name='domain']").val();
+                $.ui.loading();
+                $.ajaxPassport({
+                    url:"{url /ucenter/transfer_succ}",
+                    type:"POST",
+                    success:function (res) {
+                        $.ui.close_loading();
+                        if (res.error == 0) {
+                            $.ui.success(res.message);
+                        }else{
+                            $.ui.error(res.message);
+                        }
+                    },
+                    data:{domain:domain,hash:hash}
+                });
+            });
+
+            return false;
+        }
+        time--;
+        $("#timers").html(time);
+        setTimeout("timedCount()",1000)
+    }
+</script>
+{/block}

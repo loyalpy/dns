@@ -1,0 +1,10 @@
+var cityData = [];cityData[1100] = '北京';
+cityData[1200] = '浙江';
+cityData[1201] = '杭州';
+cityData[1202] = '金华';
+cityData[1203] = '温州';
+cityData[1204] = '宁波';
+cityData[1300] = '上海';
+cityData[1400] = '江苏';
+cityData[1401] = '苏州';
+cityData[1402] = '扬州';

@@ -1,0 +1,209 @@
+cof{block main}
+<div class="main-nav">
+  <div class="name">企业列表</div>
+  <div class="navbtn0"></div>
+  <div class="navbtn">
+   <!--button-->
+  <button type="button" class="btn btn-default btn-sm refresh-btn" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button> 
+  <!--end button-->
+  <!--button-->
+ 
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /rc_manager/company?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+	<col />
+	<col width="80px" />
+	<col width="170px" />
+	<col width="180px" />
+	<col width="60px" />
+	<col width="100px" />
+	<col width="60px" />
+	<col width="130px" />
+	<col width="37px" />	
+	<col width="100px" />
+	<thead>
+	<tr>
+	<th>公司名[ID]</th>
+	<th>认证信息</th>
+	<th>联系信息</th>
+	<th>认证</th>
+	<th>积分</th>
+	<th>余额</th>
+	<th>简历量</th>
+	<th>最后登录时间</th>
+	<th>状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+{block javascript}
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var roleList = {echo JSON::encode($role_res)};
+var roleList_A = {echo JSON::encode($rolelist)};
+var ulevel = {echo JSON::encode($ulevel_res)};
+var ulevel_A = {echo JSON::encode($ulevel)};
+var utypes = {echo JSON::encode($utypes)};
+</script>
+{include tpl/form}
+{include user_manager/utpl}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class="<#if (data.urole == 1)>font-red<#else>font-blue</#if>" title="<#if (data.urole>0)>${roleList_A[data.urole]['name']}</#if>">
+    ${data.company_name}<span class="font-gray">[${data.company_id},${data.uid}]</span>
+    <#if (data.urole>0)>
+    <a style="display:none;" class="glyphicon glyphicon-question-sign font-red"></a>
+    </#if>
+    </td>
+    <td><font class="<#if (data.ulevel>0)>font-green<#else>font-gray</#if>">${ulevel_A[data.utype][data.ulevel]['alias']}</font></td>
+    <td class="font-gray"><#if (data.linker == null)> - <#else>${data.linker}/${data.mobile}<br/>${data.email}</#if></td>
+    <td>
+    <#if (!$.is_empty(data.rzs.idcard))><a target="_blank" href="{url static@}${data.rzs.idcard.path}">身份证已传</a>
+	    <#if (data.rzs.idcard.status == 3)><span class="font-green">[已审]</span>
+	    <#elseif (data.rzs.idcard.status == 2)><span class="font-red">[失败]</span>
+	    <#elseif (data.rzs.idcard.status == 1)><span class="font-org">[变更]</span>
+	    <#else><span class="font-gray">[待审]
+	    </#if>
+    </#if>
+
+     <#if (!$.is_empty(data.rzs.zhizhao))>
+     <br/><a target="_blank" href="{url static@}${data.rzs.zhizhao.path}">营业执照已传</a>
+		<#if (data.rzs.zhizhao.status == 3)><span class="font-green">[已审]</span>
+	    <#elseif (data.rzs.zhizhao.status == 2)><span class="font-red">[失败]</span>
+	    <#elseif (data.rzs.zhizhao.status == 1)><span class="font-org">[变更]</span>
+	    <#else><span class="font-gray">[待审]
+	    </#if>
+     </#if>
+
+     <#if (!$.is_empty(data.rzs.chengruoshu))>
+     <br/><a target="_blank" href="{url static@}${data.rzs.chengruoshu.path}">承若书已传</a>
+		<#if (data.rzs.chengruoshu.status == 3)><span class="font-green">[已审]</span>
+	    <#elseif (data.rzs.chengruoshu.status == 2)><span class="font-red">[失败]</span>
+	    <#elseif (data.rzs.chengruoshu.status == 1)><span class="font-org">[变更]</span>
+	    <#else><span class="font-gray">[待审]
+	    </#if>
+     </#if>
+
+     <#if (!$.is_empty(data.rzs.idcard) || !$.is_empty(data.rzs.zhizhao) || !$.is_empty(data.rzs.chengruoshu))><br/>
+     <button type="button" data-uuid="${data.uid}" class="btn btn-xs btn-default btn-rzsh">认证</button>
+     </#if>
+    </td>
+    <td class="f14"><#if ($.is_empty(data.point))>0<#else>${data.point}</#if></td>
+    <td><font class="f14 font-red"><#if ($.is_empty(data.balance))>0<#else>${data.balance}</#if></font></td>
+    <td><font class="f14 font-green"><#if ($.is_empty(data.resumes))>0<#else>${data.resumes}</#if></font></td>
+    <td>${data.regdateline}<br/>${data.logdateline}</td>
+    <td class="font-gray"><#if (data.inlock==1)><cite title="已锁" class="glyphicon glyphicon-exclamation-sign font-red"></cite><#else><cite class="glyphicon glyphicon-ok-sign font-green" title="正常"></cite></#if></td>
+    <td class="font-gray">
+    <p class="table-item-op">
+	{if $this->check_purview('/user_manager/userlist_edit')}
+	<a href="javascript:void(0);" class="editbtn" data-utype="${data.utype}" data-url="{url /user_manager/userlist_edit?uid=}${data.uid}"><span class="glyphicon glyphicon-edit"></span></a> 
+	{/if}
+	{if $this->check_purview('/user_manager/userlist_refresh')}
+	<a href="javascript:void(0);" class="t-ajax-button" data-url="{url /user_manager/userlist_refresh?uid=}${data.uid}"><span class="glyphicon glyphicon-refresh"></span></a> 
+	{/if}
+	{if $this->check_purview('/user_manager/userlist_quicklogin')}
+	<a href="{url /user_manager/userlist_quicklogin?uid=}${data.uid}" target="_blank" title="快速登录"><span class="glyphicon glyphicon-user"></span></a> 
+	{/if}<br/>
+
+	{if $this->check_purview('/user_manager/userlist_recharge')}
+	<button data-id="${data.uid}" data-name="${data.company_name}" type="button" class="btn btn-danger btn-xs table-item-op-recharge">账</button>
+	{/if}
+	{if $this->check_purview('/order_manager/recharge_add')} 
+	<button data-uid="${data.uid}" data-uname="${data.company_name}" data-amount="1000.00" type="button" class="btn btn-primary btn-xs table-item-add-recharge">充</button>
+	{/if}
+	{if $this->check_purview('/user_manager/userlist_setting')}
+    <button data-id="${data.uid}" data-name="${data.name}" type="button" class="btn btn-success btn-xs btn-setting" data-url="{url /user_manager/userlist_setting?uid=}${data.uid}">设</button>
+	{/if}
+	</p>
+    </td>
+	</tr>
+</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script language="javascript">
+var search_formdata = {
+	startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+	enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+    keyword:{type:"text",label:"UID/关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    company:{type:"hidden",name:"company",value:"{$condi['company']}"},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_userinfo(this);
+		 });
+		$(".t-ajax-button").each(function(i){
+			$.t_ajax_button(this);
+		});
+		$(".btn-setting").click(function(){
+			edit_user_setting_func(this);
+		});
+		$(".btn-rzsh").click(function(){
+			rz_sh(this);
+		});
+		$(".table-item-op-recharge").click(function(){
+			edit_user_balance_point(this);
+		});
+		$(".table-item-add-recharge").click(function(){
+			edit_user_recharge(this);
+		});
+	});
+}
+
+$(function(){
+	//加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 //加载列表
+	 loadlist(1);
+     //增加按钮
+	 $(".addbtn").click(function(){
+		 edit_userinfo(this);
+	 });
+	 //刷新按钮
+	 $(".refresh-btn").click(function(){
+	 	 loadlist(1);
+	 });	 
+	 $(".date-ymd").datetimepicker({
+		language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"   
+	});
+})
+</script>
+{/block}

@@ -1,0 +1,163 @@
+cof{block main}
+<div class="main-nav">
+  <div class="name">资金冻结列表</div>
+  <div class="navbtn0"></div>
+  <div class="navbtn">
+   <!--button-->
+  <button type="button" class="btn btn-default btn-sm refresh-btn" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button> 
+  <!--end button-->
+  <!--button-->
+ 
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /finance_manager/dongjie?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+	<col width="30px" />
+	<col width="130px" />
+	<col width="130px" />
+	<col width="190px" />
+	<col width="90px" />
+	<col />
+	<col width="130px" />
+	<col width="120px" />	
+	<col width="60px" />
+	<thead>
+	<tr>
+	<th></th>
+	<th>冻结编号</th>
+	<th>订单号</th>
+	<th>企业</th>
+	<th>冻结金额</th>
+	<th>说明</th>
+	<th>冻结时间</th>
+	<th>状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+	<tr>
+	<th></th>
+	<th colspan="8"></th>
+	</tr>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+{block javascript}
+<script language="javascript">
+var pageurl = "{$pageurl}";
+</script>
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td>-</td>
+    <td class="font-blue f12" title=">">
+${data.pay_no}    
+</td>
+    <td class="font-blue f12" title=">">
+${data.order_no}    
+</td>
+    <td>
+    <font class="font-black">${data.company_name}</font>
+	</td>
+    <td><font class="f14 font-org">${data.amount}</font></td>
+    <td class="font-gray">
+   <font class="font-gray">${data.note}</font>
+	</td>
+<td>${data.dateline}</td>
+<td>
+<#if (data.status == 0)>
+<font class="font-red">冻结中</font>
+<#elseif (data.status == 1)>
+<font class="font-gray">冻结完成</font>
+<#elseif (data.status == 2)>
+<font class="font-green">冻结已返回</font>
+</#if>
+</td>
+    <td class="font-gray">
+    -
+    </td>
+	</tr>
+</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script language="javascript">
+var initpage = 1;
+var search_formdata = {
+	startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+	enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+    keyword:{type:"text",label:"UID/关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    company:{type:"hidden",name:"company",value:"{$condi['company']}"},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var loadlist = function(page){
+	initpage = page;
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_userinfo(this);
+		 });
+		$(".t-ajax-button").each(function(i){
+			$.t_ajax_button(this);
+		});
+		$(".btn-setting").click(function(){
+			edit_user_setting_func(this);
+		});
+		$(".table-item-op-recharge").click(function(){
+			edit_user_balance_point(this);
+		});
+		$(".table-item-add-recharge").click(function(){
+			edit_user_recharge(this);
+		});
+	});
+}
+$(function(){
+	//加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 //加载列表
+	 loadlist(1);
+     //增加按钮
+	 $(".addbtn").click(function(){
+		 edit_userinfo(this);
+	 });
+	 //刷新按钮
+	 $(".refresh-btn").click(function(){
+	 	 loadlist(1);
+	 });	 
+	 $(".date-ymd").datetimepicker({
+		language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"   
+	});
+})
+</script>
+{/block}

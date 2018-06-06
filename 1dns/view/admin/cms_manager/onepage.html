@@ -1,0 +1,159 @@
+{block head_menu}
+<div class="menu">
+ <ul>
+	 {if $this->check_purview('/cms_manager/onepage')}
+ <li><a href="{url /cms_manager/onepage}" class="{if '/'.$inc.'/'.$act == '/cms_manager/onepage'}cur{/if}">单页管理</a></li>
+	 {/if}
+	 {if $this->check_purview('/cms_manager/onepage_cate')}
+ <li><a href="{url /cms_manager/onepage_cate}" class="{if '/'.$inc.'/'.$act == '/cms_manager/onepage_cate'}cur{/if}">单页分类</a></li>
+	 {/if}
+ </ul>
+</div>
+{/block}
+{block main}
+<div class="main-nav">
+  <div class="name">单页列表</div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview('/cms_manager/onepage_edit')}
+  <a href="{url /cms_manager/onepage_edit?id=0}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增单页</a>
+	  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="?do=get_url">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+	<col width="50px" />
+    <col  />
+    <col width="150px" />
+    <col width="210px" />
+	<col  width="180px"/>
+	<col width="100px" />
+	<thead>
+	<tr>	
+	<th>ID</th>
+    <th>标题</th>
+    <th>分类</th>
+    <th>其他</th>
+	<th>发布时间</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<!-- -->
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block javascript}
+{include tpl/form}
+<!--单页编辑按钮-->
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class="font-gray">${data.id}</td>
+    <td class="font-blue f14">${data.name} <font class="font-gray f12">[${data.ident}](${data.sort})</font></td>
+    <td class="font-black">${$.show_dataconfig('onepage',data.cat_id).name}</td>
+    <td>${data.description}</td>
+    <td class="font-black">${data.dateline}</td>
+    <td>
+	<p class="table-item-op">
+		{if $this->check_purview('/cms_manager/onepage_edit')}
+	<a href="{url /cms_manager/onepage_edit?id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a>
+		{/if}
+		{if $this->check_purview('/cms_manager/onepage_del')}
+	<a href="javascript:void(0);" class="delbtn" data-url="{url /cms_manager/onepage_del?id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a> 
+		{/if}
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /cms_manager/onepage_edit}" method="post" class="theform form form-1" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/kindeditor-4.1.7/kindeditor-all-min.js}" type="text/javascript" ></script>
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var cat_list_v = [];
+var initpage = 1;
+{foreach items=$catlist}
+cat_list_v.push({key:'{$item['code']}',v:'{$item['name']}'});
+{/foreach}
+var search_formdata = {
+	cat_id:{type:"select",label:"分类",name:"cat_id",value:"{$condi['cat_id']}",disabled:0,data_sr:cat_list_v,css:"low",require:"",desc:"",item_css:"item-100"},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"{$condi['keyword']}",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+//seo_title  seo_keyword  seo_description 
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(){
+		initpage = page;
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+	
+		$(".delbtn").click(function(){
+			del_func(this);
+		 });
+	});
+}
+var edit_func = function(obj){
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					loadlist(initpage);
+				}
+			}
+		});
+	}
+}
+//文档加载后执行
+$(function(){
+     //加载所有单页
+	 loadlist(initpage);
+      //加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+     //新增单页按钮
+	 $(".addbtn").click(function(){
+		//edit_func(this);
+	 });
+})
+</script>
+{/block}

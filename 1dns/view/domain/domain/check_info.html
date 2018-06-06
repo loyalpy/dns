@@ -1,0 +1,158 @@
+{block main}
+<div class="aps1">
+        <div class="mod-nav-bar"><span class="nav-title-text">{$domain}的whois信息</span></div>
+        <div class="main" style="min-height: 640px">
+            <div class="mod-wating" style="margin: 10px 0px 0px 15px;">
+                <img alt="正在加载中" class="loading" src="{skin domain@images/loading2.gif}" style="width: 22px;height: 22px;"> <strong>正在查询详细信息，请稍等。</strong>
+            </div>
+        </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_domain_info">
+    <#macro rowedit data>
+        <div class="mod-box">
+            <div class="mod-box-hd">
+                <h3>以下信息获取时间：${data.check_time}&nbsp;&nbsp;&nbsp;<span class="btn btn-xs btn-info get-real-info">获取最新信息</span></h3>
+            </div>
+            <div class="mod-box-bd">
+                <table class="form-table tb-whois-info">
+                    <colgroup>
+                        <col style="width:180px">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <#if (data.domain_info2 != -1)>
+                        <tr>
+                            <th>域名所有者</th>
+                            <td>
+                                <#if (data.domain_info1.r_organize_name_uk)>
+                                        ${data.domain_info1.r_organize_name_uk}
+                                    <#else>
+                                        ${data.domain_info1.r_user_name_cn}
+                                </#if>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>联系人</th>
+                            <td>
+                                <#if (data.domain_info1.r_user_name_cn)>
+                                    ${data.domain_info1.r_user_name_cn}
+                                    <#else>
+                                        ${data.domain_info1.r_organize_name_uk}
+                                </#if>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>所有者联系邮箱</th>
+                            <td>${data.domain_info1.r_email}</td>
+                        </tr>
+                        <#if (data.domain_info1.registrant)>
+                            <tr>
+                                <th>域名注册商</th>
+                                <td>${data.domain_info1.registrant}</td>
+                            </tr>
+                        </#if>
+                        <tr>
+                            <th>注册日期</th>
+                            <td>${data.domain_info1.applyDate}</td>
+                        </tr>
+                        <tr>
+                            <th>到期日期</th>
+                            <td>${data.domain_info1.expireDate}</td>
+                        </tr>
+                        <#if (data.domain_info1.domain_status)>
+                            <tr>
+                                <th>域名状态</th>
+                                <td>
+                                    <ul>
+                                        <#if (data.domain_info1.domain_status && data.domain_info1.domain_status.length > 0)>
+                                            <#list data.domain_info1.domain_status as domain_status>
+                                                <li>${domain_status}</li>
+                                            </#list>
+                                        </#if>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </#if>
+                        <tr>
+                            <th>DNS服务器</th>
+                            <td>
+                                <ul>
+                                    <#if (data.domain_info1.dns && data.domain_info1.dns.length > 0)>
+                                            <#list data.domain_info1.dns as dns>
+                                                <li>${dns}</li>
+                                            </#list>
+                                        <#else>
+                                            <#if (data.domain_info1.dns1)>
+                                                <li>${data.domain_info1.dns1}</li>
+                                            </#if>
+                                            <#if (data.domain_info1.dns2)>
+                                                <li>${data.domain_info1.dns2}</li>
+                                            </#if>
+                                    </#if>
+                                </ul>
+                            </td>
+                        </tr>
+                        <#else>
+                            查询超时！
+                    </#if>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="mod-box">
+            <div class="mod-box-hd"><h3>详细注册信息&nbsp;&nbsp;&nbsp;<a class="btn btn-xs btn-info" href="{url home@/helper/article?tid=97}" target="_blank">专业词汇中/英文对照</a></h3></div>
+            <div class="mod-box-bd">
+                <pre><#if (data.domain_info2 == -1)>查询超时！<#else>${data.domain_info2}</#if></pre>
+                <table class="form-table tb-whois-info">
+                    <colgroup>
+                        <col style="width:180px">
+                        <col>
+                    </colgroup>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    $(function () {
+        $.ajaxPassport({
+            url:"{url domain@domain/check_info}",
+            success:function (res) {
+                if (res.error == 0) {
+                    var html = "" + easyTemplate($("#tpl_domain_info").html(),res.message);
+                    $(".aps1 .main").html(html);
+
+                    //获取最新信息
+                    $(".get-real-info").click(function () {
+                        var h = "<div class=\"mod-wating\" style=\"margin: 10px 0px 0px 15px;\"> " +
+                                "<img alt=\"正在加载中\" class=\"loading\" src=\"{skin domain@images/loading2.gif}\" style=\"width: 22px;height: 22px;\"> <strong>正在查询详细信息，请稍等。</strong> " +
+                                "</div>";
+                        $(".aps1 .main").html(h);
+
+                        $.ajaxPassport({
+                            url:"{url domain@domain/check_info}",
+                            success:function (res) {
+                                if (res.error == 0) {
+                                    var html = "" + easyTemplate($("#tpl_domain_info").html(),res.message);
+                                    $(".aps1 .main").html(html);
+                                    $(".aps1 .main").find(".get-real-info").hide();
+                                }else{
+                                    $(".aps1 .main").html("<span style='margin-left:12px;'>查询超时！</span>");
+                                }
+                            },
+                            data:{domain:"{$domain}",do:"get",check:"fresh"}
+                        });
+                    });
+                }else{
+                    $(".aps1 .main").html("<span style='margin-left:12px;'>查询超时！</span>");
+                }
+            },
+            data:{domain:"{$domain}",do:"get"}
+        });
+    });
+</script>
+{/block}

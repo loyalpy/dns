@@ -1,0 +1,60 @@
+{block main}
+<!-- List -->
+<div data-am-widget="list_news" class="am-list-news am-list-news-default">
+	<div class="am-list-news-bd">
+    <ul class="am-list">
+     
+    </ul>
+    </div>
+    
+    <!--更多在底部-->
+    <div class="am-list-news-ft">
+    <button data-box=".am-list" data-fix="工友" data-tpl="#tpl_list_row" data-url="{$pageurl}" data-page="0" class="am-list-news-more am-btn am-btn-default btn-loadlist" type="button">查看更多 &raquo;</button>
+    </div>
+</div>
+{/block}
+{block javascript}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+<#if (data.list.length>0)>
+<#list data.list as row>
+<li class="am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left">
+        <div class="am-u-sm-2 am-list-thumb">
+          <a href="{url /resumelib/resume_view?r=}${row.resume_id_str}">
+            <img src="${row.avatar}" alt="${row.name}" class="am-circle" width="50" />
+          </a>
+        </div>
+        <div class="am-u-sm-10 am-list-main">
+          <h3 class="am-list-item-hd">
+            <a href="{url /resumelib/resume_view?r=}${row.resume_id_str}">${row.name}(<#if (row.sex == 1)>男<#elseif (row.sex == 2)>女<#else>-</#if>,${row.age}岁,${$.get_cate(row.job_cate,'job_cate')})</a>
+          </h3>
+          <div class="am-list-item-text">
+${row.job_name}&nbsp;&nbsp;|&nbsp;&nbsp;
+<#if (!$.is_empty(row.job_edu))>${$.get_dataconfig("job_edu."+row.job_edu)}&nbsp;&nbsp;|&nbsp;&nbsp;</#if>
+<#if (!$.is_empty(row.city))>${$.get_cate(row.city,'city')}&nbsp;&nbsp;|&nbsp;&nbsp;</#if>
+<#if (!$.is_empty(row.job_area))>${$.get_cate(row.job_area,'city')}&nbsp;&nbsp;|&nbsp;&nbsp;</#if>
+共介绍${row.tui_times}次
+		  </div>
+          <div class="dis10"></div>
+          <div class="">
+          <a href="{url /medier_resume/add?id=}${row.id}" class="am-btn am-btn-warning am-btn-xs">
+			修改&nbsp;&nbsp;&nbsp;&nbsp;
+		  </a>
+		  </div>
+        </div>
+      </li>
+</#list>
+</#if>
+</#macro>
+</script>
+<script language="javascript">
+var cates_a = {echo JSON::encode($cates_a);};
+var cates   = {echo JSON::encode($cates);};
+$(function(){
+	$.loadmore(".btn-loadlist",function(res){
+		
+	});
+})
+
+</script>
+{/block}

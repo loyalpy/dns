@@ -1,0 +1,129 @@
+{block main}
+<div class="page-inner">
+<ol class="breadcrumb">
+  <li><a href="{$url}?pid=0" class="txt-blue">顶级{$table_alias}</a></li>
+  {if $catpaths}
+  {foreach items=$catpaths}
+  <li><a href="{$url}?pid=$key" class="txt-blue">{$item}</a></li>
+  {/foreach}
+  {/if} 
+  <li>&nbsp;&nbsp;&nbsp;
+  <a href="{$url}?do=edit&pid={$pid}" class="btn btn-danger">
+  <span class="glyphicon glyphicon-plus"></span> 添加</a> 
+  <button type="button" data-url="{$url}?do=refresh" class="btn btn-success t-ajax-button" data-loading-text="处理中……">生成缓存</button></li>
+</ol>
+<div class="tabnav">
+<ul class="nav nav-tabs" id="myTab">
+  <li class="active"><a href="#home" data-toggle="tab">基本信息</a></li>
+  <li><a href="#job" data-toggle="tab">关联岗位</a></li>
+</ul>
+</div>
+<form id="form_edit" action="{$url}?do=edit" method="post" class="form-horizontal t-ajax-form" role="form">
+<div class="form-content">
+<div class="tab-content">
+   <!--baseic info-->
+   <div class="tab-pane fade in active" id="home">
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label" for="Mname">名称:</label>
+		    <div class="col-sm-4">
+		    <input type="text" class="form-control" name="data[name]" value="{$data['name']}" maxlength="30" id="Mname" placeholder="" />
+		    </div>
+		    <label class="col-sm-1 control-label" for="Msort">序号:</label>
+		    <div class="col-sm-2">
+		    <input type="text" class="form-control" name="data[sort]" value="{$data['sort']}" maxlength="30" id="Msort" placeholder="" />
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label" for="Mpid">上级:</label>
+		    <div class="col-sm-4">
+		    <select  class="form-control" name="data[pid]">
+		    <option value="0">顶级{$table_alias}</option>
+		    {echo C('category',$table)->get(0,$data['pid'],true)}
+		    </select>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label" for="Mdomains">绑定域名:</label>
+		    <div class="col-sm-6">
+		    <textarea class="form-control" name="data[domains]" style="height:100px;">{$data['domains']}</textarea>
+		    </div>
+		    <div class="col-sm-2">
+		    一行一个域名
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label" for="Mtype">类型:</label>
+		    <div class="col-sm-4">
+		    <select  class="form-control" name="data[type]">		    
+		    <option value="">请选择</option>
+		    </select>
+		    </div>
+		  </div>
+		   <div class="form-group">
+		    <label class="col-sm-2 control-label">状态:</label>
+		    <div class="col-sm-6">
+		    <label class="checkbox-inline">
+			  <input name="data[status]" type="checkbox" value="1" {if $data['status'] == 1}checked="checked"{/if}/>选中可用
+			</label>
+		    </div>
+		  </div>
+   </div>
+   <!--end baseic info-->
+   <!-- rel -->
+   <div class="tab-pane fade in" id="job">
+   	  <div class="form-group">
+		    <label class="col-sm-1 control-label"></label>
+		    <div class="col-sm-9">
+		      <div class="trade_job_rel">
+		      {set $jobcate = C("category","job_cate")->fetch(0);}
+		      {if $jobcate}
+		      <ul>
+		      {foreach items=$jobcate}
+		      <li class="{if $item['level']==0}f16{elseif $item['level']==1}f14{else}f12{/if} level{$item['level']}">
+		      <input {if in_array($item['id'],$data['jobs'])} checked="checked"{/if} data-pid="{$item['pid']}" data-id="{$item['id']}"  type="checkbox" value="{$item['id']}" name="reljob[]"  />
+		      {$item['space']}{$item['name']}
+		      </li>
+		      {/foreach}
+		      </ul>
+		      {/if}
+		      </div>
+		    </div>
+	  </div>
+   </div>
+   <!-- end rel -->
+   <div class="form-group">
+		    <label class="col-sm-2 control-label"></label>
+		    <div class="col-sm-6">
+		    <input type="hidden" value="{$data['id']}" name="id" />
+			<input type="hidden" value="{hash}" name="hash" />
+            <button type="submit" class="btn btn-primary btn-lg" tabindex="4" data-loading-text="处理中……" >完成修改</button>
+		    </div>
+  </div>
+</div>
+</div>
+</div>
+</form>
+{/block}
+
+{block javascript}
+<script>
+$(function(){
+	$(".trade_job_rel").find("input[type='checkbox']").click(function(){
+		var obj = this;
+		var pid = $(obj).attr("data-pid");
+		var id  = $(obj).attr("data-id");
+		var flag = obj.checked; 
+		$("input[data-pid='"+id+"']").each(function() {
+			this.checked = flag;
+		});
+		if(flag){
+			$(".trade_job_rel").find("input[data-id='"+pid+"']").get(0).checked = flag;
+		}else{
+			if($(".trade_job_rel").find("input[data-pid='"+pid+"']").find(':checked').length == 0){
+				$(".trade_job_rel").find("input[data-id='"+pid+"']").get(0).checked = flag;
+			}
+		}
+	});
+})
+</script>
+{/block}

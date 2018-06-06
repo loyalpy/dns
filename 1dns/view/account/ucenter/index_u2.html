@@ -1,0 +1,63 @@
+{block main}
+<div class="right_yi">
+	<div class="ind-ulevel">我的身份：{$this->userinfo['setting']['ulevel_name']}<font class="font-gray">({if $this->userinfo['ulevel'] >0}<font class="font-green">已认证</font>{else}<font class="font-red">等待认证</font>{/if})</font></div>
+      <div class="searchbar" style="display:none;">
+        <div class="text">
+          <input class="search_input ac_input" id="domainKey" type="text" value="" autocomplete="off">
+        </div>
+        <span class="searchbar"><input type="button" id="btnAddDomain" class="btnersy" value="查询人才" style="border:none;"></span></div>
+    </div>
+
+    <div class="right_er">
+      <h2><span>我的账户</span></h2>
+      <div class="yibgxbk">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tbody><tr>
+            <td width="34%" class="zj_yi gtbd_ybk"><span>账户余额</span></td>
+            <td width="34%" class="zj_yi gtbd_ybk"><span>冻结资金</span></td>
+            <td width="33%" class="zj_yi"><span>未查看报名</span></td>
+          </tr>
+          <tr>
+            <td class="zj_er gtbd_ybk">{$this->userinfo['account']['balance']}</td>
+            <td class="zj_er gtbd_ybk">{echo M("tmp_payed")->get_one("status=0 AND uid=$uid","sum(amount)");}</td>
+            <td class="zj_er">{echo M("resume_lib")->get_one("view_dateline=0 AND company_id='$this->ext_id'","count(*)")}</td>
+          </tr>
+          <tr>
+            <td class="zj_san gtbd_ybk"><a href="{url /finance/recharge}">立即充值</a></td>
+            <td class="zj_san gtbd_ybk"><a href="{url /finance/dongjie}">查看</a></td>
+            <td class="zj_san"><a href="{url /resumelib/tuilist}">查看报名<img style="display:none;" src="{url static@/images/ht_wu.png}" title="如何获取积分"></a></td>
+          </tr>
+        </tbody></table>
+      </div>
+    </div>
+   <div class="right_er" style="display:none;">      
+      <h2><span>悬赏岗位</span><b><a href="DomainList.aspx">全部岗位</a></b></h2>
+      <div class="right_erxyi">
+      </div>     
+    </div>
+    <div class="right_si_box">
+      <div class="right_si">
+        <h2><span>其它服务</span></h2>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tbody><tr>
+            <td width="25%" class="zj_liu"><a href="{url home@/cms/helper}" target="_blank"><img src="{url static@/images/ht_qi.png}"><b>在线帮助</b></a></td>
+            <td width="25%" class="zj_liu"><a href="{url /job/fabu}" title="岗位发布"><img src="{url static@images/ht_ba.png}"><b>发布岗位</b></a></td>
+            <td width="25%" class="zj_liu"><a href="{url /ucenter/rz}"><img src="{url static@/images/ht_jiu.png}"><b>认证管理</b></a></td>
+            <td width="25%" class="zj_liu"><a href="{url /finance/accountlog}" target="_blank"><img src="{url static@/images/ht_shi.png}"><b>收支明细</b></a></td>
+          </tr>
+        </tbody></table>
+      </div>
+      <div class="right_wu">
+        <h2><span>万才公告</span><b></b></h2>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tbody><tr> </tr>
+        {set $tuinews = M("cms_threads")->query("fid=12","*","intop DESC,sort ASC,dateline DESC",4);}
+        {foreach items=$tuinews}
+          <tr>
+            <td width="64%" class="zj_qi"><span>{echo tTime::get_datetime("m-d",$item['dateline'])}</span><a href="{url home@/cms/topic/tid/$item[tid]}" target="_blank">{$item['subject']}</a></td>
+          </tr>
+        {/foreach}        
+        </tbody></table>
+      </div>
+    </div>
+   {/block}

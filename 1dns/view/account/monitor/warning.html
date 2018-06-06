@@ -1,0 +1,180 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /monitor/monitor}">实时监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/warning}" class="cur">报警信息&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_set}">监控设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_option_domain}">添加监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">报警信息<font size="4px" color="#5AB65A"> ({$monitor_warning})</font></span></h1>
+    </div>
+    <button type="button" class="am-btn am-btn-default am-radius am-btn-sm del-warning">删除</button>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="am-btn am-btn-success am-radius am-btn-sm clear-warning-monitor">清空报警信息</button>
+    <div class="am-u-lg-6" style="float: right;width: 300px;margin-right: -15px;">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text"  class="am-form-field infor-keyword" placeholder="请输入关键词">
+            <span class="am-input-group-btn">
+                <button class="am-btn keyword" type="button"><span class="am-icon-search"></span></button>
+            </span>
+        </div>
+    </div>
+    <div class="dis20"></div>
+    <div class="am-information-content">
+        <div class="listbody"></div>
+    </div>
+</div>
+<div class="am-cf"></div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_monitor_warning_list">
+    <#macro rowedit data>
+        <table class="am-table am-table-hover monitor-list" style="font-size: 14px">
+            <thead>
+            <tr>
+                <th><input type="checkbox" data-name="warning[]" class="checkall"/></th>
+                <th>监控项目</th>
+                <th>监控节点</th>
+                <th>故障原因</th>
+                <th>故障IP</th>
+                <th>开始时间</th>
+                <th>恢复时间</th>
+                <th>持续时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#list data.list as monitor_warning>
+                <tr class="domain_${monitor_warning.id}">
+                    <td><input type="checkbox" name="warning[]" value="${monitor_warning.id}"/></td>
+                    <td><a href="javascript:void (0);">${monitor_warning.RRname}.${monitor_warning.domain}</a></td>
+                    <td><a href="javascript:void (0);">${monitor_warning.monitor_nodecn}</a></td>
+                    <td><font color="red">${monitor_warning.reason}</font></td>
+                    <td><font color="gray">${monitor_warning.ip}</font></td>
+                    <td><#if (monitor_warning.startdateline == 0)> - <#else><font color="gray">${$.time_to_string(monitor_warning.startdateline,'Y-m-d H:i:s')}</font></#if></td>
+                    <td><#if (monitor_warning.enddateline == 0)> - <#else><font color="gray">${$.time_to_string(monitor_warning.enddateline,'Y-m-d H:i:s')}</font></#if></td>
+                    <td>${monitor_warning.distime_str}</td>
+                </tr >
+            </#list>
+            <#if (data.list.length==0)>
+                <tr><td colspan="8"><a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">没有符合条件的结果?</a></td></tr>
+            </#if>
+            </tbody>
+        </table>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    $(function(){
+        // 搜索内容事件
+        $("button.keyword").click(function(){
+            var keyword = $(".infor-keyword").val();
+            if (!$.is_empty(keyword)){
+                load_monitor_warning_list(1,keyword);
+            }else{
+                load_monitor_warning_list(1);
+            }
+        });
+        load_monitor_warning_list(1);
+        //清空报警信息
+        $(".clear-warning-monitor").unbind("click").bind("click",function(){
+            $.ui.confirm(function(){
+                $.ui.loading();
+                $.ajaxPassport({
+                    url:"{url /api/DomainMonitor.WarningClear}",
+                    success:function(res){
+                        $.ui.close_loading();
+                        if (res.status == 1) {
+                            $.ui.success(res.msg);
+                            load_monitor_warning_list(1);
+                        }else{
+                            $.ui.error(res.msg);
+                        }
+                    },
+                });
+            },"你确定要清空报警信息吗");
+        });
+    });
+    //加载通知列表
+    var load_monitor_warning_list = function(page,keyword,condition){
+        var url = "{url /api/DomainMonitor.MonitorWarning}";
+        var keyword  = $.is_empty(keyword)?'':keyword;
+        var condition  = $.is_empty(condition)?'':condition;
+        $.ui.loading($(".monitor-list"));
+        $.ajaxPassport({
+            url:url,
+            success:function(res){
+                $.ui.close_loading($(".monitor-list"));
+                if (!$.is_empty(keyword) && !$.is_array(res.data.list)) {
+                    res.data.list = "没有包含"+" '"+keyword+"' "+"的消息，请重新输入搜索内容";
+                }
+                var listhtml = ""+ easyTemplate($("#tpl_monitor_warning_list").html(),res.data);
+                $(".listbody").html(listhtml);
+
+                $("button,a").bind("focus",function(){
+                    $(this).blur();
+                });
+
+                //全选，全不选
+                $(".monitor-list").find("input.checkall").unbind("click").bind("click",function(){
+                    $.check_all(this);
+                });
+
+            },
+            data:{page:page,keyword:keyword,condition:condition},
+        });
+    }
+    //批量删除报警信息
+    var ids= new Array();
+    $(".del-warning").unbind("click").bind("click",function(){
+        var ids_tmp  = $.fetch_ids("warning[]");
+        ids = ids_tmp.split(",");
+        if (ids == "") {
+            $.ui.error('请选择要删除的报警信息！')
+            return;
+        }
+        $.ui.confirm(function(){
+            batch_monitor_warning_op(0);
+        },"你确定要删除域名监控吗？") ;
+    });
+    var num = 0;
+    var batch_monitor_warning_op = function(i){
+        var id=ids[i];
+        if( i >= ids.length || typeof ids[i] == "undefined"){
+            num = 0;
+            return false;
+        }
+        $.ui.loading();
+        $.ajaxPassport({
+            url: "{url /api/DomainMonitor.WarningDel}",
+            success: function (res) {
+                if (res.status == 1) {
+                    num++;
+                    var domainId = ".domain_"+ids[i];
+                    setTimeout(function () {
+                        $(domainId).remove();
+                    }, 50);
+                }
+                //执行最后一次时提示操作结果
+                if (i == (ids.length - 1)) {
+                    if (num >0) {
+                        $.ui.close_loading();
+                        $.ui.success("成功删除"+num+"条报警信息");
+                        //如果是删除,重新加载
+                        load_monitor_warning_list(1);
+                    }else{
+                        $.ui.close_loading();
+                        $.ui.error(res.msg);
+                    }
+                }
+                batch_monitor_warning_op(i+1);
+            },
+            data: {id:id},
+        });
+    }
+</script>
+{/block}

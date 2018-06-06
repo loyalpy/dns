@@ -1,0 +1,201 @@
+{block head_menu}
+<div class="menu">
+ <ul>
+	 {if $this->check_purview('/cms_manager/friendlink')}
+ <li><a href="{url /cms_manager/friendlink}" class="{if '/'.$inc.'/'.$act == '/cms_manager/friendlink'}cur{/if}">链接管理</a></li>
+	 {/if}
+	 {if $this->check_purview('/cms_manager/friendlink_cate')}
+ <li><a href="{url /cms_manager/friendlink_cate}" class="{if '/'.$inc.'/'.$act == '/cms_manager/friendlink_cate'}cur{/if}">链接分类</a></li>
+	 {/if}
+ </ul>
+</div>
+{/block}
+
+
+{block main}
+<div class="main-nav">
+  <div class="name">链接列表</div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview('/cms_manager/friendlink_edit')}
+  <a href="javascript:void(0)" data-url="{url /cms_manager/friendlink_edit?id=0}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增链接</a>
+	  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+
+<!--search box-->
+<form class="the_searchform form" method="POST" action="?do=get_url">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+	<col width="50px" />
+	<col width="100px" />
+
+    <col width="260px" />
+	<col />
+	<col width="200px" />
+	<col width="100px" />
+	<thead>
+	<tr>	
+	<th>ID</th>
+	<th>logo</th>
+    <th>链接名</th>
+	<th>链接地址</th>
+	<th>分类</th>
+	
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+
+<!-- -->
+<div class="pagebar"></div>
+
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+{include tpl/form}
+<!--友情链接编辑按钮-->
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class="font-gray">${data.id}</td>
+    <td class="font-gray"><#if ($.is_empty(data.logo))> - <#else><img src="{url static@/}${data.logo}" width="120" height="60" /></#if></td>
+    <td class="font-blue f14">${data.name}</td>
+    <td class="font-black">${data.link}</td>
+    <td class="font-black">${$.show_dataconfig('friendlink',data.cat_id).name}</td>
+    <td>
+	<p class="table-item-op">
+		{if $this->check_purview('/cms_manager/friendlink_edit')}
+	<a href="javascript:void(0);" class="editbtn" data-url="{url /cms_manager/friendlink_edit?id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a>
+		{/if}
+		{if $this->check_purview('/cms_manager/friendlink_del')}
+		<a href="javascript:void(0);" class="delbtn" data-url="{url /cms_manager/friendlink_del?id=}${data.id}&cat_id=${data.cat_id}"><span class="glyphicon glyphicon-remove"></span></a>
+		{/if}
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+
+
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /cms_manager/friendlink_edit}" enctype="multipart/form-data" method="post" class="theform form form-1" role="form">
+<div class="tpl"></div>
+
+</form>
+</div>
+</#macro>
+</script>
+
+
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var cat_list_v = [];
+{foreach items=$catlist}
+cat_list_v.push({key:'{$item['code']}',v:'{$item['name']}'});
+{/foreach}
+var search_formdata = {
+	cat_id:{type:"select",label:"分类",name:"cat_id",value:"{$condi['cat_id']}",disabled:0,data_sr:cat_list_v,css:"low",require:"",desc:"",item_css:"item-100"},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"{$condi['keyword']}",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var formdata = {
+    cat_id:{type:"select",label:"分类",name:"cat_id",value:"",data_sr:dataConfig_A['friendlink'],css:"",require:"datatype='*'",desc:"",item_css:""},
+	name:{type:"text",label:"链接名称",name:"name",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"名称不可不填",item_css:""},
+	link:{type:"text",label:"链接URL",name:"link",value:"",data_sr:[],css:"",require:"",desc:"链接不可不填",item_css:""},
+	sort:{type:"text",label:"序号",name:"sort",value:"0",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    logo:{type:"file",label:"logo" ,name:"logo",value:"",data_sr:[],css:"",desc:"",item_css:"",desc:"请上传120px*60px图片文件" },
+    id:{type:"hidden",label:"-",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改链接"});
+	$("#myModal").find(".modal-dialog").width(760);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 loadlist(1);
+		 return true;
+	},function(res){
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					loadlist();
+				}
+			}
+		});
+	}
+}
+
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_func(this);
+		 });
+		$(".delbtn").click(function(){
+			del_func(this);
+		 });
+	});
+}
+$(function(){
+	  //加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 
+	 loadlist(1);
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+
+//文档加载后执行
+$(function(){
+     //加载所有单页
+	 loadlist();
+
+     //新增单页按钮
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+</script>
+{/block}

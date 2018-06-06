@@ -1,0 +1,199 @@
+{block main}
+<div class="main-nav">
+  <div class="name">用户角色</div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview('/user_manager/userrole_edit')}
+  <a href="javascript:void(0)" data-url="{url /user_manager/userrole_edit?id=0}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增角色</a>
+	  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+	<col width="70px" />
+	<col width="180px" />
+	<col />
+	<col width="220px" />
+	<col width="70px" />
+	<col width="100px" />
+	<thead>
+	<tr>	
+	<th>角色ID</th>
+	<th>角色名</th>
+	<th>角色描述</th>
+	<th>所属公司</th>
+	<th>状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /user_manager/userrole_edit}" method="post" class="theform form form-2" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td>${data.id}</td>
+    <td class="font-gray">${data.name}</td>
+    <td>${data.content}</td>
+    <td></td>
+    <td class="font-gray">
+    <#if (data.inlock==1)><cite class="glyphicon glyphicon-exclamation-sign font-red"></cite> 已锁<#else><cite class="glyphicon glyphicon-ok-sign font-green"></cite> 正常</#if>
+    </td>
+    
+    <td class="font-gray">
+    <p class="table-item-op">
+    <#if (data.id == 1)> -
+    <#else>
+		{if $this->check_purview('/user_manager/userrole_edit')}
+	<a href="javascript:void(0);" class="editbtn" data-url="{url /user_manager/userrole_edit?id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a> 
+		{/if}
+		<#if (data.id == 2)> <#else>
+			{if $this->check_purview('/user_manager/userrole_del')}
+	<a href="javascript:void(0);" class="delbtn" data-url="{url /user_manager/userrole_del?id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a> 
+			{/if}
+		</#if>
+	</#if>
+	</p>
+    </td>
+	</tr>
+</#macro>
+</script>
+<script language="javascript">
+var formdata = {
+	name:{type:"text",label:"角色名",name:"name",value:"",disabled:0,data_sr:[],css:"",require:"datatype='*'",desc:"角色名必须填写",item_css:""},
+	content:{type:"textarea",label:"角色描述",name:"content",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    inlock:{type:"checkbox",label:"锁定",name:"inlock",value:"",disabled:0,data_sr:[{v:"锁定",key:1}],css:"",require:"",desc:"",item_css:""},
+	html4:{type:"html",value:"<div class=\"rpurview\"></div>"},
+	html1:{type:"html",value:"<h4>模块权限</h4><div class=\"dis10\"></div>"},
+	html2:{type:"html",value:"<div class=\"purview\"></div>"},
+    id:{type:"hidden",label:"",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+//分组权限全选
+var checkGroupAll = function(obj){
+	var ischecked = parseInt($(obj).attr("data-s"));
+	var name = $(obj).attr("data-g");
+	if(ischecked == 1){
+		$('input[data-g="'+name+'"]').attr('checked',"checked");
+		$(obj).attr("data-s",0);
+		$(obj).html("全不选");
+	}else{
+		$('input[data-g="'+name+'"]').attr('checked',false);
+		$(obj).attr("data-s",1);
+		$(obj).html("全选");
+	}
+}
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改角色"});
+	$("#myModal").find(".modal-dialog").width(1010);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 loadlist(1);
+		 return true;
+	},function(res){
+		 var rhtml = html = "";
+		 for(var i in res.all_purview){
+		 	if(parseInt(res.all_purview[i]['status']) != 1)continue;
+		 	html += "<div class='form-item purview-item'>";
+		 	html += "<label>"+res.all_purview[i]['name']+"<br/> <font class=\"font-gray tr\"><button type=\"button\" data-s=\"1\" data-g=\""+res.all_purview[i]['url']+"\" class=\"btn btn-default btn-xs selall\" type=\"checkbox\">全选</button></font></label>";
+		 	html += "<div class=\"item-v\">";
+		 	for(var j in res.all_purview[i]['childrens']){
+		 		if(parseInt(res.all_purview[i]['childrens'][j]['status']) != 1)continue;
+		 		var url = res.all_purview[i]['childrens'][j].url;
+		 		html += "<div class=\"submenu\"><div class=\"sub0\"><input class=\"reset\" "+(res.purview.indexOf("@"+url+"@")>=0?"checked=\"checked\"":"")+" data-g=\""+res.all_purview[i]['url']+"\" name=\"purview["+res.all_purview[i]['url']+"][]\" value=\""+url+"\" type=\"checkbox\" /> "+res.all_purview[i]['childrens'][j].name+"</div>";
+		 		html += "<div class=\"sub1\">";
+		 		for(var k in res.all_purview[i]['childrens'][j]['purview']){
+		 			var url = res.all_purview[i]['childrens'][j].url+"_"+k;
+		 			html += "<span class=\"font-gray\"><input class=\"reset\" "+(res.purview.indexOf("@"+url+"@")>=0?"checked=\"checked\"":"")+" name=\"purview["+res.all_purview[i]['url']+"][]\" data-g=\""+res.all_purview[i]['url']+"\" value=\""+url+"\" type=\"checkbox\" /> "+res.all_purview[i]['childrens'][j]['purview'][k]+"</span>";
+		 		}
+		 		html += "<div class=\"cl\"></div></div>";
+		 		html += "<div class=\"cl\"></div></div>";
+		 	}
+		 	html += "<div class=\"cl\"></div></div>";
+		 	html += "<div class=\"cl\"></div></div>";
+		 }
+		 var rhtml = "<div class='form-item purview-item'><label></label><div class=\"item-v\"><div class=\"submenu rpurview\">";
+		  for(var i in res.all_rpurview){
+		  	  rhtml += "<span><input class=\"reset\" "+((res.rpurview.substr(i,1) == "Y")?"checked=\"checked\"":"")+" name=\"rpurview"+i+"\" value=\"Y\" type=\"checkbox\" /> "+res.all_rpurview[i]+"["+i+"]&nbsp;&nbsp;&nbsp;&nbsp;</span>";
+		  	  
+		  }
+		 rhtml += "<div class=\"cl\"></div></div>";
+		 rhtml += "<div class=\"cl\"></div><div class=\"dis20\"></div></div>";
+		 rhtml += "<div class=\"cl\"></div></div>";
+		 $("#myModal").find(".modal-content").find(".purview").html(html);
+		  $("#myModal").find(".modal-content").find(".rpurview").html(rhtml);
+		 $("#myModal").find(".modal-content").find("button.selall").click(function(){
+		 	checkGroupAll(this);
+		 })
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！关联用户将失去权限")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					loadlist();
+				}
+			}
+		});
+	}
+}
+var pageurl = "{$pageurl}";
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		}
+		$(".editbtn").click(function(){
+			edit_func(this);
+		 });
+		$(".delbtn").click(function(){
+			del_func(this);
+		});
+	});
+}
+$(function(){
+	loadlist(1);
+	//增加按钮
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 }); 
+})
+</script>
+{/block}

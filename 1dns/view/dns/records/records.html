@@ -1,0 +1,168 @@
+{block left}
+{/block}
+{block main}
+{set $ns_group = M("@domain_ns_group")->get_cache_by_ns($domain_row['ns_group']);}
+{set $ns_group_ns = isset($ns_group['ns'])?$ns_group['ns']:"";}
+<div class="records combox">
+{if $domain_row['inns'] == 0}
+    <div class="page-tip">
+        <strong>还差最后一步，即可开始使用 八戒DNS,将当前NS改成八戒DNS对应套餐的NS</strong>
+        <div style="width:500px;margin:8px 0 0 0;">
+        <table class="am-table ">
+            <tbody>
+             <tr>
+             <td class="am-warning">
+                 {if $domain_row['ns'] && $domain_row['ns'] != -1}
+                 {echo str_replace(';',"<br/>",$domain_row['ns']);}
+                 {else}
+                 未检测到NS
+                 {/if}
+             </td>
+             <td class="am-warning"><cite class="am-icon-angle-double-right am-text-warning"></cite></td>
+             <td class="am-success">
+                {if $ns_group_ns}
+                {echo str_replace(';',"<br/>",$ns_group_ns);}
+                {else}
+                f1g1ns1.dnspig.com<br/>
+                f1g1ns2.dnspig.com
+                {/if}
+             </td>   
+            </tbody>
+        </table>
+        </div>
+        <b>
+            为避免多次修改您的DNS,请先选好域名套餐,我们提供稳定的收费套餐：
+            <a class="txt-blue" target="_blank" href="/product/buy">标准版,豪华版,旗舰版</a>
+        </b>
+        <br>
+        注意不能同时和其他 DNS 混用，会导致解析混乱哦～
+        <span id="transmark" style="display: none; width: 0px; height: 0px;"></span>
+        <br>
+        修改 DNS 服务器需要最长 48 小时的全球生效时间，请耐心等待
+        <br>
+        遇到困难？
+        <a class="txt-blue" target="_blank" href="{url home@/helper/index}">
+            寻找技术支持
+            <span class="f9">>></span>
+        </a>
+        <br>
+        <button class="close" onclick="$(this.parentNode).hide();"></button>
+    </div>
+    <div class="dis10"></div>
+{/if}
+    <div class="records-nav">
+        <ul>
+            <li class="domain"><a href="#"><i class="am-icon-globe"></i></a> <span>{if $domain_cn}{$domain_cn}{else}{$domain}{/if}</span>
+            </li>
+            <li><a href="{url /records/records_count}">解析量统计</a></li>
+            <li class="cur"><a href="{url /records/records}">记录设置</a></li>
+        </ul>
+    </div>
+    <div class="dis10"></div>
+    <div class="record-op">
+        <div class="record-op-l">
+            <button type="button" class="am-btn am-btn-success am-dropdown-toggle am-radius am-btn-sm am-add-records"><span class="am-icon-plus"></span> 添加记录 </button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="am-btn am-btn-default am-btn-sm am-radius recordsOption" data-do="stop">暂停</button>
+            <button type="button" class="am-btn am-btn-default am-btn-sm am-radius recordsOption" data-do="start">启用</button>
+            <button type="button" class="am-btn am-btn-default am-btn-sm am-radius recordsOption" data-do="del">删除</button>
+            {if $domain_row['records'] == 0}
+            <button type="button" class="am-btn am-btn-warning am-btn-sm am-radius am-import-btn">导入记录</button>
+            {/if}
+        </div>
+        <div class="record-op-r">
+            <input type="text" class="am-form-field am-radius am-input-sm am-serch-records" placeholder="快速查找记录" />
+        </div>
+    </div>
+    <div class="dis10"></div>
+    <div class="record-list" style="position: relative;">
+        <form method="post" id="setRecords form-with-tooltip">
+            <table class="am-table am-table-striped">
+                <col width="30px"/>
+                <col width="180px" />
+                <col width="130px" />
+                <col width="150px"/>
+                <col  />
+                <col width="90px"/>
+                <col width="70px" />
+                <col width="150px"/>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" data-name="recordId[]" class="checkall"/></th>
+                    <th>主机名</th>
+                    <th>类型</th>
+                    <th>线路</th>
+                    <th>记录值</th>
+                    <th>MX优先级</th>
+                    <th>TTL</th>
+                    <th class="am-text-right">操作</th>
+                </tr>
+                </thead>
+                <tbody class="add_tpl"></tbody>
+                <tbody class="add_tips" style="display:none;"><tr><td colspan="8"></td></tr></tbody>
+                <tbody class="list_tpl"></tbody>
+                {if $ns_group_ns}
+                {set $ns_group_ns_arr = explode(';',$ns_group_ns);}                
+                <tbody>
+                {foreach items=$ns_group_ns_arr}
+                <tr class="am-disabled am-active">
+                    <td></td>
+                    <td>@</td>
+                    <td>NS</td>
+                    <td>默认</td>
+                    <td>{$item}</td>
+                    <td>_</td>
+                    <td>600</td>
+                    <td></td>
+                </tr>
+                {/foreach}
+                </tbody>
+                {/if}
+            </table>            
+           </form>
+    </div>
+    <div class="pagebar"></div>
+    <div class="dis20"></div>
+</div>
+<div class="my-domian-upgrade"></div>
+
+{/block}
+
+{block javascript}
+{include records/records_tpl}
+{include records/records_import}
+<!--解析记录列表  start-->
+<script type="text/javascript">
+    $(function(){
+        $("a").bind("focus",function(){
+            $(this).blur();
+        });
+        $(".record-list").find("input.checkall").unbind("click").bind("click",function(){
+            $.check_all(this);
+        });
+        $(".recordsOption").click(function(){
+            batch_records_op(this);
+        });
+        $("input.am-serch-records").keyup(function(){
+            var keyword = $(this).val();
+            if (!$.is_empty(keyword)){
+                get_records_list(1,keyword);
+            }else{
+                get_records_list(1);
+            }
+        });
+        $('.am-add-records').click(function(){
+            add_edit_record();
+        });
+        //升级套餐
+        $(".domian-upgrade").unbind("click").bind("click",function(){
+            var goods_name = $(this).attr("data-domain");
+            add_cart_step1(1,0,"",goods_name);
+        });
+
+        {if $domain_row['records'] > 0}
+        get_records_list(1);
+        {/if}
+    });
+</script>
+<!--解析记录列表 end-->
+{/block}

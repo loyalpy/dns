@@ -1,0 +1,238 @@
+{block title}悬赏{echo intval($data['amount']*$data['tui_num'])}元招{$data['tui_name']}-{$data['company_name']}-万才网{/block}
+{block main}
+<div class="dis20"></div>
+<div id="job-view-enterprise">
+  <div class="wrap clearfix">
+    <div class="main ">
+      <div class="title">
+        <div class="title-info ">
+          <h1 title="{$data['tui_name']}">{$data['tui_name']}</h1>
+          <h3>{$data['company_name']}</h3>          
+          <span class="title-triangle" style="display:none;"></span>
+        </div>
+        <!-- 已暂停职位 -->
+        <div class="job-main ">
+        	<div class="clearfix">
+        		<div class="job-title-left">
+		          <div class="resume clearfix">
+		            <span>{echo tFun::get_conf('city',$data['job_area'])}</span>
+		            <span>{if $data['sex'] == 1}男{elseif $data['sex'] == 2}女{else}男女不限{/if}</span>
+		            <span class="noborder">{if $data['age_min'] && $data['age_max']}
+						{$data['age_min']} - {$data['age_max']}周岁
+						{else}年龄不限{/if}</span>
+		          </div>
+		          <p class="release-time">更新时间：{echo tTime::format_dateline("Y-m-d H:i:s",$data['lastupdate']);}</p>
+		          <div class="dis60"></div>
+		          <div class="dis30"></div>
+		        </div>
+		        <div class="right-control">
+		        	<!-- 收藏按钮 start -->
+                    <div class="right-operation">
+                    <a class="link-collection jobfavbtn" data-selector="link-collection" data-value="0" href="javascript:void(0);">收藏</a>
+                    </div>
+                    <!-- jing end -->
+		            <div data-selector="fix-jobapply" class="fix-stop">
+		   			<a href="javascript:;" class="btn-apply btn btn-warning jobapplybtn" data-selector="sendResume" style="top: 17px;">我感兴趣 ,立即报名</a>
+		   			<div class="amount-box">
+					<div class="amount">￥{echo intval($data['amount']*$data['tui_num'])}</div>
+					<div class="name">悬赏 <b>{$data['tui_num']}</b>人</div>
+					</div>
+		            </div>
+		        </div>
+		      </div>
+        <!-- tags -->
+        {if $data['tag_post']}
+        <div class="tag-list clearfix">
+        <span class="tag">{echo tFun::get_tag_more('tag_post',$data['tag_post'],'</span><span class="tag">');}</span>
+		<div class="cl"></div>
+		</div>
+		{/if}
+		
+        </div>
+        <!-- 信息 -->
+        <div class="job-main main-message ">
+          <h3>基本信息：</h3>
+          <div class="content">
+            <ul>
+			  <li><span>工作地点：</span>{echo tFun::get_conf('city',$data['job_area'])}  </li>
+			  <li><span>所属部门：</span>{if $data['depart_name']}{$data['depart_name']}{else}不限{/if}</li>
+              <li title=""><span>学历要求：</span>{if $data['job_edu']}{echo App::get_conf("data_config.job_edu.".$data['job_edu'])}{else}不限{/if}</li>
+              <li><span>性别要求：</span>{if $data['sex'] == 1}男{elseif $data['sex'] == 2}女{else}男女不限{/if}</li>
+              <li><span>年龄要求：</span>{if $data['age_min'] && $data['age_max']}
+						{$data['age_min']} - {$data['age_max']}周岁
+						{else}年龄不限{/if}</li>
+              <li><span>经验要求：</span>{if $data['job_age']}{echo App::get_conf("data_config.job_age.".$data['job_age'])}{else}工作经验不限{/if}</li>
+              <li><span>薪资：</span>{echo App::get_conf("data_config.job_salary.".$data['job_salary'])}</li>
+              <li><span>岗位分类：</span>{echo tFun::get_conf("job_cate",$data['job_cate'])}</li>
+            </ul>
+          </div>
+        </div>
+        <!-- 职位描述 -->
+        <div class="job-main main-message ">
+          <h3>职位描述：</h3>
+          <div class="content content-word">
+          {echo nl2br($data['about']);}
+          </div>
+        </div>
+        <!-- 企业介绍 -->
+        <div class="job-main main-message noborder " data-selector="introduction">
+          <h3>企业介绍：</h3>
+          <div class="content content-word">
+            {echo nl2br($company_data['about']);}
+          </div>
+          <div class="dis20"></div>
+          {set $attach = M("@company")->get_attach($data['company_id'],'xingxiang');}
+          {if $attach}
+          <h3>企业形象：</h3>
+          <div class="content content-word">
+            {foreach items=$attach}
+            <div class="img"><img src="{url static@/attach/company/}{$item['path']}/{$item['filename']}_480_480.{$item['ext']}" /></div>
+            {/foreach}
+          </div>
+          {/if}
+          <div class="dis20"></div>
+          {set $attach = M("@company")->get_attach($data['company_id'],'huanjin');}
+          {if $attach}
+          <h3>工作环境：</h3>
+          <div class="content content-word">
+            {foreach items=$attach}
+            <div class="img"><img src="{url static@/attach/company/}{$item['path']}/{$item['filename']}_480_480.{$item['ext']}" /></div>
+            {/foreach}
+          </div>
+          {/if}
+          <div class="dis20"></div>
+          {set $attach = M("@company")->get_attach($data['company_id'],'shisu');}
+          {if $attach}
+          <h3>食宿环境：</h3>
+          <div class="content content-word">
+            {foreach items=$attach}
+            <div class="img"><img src="{url static@/attach/company/}{$item['path']}/{$item['filename']}_480_480.{$item['ext']}" /></div>
+            {/foreach}
+          </div>
+          {/if}
+        </div>
+        <div class="job-resume-block " data-selector="job-resume-block">        	
+       		<div class="job-resume">
+	            <div class="job-resume-left">
+	              <p class="unlogin">在万才网 <a class="btn btn-org" href="{url account@/uc_resume/edit}">完善简历</a>&nbsp;报名参被邀请面试还可以赚钱</p>
+	            </div>
+          	</div>
+        </div>
+      </div>
+	   <div class="job-require bottom-job-require">
+        <h3>该企业其他悬赏：</h3>
+        <div class="lb-block">
+	        <div class="lb-content clearfix">
+        	<ul class="job-require-list clearfix">
+        	{foreach items=$tuilist['list']}
+	  		<li><a href="{echo tFun::build_url('/job/view',array('tui_id'=>tUtil::numstr($item['tui_id'])))}">
+						<span class="job-require-span">{$item['tui_name']}</span>
+						<p class="clearfix">
+								<span>{$item['amount']}<font class="f12 font-gray">/人,悬赏</font><font class="f14 font-org">{$item['tui_num']}</font><font class="f12 font-gray">人</font></span>
+								{echo App::get_conf("data_config.job_salary.".$item['job_salary'])} | {if $item['age_min'] && $item['age_max']}
+						{$item['age_min']} - {$item['age_max']}周岁
+						{else}年龄不限{/if}
+						</p>
+					</a></li>
+			{/foreach}             
+	        </ul>
+	        </div>
+	      </div>
+      </div>
+		
+      <div class="search-box">
+        <form action="{url /job}" method="get">
+          <input type="text" placeholder="搜索其他职位" name="keyword" class="input-text"><button class="btn btn-org" type="submit">搜索</button>
+        </form>
+      </div>
+    </div>
+    <div class="side">
+      <div class="right-blcok-post">		
+        <div class="right-post-top">
+          <h3>职位发布企业</h3>
+          <a href="javascript:void(0)" target="_blank"><img src="{echo tFun::avatar($company_data['uid'],'logo')}"></a>
+          <p class="post-top-p">{$company_data['name']}</p>
+          <div class="content content-word">
+            <span>行业：</span>
+            <a title="{$company_data['trade']}" href="javascript:void(0);">{echo tFun::get_conf_more('trade_cate',$company_data['trade'])}</a>
+            <br>
+            <span>规模：</span>{echo App::get_conf("data_config.company_sp.".$company_data['company_sp'])}<br>
+            <span>性质：</span>{echo App::get_conf("data_config.company_tp.".$company_data['company_tp'])}<br>
+            
+            <span>地址：</span>{$company_data['address']}
+            
+          </div>
+        </div>
+		 <!-- 地图 -->
+        
+        <div class="right-post-map">
+          <div class="smallmap" style="display: block;">
+            <input type="hidden" value="" id="company-name">
+            <input type="hidden" value="" id="com-dq">
+            <input type="hidden" value="" id="company-address">
+            <input type="hidden" value="{$company_data['pos']['lng']}" id="Mlng">
+            <input type="hidden" value="{$company_data['pos']['lat']}" id="Mlat">
+            <div class="maps" id="map_canvas" style="overflow: hidden; position: relative; z-index: 0; color: rgb(0, 0, 0); text-align: left; background-color: rgb(243, 241, 236);">
+            </div>
+            <span class="lookbigmapbg"></span>
+            <a href="javascript:;" class="lookbigmap" onclick="">查看大图</a>
+          </div>
+        </div>
+        <div class="right-post-hint clearfix" style="display:none;">
+		<!-- 咨询 -->
+        <div class="right-post-wenzi">您好，我是{$data['company_name']}招聘负责人，很高兴认识您，有任何问题欢迎交流沟通 <span></span></div>
+        <img src="" class="hint-img">
+        </div>
+        <p style="display:none;" class="right-post-liuyan">给我留言</p>
+        <form style="display:none;" method="post" class="message-form tel-me clearfix">
+          <input type="hidden">
+          <textarea placeholder="" name="messageContent" class="input-text"></textarea>
+          <button class="btn btn-primary" type="submit"><span>发送</span></button>  
+        </form>
+		<p style="display:none;" class="right-post-else">最近浏览职位</p>
+		<ul style="display:none;" class="right-post-else-list"></ul>
+      </div>
+      <div style="display:none;" class="right-blcok-post right-weixin clearfix"></div>
+    </div>
+</div>
+<div class="operation-data clearfix">
+<div class="bread-crumbs clearfix">
+      <span>当前位置:</span>
+      <span>{echo tFun::get_conf('job_cate',$data['job_cate'])}悬赏招聘</span><span>&gt;</span>
+      <span>{$data['tui_name']}</span>
+</div>
+</div>
+</div>
+{/block}
+{block javascript}
+{include job/tpl}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1CPGHP2b3Vazq05P6TS7WV6Y"></script>
+<script language="javascript" src="{url static@/javascript/baidu/biaozhu.js}"></script>
+<script language="javascript">
+$(function(){
+	mybaidu.init_map();
+})
+</script>
+<script language="javascript">
+$(function(){
+	//详情页菜单定位 fix-jobapply" class="fix-stop"
+	var scroll_h=0;
+	var scrollstart = $(".right-control").offset().top;
+	window.onscroll = function(){
+		 scroll_h = document.body.scrollTop+document.documentElement.scrollTop;
+		 if(scroll_h > scrollstart-54){
+			 $("[data-selector='fix-jobapply']").attr("class","fix-jobapply");
+		 }else{
+			 $("[data-selector='fix-jobapply']").attr("class","fix-stop");
+		}
+	}
+	$(".jobapplybtn").bind("click",function(){
+		myuser.login("myjob.apply","{$data['tui_id']}");
+	});
+	$(".jobfavbtn").bind("click",function(){
+		myuser.login("myjob.fav","{$data['job_id']}");
+	})
+})
+</script>
+{/block}
+{block friendlink}{/block}

@@ -1,0 +1,108 @@
+/*********************************my recharge*******************************/
+*, *::after, *::before {box-sizing: inherit;}
+.am-uc-right .am-finance-content .admin-content-list{margin-left: -30px;}
+.am-uc-right .am-finance-content ul li{border-right: 1px solid #E9ECF1;font-size: 15px;height: 120px;line-height: 28px;}
+.am-uc-right .profile_information{height: 42px;}
+.am-uc-right .profile_information ul li{height: 42px;line-height: 42px;}
+.am-uc-right .profile_information ul li.cur{border-top: 2px solid #00A2CA;}
+.am-uc-right .am-finance-content{font-size: 14px;}
+.am-uc-right .am-finance-content .am-u-sm-2{color: gray;font-weight: 300}
+.am-uc-right .am-finance-content table.recharge-table{font-size: 13px;width: 94%;margin-left: 35px;}
+.am-uc-right .am-finance-content table .detail-bank{padding-left: 20px;}
+
+.finance-tip {background: #FFFFEB none repeat scroll 0 0;border: 1px solid #DADADA;line-height: 20px;padding: 13px 0px 13px 40px;font-size: 14px;}
+.am-uc-right .am-finance-list-key{float: left;margin-left: 20px;}
+
+.am-btn-group .cur{background-color: #D5D5D5;}
+
+.uc-msg {}
+.uc-msg-hd {height:32px;line-height:28px;}
+.uc-msg-btn {text-align:center;}
+
+.domian-upgrade{cursor:pointer;}
+
+/**************************************domain upgrage****************************************/
+.cartbox {padding:20px 30px;}
+.cartbox .bd-top{font-size: 12px;border: 1px solid #c6edf9;background-color: #DDF4FF;height:35px;line-height: 35px;text-align: left;padding-left: 10px;}
+.cartbox .bd-middle{;margin-top: 12px;}
+
+.profile_information ul{position: relative;left: -38px;}
+.profile_information li{float: left;}
+
+.service_group_nav_content table td,.service_group_nav_content table th {font-size:12px;}
+
+.buy-sms-table tr th, .buy-sms-table tr td{font-size: 14px;}
+.buy-sms-table tr td .zz{color: #0E90D2;margin-left: 15px}
+.buy-sms-table tr td .sms-total{color: #F37B1D;}
+.buy-sms-table tr td select{padding:7px 9px;width:40px;font-size:12px;}
+
+/**************************************shopping***********************************************/
+.order-shopping{margin: 0 auto;border: 1px solid #dedede;padding:0;font-size: 14px;width: 960px;height: auto;background-color: #fff;}
+.order-shopping .nav{border-bottom: 1px solid #dedede;text-align: center;padding:20px 30px;background-color: #fff;}
+.order-shopping .nav> ul {padding:0 !important;margin:0 !important;}
+.order-shopping .nav li{float: left;margin-right:72px;}
+.order-shopping .un-use div.icon span{-moz-transition-duration: 0.8s;background-color: #FFFFFF;background-position: -30px 50%;border: 1px solid #CCCCCC;border-radius: 60px;color: #565656;display: block;float: left;height: 27px;width: 27px;text-align:center;text-indent:0;margin: 0 15px 0 0px;position: relative;top:3px;}
+.order-shopping  i.am-icon-angle-right{margin-left: 58px;}
+.order-shopping .content {background-color: #fff;min-height: 500px;}
+.order-shopping .content-shop {padding:0 30px;background-color: #fff;}
+.order-shopping .content-shop .step1 .step1_empty{text-align: center;padding: 70px 0px;}
+.order-shopping .content-shop .step1 .step1_empty a{margin-right: 40px;}
+.order-shopping .content-shop .step1 .step1_empty span{font-size: 17px;position: relative;top:-25px;}
+.order-shopping .content-shop .step1 .step1_empty button{position: relative;top:-15px;left:-65px;}
+
+.order-shopping .content-shop .step1_list .cart-add-order{border-top: 1px solid silver;padding: 20px;background-color: #F8FBFF;text-align: right; margin-bottom:20px;}
+.order-shopping .content-shop .step1_list .cart-add-order .hadcheck{float: left;position: relative;left: 0px;}
+.order-shopping .content-shop .step1_list .cart-add-order .go-add{line-height: 34px;font-size: 14px;}
+.order-shopping .content-shop .step1_list .cart-add-order .go-add button{position: relative;top:-10px;}
+
+.order-shopping .content-shop .step1_list .cart-add-order .go-add .goback{position: relative;top:-50px;float: left;left:10px;}
+
+.cart-type {border-left:solid 2px #1BA208 !important;}
+.order-pay {padding:12px 30px 30px 12px;}
+.am-uc-right .check-record table{font-size: 14px;width: 80%;margin: 50px 0px 0px 35px;}
+.am-uc-right .monitor-set{margin: 50px 0px 0px 35px;font-size: 14px;width: 80%;}
+.am-uc-right .check-domain{margin:50px 0 0 240px;}
+
+/**************************************监控设置折叠组´°***********************************************/
+.am-panel-group .am-panel .am-panel-bd .am-panel-monitor-r{position: relative;left: 150px;top: -26px;line-height: 35px;}
+
+.monitor-list tbody tr td{line-height: 32px;}
+
+/**************************************ajax autocomplete***********************************************/
+.autocomplete-suggestions { border: 1px solid #999; background: #FFF; cursor: default; overflow: auto; -webkit-box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64); -moz-box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64); box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64); }
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-no-suggestion { padding: 2px 5px;}
+.autocomplete-selected { background: #F0F0F0; }
+.autocomplete-suggestions strong { font-weight: bold; color: #F37B1D; }
+.autocomplete-group { padding: 2px 5px; }
+.autocomplete-group strong { font-weight: bold; font-size: 16px; color: #F37B1D; display: block; border-bottom: 1px solid #000; }
+
+/**************************************监控设置详情***********************************************/
+.monitor_detail h2.am-titlebar-title{color: #000;font-weight: 300}
+.monitor_detail .domain-monitor-detail{padding: 20px;}
+.monitor_detail .domain-monitor-detail .domain-monitor-detail-a{float: left;}
+.monitor_detail .domain-monitor-detail .domain-monitor-detail-span{float: left;margin-left: 30px;}
+.monitor_detail .domain-monitor-detail .domain-monitor-detail-span .span-down{color: gray;font-size: 12px;}
+
+.monitor_detail .domain-acl-detail{padding: 20px;font-size: 12px;}
+.monitor_detail .domain-acl-detail thead tr{background-color: #E7E7E7;}
+
+.monitor_detail .domain-monitor-count{padding: 20px;font-size: 13px;}
+.monitor_detail .domain-monitor-count select{width: 140px;height: 26px;}
+
+.click-d:hover{cursor:pointer;}
+
+
+
+/**************************************自定义线路***********************************************/
+#setline-s{min-height: 500px}
+#setline-s .setline-list{padding: 10px 8px 30px 8px}
+#setline-s .setline-list .list-up-l{float: left;font-size: 22px;}
+#setline-s .setline-list .list-up-l span{font-size: 16px;color: #5EB95E}
+#setline-s .setline-list .list-up-r{float: right;}
+
+#setline-s .setline-list table tr th{font-size: 14px}
+#setline-s .setline-list table tr td{font-size: 14px}
+#setline-s .setline-list table tr td.line-gray{color: gray;}
+
+#setline-s .setline-list table tr td i:hover{cursor:pointer;}

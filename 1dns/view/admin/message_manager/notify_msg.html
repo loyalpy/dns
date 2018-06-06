@@ -1,0 +1,154 @@
+{block main}
+<div class="main-nav">
+  <div class="name">系统通知</div>
+  <div class="navbtn0">
+  </div>
+  <div class="navbtn">
+  <!--button-->
+  <a href="javascript:void(0);" class="addbtn btn btn-primary btn-sm">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增通知</a>
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /message_manager/notify}">
+<div class="tpl">
+<!--form start-->
+<div class="form-item form-item-date ">
+	<label>时间：</label> 
+	<div class="item-v">
+	<input class="nhigh date-ymd shigh" value="{$startdate}" readOnly type="text" name="startdate" /> <cite class="glyphicon glyphicon-calendar"></cite>
+	</div><div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-date ">
+	<label>-</label> 
+	<div class="item-v">
+	<input class="nhigh date-ymd shigh" value="{$enddate}" readOnly type="text" name="enddate" /> <cite class="glyphicon glyphicon-calendar"></cite>
+	</div><div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-text "><label>UID/关键词：</label>
+	<div class="item-v"><input class="nhigh" value="{$keyword}" type="text" name="keyword" /></div>
+	<div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-button undefined"><label></label>
+	<div class="item-v"><input value="{hash}" type="hidden" name="hash"><button class="btn btn-success btn-sm" type="submit">搜索</button></div>
+	<div class="cl"></div>
+</div>
+<!--form end-->
+<div class=cl></div>
+</div>
+</form>
+<!--end search box -->
+<!-- list start-->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class='table table-bordered' cellpadding="0" cellspacing="0">
+				<col width="100px" />
+				<col width="130px" />
+				<col width="190px" />
+				<col />
+				<col width="70px" />
+				<col width="140px" />
+				<col width="140px" />
+				<col width="45px" />
+				<thead>
+					<tr class="active">
+					<th>发送人</th>
+					<th>接收人</th>
+					<th>标题</th>
+					<th>内容</th>
+					<th>已读</th>
+					<th>读时间</th>
+					<th>时间</th>
+					<th>操作</th>
+					</tr>
+				</thead>
+				{foreach items=$this->datalist['list']}
+				<tbody class="list-item">
+				    <tr>
+					<td>
+					{if $item['muid']}
+					{set $muserinfo = C("user")->get_cache_userinfo($item['muid']);}
+					{$muserinfo['name']}
+					{else}
+					系统
+					{/if}
+					</td>
+					<td>
+					{if $item['tuid']}
+					{set $muserinfo = C("user")->get_cache_userinfo($item['tuid']);}
+					{$muserinfo['name']}
+					{else}
+					-
+					{/if}
+					</td>
+					<td>{$item['subject']}</td>
+					<td>{$item['message']}</td>
+					<td>
+					{if $item['inread'] == 1}
+					<font class="font-green">已读</font>
+					{else}
+					<font class="font-gray">未读</font>
+					{/if}
+					</td>
+					<td>
+					{if $item['inread'] == 1}
+					{echo tTime::get_datetime('Y-m-d H:i:s',$item['read_dateline'])}
+					{else} -
+					{/if}
+					</td>
+					<td>{echo tTime::get_datetime('Y-m-d H:i:s',$item['dateline'])}</td>
+					<td>
+					<p class="table-item-op"><a href="javascript:void(0);" class="t-ajax-button" data-url="{url /message_manager/notify_msg_del?id=$item[id]}" confirm="1"><span class="glyphicon glyphicon-remove"></span></a>
+					</p>
+					</td>
+					</tr>
+				</tbody>
+				{/foreach}
+ </table>
+</div>
+<div class="pagebar">
+ {$this->datalist['pagebar']}
+</div>
+</form>
+{/block}
+
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include message_manager/notify_send}
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script language="javascript" src="{url static@/javascript/kindeditor-4.1.7/kindeditor-all-min.js}" type="text/javascript" ></script>
+<script language="javascript" >
+$(".table-item-op-del").each(function(){
+  	$(this).data("data-before",function(){
+  		return confirm("您确定要删除该条信息吗?");
+  	})
+});
+$(".date-ymd").datetimepicker({
+	language:  'zh-CN',
+	autoclose: 1,
+	startView: 2,
+	minView: 2,
+	maxView: 4,
+	format:"yyyy-mm-dd",
+	pickerPosition: "bottom-right"   
+});
+$(function(){
+	$(".addbtn").click(function(){
+		send_notify("0");
+	});
+}) 
+</script>
+{/block}

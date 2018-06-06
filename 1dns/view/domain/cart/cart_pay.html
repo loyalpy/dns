@@ -1,0 +1,155 @@
+{block main}
+<div class="aps1">
+        <div class="dis20"></div>
+        <div class="order-shopping order-shopping1">
+                <div class="nav">
+                        <ul>
+                                <li class="un-use use1">
+                                        <div class="icon">
+                                                <span class="s cur">1</span>
+                                                <font class="cur">查看购物车</font>
+                                                <span class="cart_icon_right"></span>
+                                        </div>
+                                </li>
+                                <li class="un-use use2">
+                                        <div class="icon">
+                                                <span  class="s cur">2</span>
+                                                <font class="cur">提交资料</font>
+                                                <span class="cart_icon_right"></span>
+                                        </div>
+                                </li>
+                                <li class="un-use use3">
+                                        <div class="icon">
+                                                <span class="s cur">3</span>
+                                                <font class="cur">确认订单</font>
+                                                <span class="cart_icon_right"></span>
+                                        </div>
+                                </li>
+                                <li class="un-use use4">
+                                        <div class="icon">
+                                                <span class="s">4</span>
+                                                <font >支付</font>
+                                        </div>
+                                </li>
+                        </ul>
+                </div>
+                <div class="content">
+                        <div class="dis30"></div>
+                        <div class="content-shop">
+                                <div class="order-detail">
+                                        <div class="cart-type" style="border-left: 2px solid #5D9FD6;padding-left: 10px;font-size: 20px;">域名购买({echo count($list['list']);})</div>
+                                        <div class="dis20"></div>
+                                        <table class="table"  style="margin-left: 10px;">
+                                                <col>
+                                                <col width="220"/>
+                                                <col width="220"/>
+                                                <thead>
+                                                <tr>
+                                                        <th>域名</th>
+                                                        <th>年限</th>
+                                                        <th>金额(元)</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {foreach $items = $list['list']}
+                                                <tr>
+                                                        <td>
+                                                                {$item['domain']}<span style="color: gray;font-size: 12px"> ({if $item['type'] == 1}新购{else}续费{/if})</span>
+                                                                <input type="hidden" name="cart_ids0" value="{$item['cart_id']}" />
+                                                        </td>
+                                                        <td>{$item['num']}年</td>
+                                                        <td>{$item['amount']}</td>
+                                                </tr>
+                                                {/foreach}
+                                                </tbody>
+                                        </table>
+                                </div>
+
+                                {if !empty($list['list'])}
+                                {if isset($coupon_arr['id'])}
+                                <div class="cart-type" style="border-left: 2px solid #5D9FD6;padding-left: 10px;font-size: 18px">代金券</div>
+                                <div class="dis10"></div>
+                                <div class="coupon-c">
+                                        {$coupon_arr['name']}<br/>
+                                </div>
+                                {/if}
+                                {/if}
+
+
+                                <div class="dis30"></div>
+                        </div>
+                        <div class="dis30"></div>
+                        <div class="order-pay" style="border-top: 1px solid silver;text-align: right;">
+                                <div class="dis10"></div>
+                                <input type="hidden" name="coupon_code" value="{if isset($coupon_arr['id'])}{$coupon_arr['code']}{/if}" />
+                                <a type="button" href="{url /cart/cart}" class="btn btn-default" style="position: relative;top:-12px;left: -500px;">购物车首页</a>
+                                订单商品：<span style="color: #FA7821;font-size: 16px;">{$list['num']} </span>件&nbsp;&nbsp;&nbsp;应付总价：
+                                <span class="total-sum" style="color: #FA7821;font-size: 34px;">
+                                        {if isset($coupon_arr['id'])}
+                                        {echo sprintf("%.2f",$list['amount'] - $coupon_arr['balance'])}
+                                        {else}
+                                        {$list['amount']}
+                                        {/if}</span>元&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-info add-pay-1" style="position: relative;top:-12px;">确认订单</button>
+                        </div>
+                </div>
+        </div>
+        </div>
+        <div class="dis60"></div>
+        <!--添加订单失败-->
+        <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="margin-top: 300px">
+                <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel"> 温馨提示</h4>
+                                </div>
+                                <div class="modal-body" style="text-align: center;font-size: 18px;margin: 30px 0;">
+                                        <div class="" style="font-size: 16px">您有未完成订单，请先完成订单再提交新订单</div>
+                                        <div class="dis30"></div>
+                                        <a href="" type="button" class="btn btn-default" data-dismiss="modal">关闭</a>
+                                        <a href="{url /ucenter/order}" type="button" class="btn btn-warning">查看订单列表</a>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
+{/block}
+{block javascript}
+
+<script type="text/javascript">
+        $(function(){
+                $(".add-pay-1").unbind("click").bind("click",function(){
+                        var coupon_code = $("input[name='coupon_code']").val();
+                        var cart_ids0 = [];
+                        $("input[name='cart_ids0']").each(function(){
+                                cart_ids0.push($(this).val());
+                        });
+                        var data = {"cart_ids0":cart_ids0.join(",")};
+                        data.coupon_code = coupon_code;
+                        //执行创建订单并支付请求
+                        $.ui.loading();
+                        $.ajaxPassport({
+                                url:"{url /cart/order_add}",
+                                data:data,
+                                success:function(res){
+                                        $.ui.close_loading();
+                                        if(res.error == 0){
+                                                var order_no = res.message;
+                                                $.ui.success("提交成功！");
+                                                setTimeout(function(){
+                                                        $.redirect("{url /cart/pay?order_no=}"+order_no);
+                                                },500);
+                                        }else{
+                                                setTimeout(function(){
+                                                        $('#myModal').modal();
+                                                        $("#myModal").find(".modal-dialog").width(500);
+                                                },600);
+                                        }
+                                }
+                        });
+                })
+        });
+</script>
+
+{/block}

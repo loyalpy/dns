@@ -1,0 +1,144 @@
+{block head_menu}
+<div class="menu">
+    <ul>
+        {if $this->check_purview("/domain_manager/domain")}
+        <li><a href="{url  /domain_manager/domain}" >域名列表</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_qy")}
+        <li><a href="{url  /domain_manager/domain_qy}">域名牵引</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log")}
+        <li><a href="{url  /domain_manager/domain_log}">域名操作日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log_switch")}
+        <li><a href="{url  /domain_manager/domain_log_switch}" >域名切换日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_black")}
+        <li><a href="{url  /domain_manager/domain_black}" >黑白名单</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_deleted")}
+        <li><a href="{url  /domain_manager/domain_deleted}" >已删除域名</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_find")}
+        <li><a href="{url  /domain_manager/domain_find}" class="cur">域名找回</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_diyline")}
+        <li><a href="{url  /domain_manager/domain_diyline}">自定义线路</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_bind")}
+        <li><a href="{url  /domain_manager/domain_bind}">别名绑定</a></li>
+        {/if}
+    </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+    <div class="name">域名找回</div>
+    <div class="navbtn">
+        <!--button-->
+        <!--end button-->
+    </div>
+    <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_manager/domain_find?do=get_url}">
+    <div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+    <div class="list-box">
+        <table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+            <col width="40px"/>
+            <col width="120px"/>
+            <col width="220px"/>
+            <col />
+            <col width="80px"/>
+            <col width="150px"/>
+            <thead>
+            <tr>
+                <th><input type="checkbox" data-name="domain_find[]" class="checkall"/></th>
+                <th>域名</th>
+                <th>域名注册邮箱</th>
+                <th>老用户/新用户</th>
+                <th>状态</th>
+                <th>创建时间</th>
+            </tr>
+            </thead>
+            <tbody class="tpl"></tbody>
+        </table>
+    </div>
+    <div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script type="text/template" id="tpl_list_row">
+    <#macro row data>
+        <tr>
+            <td class="font-black"><input type="checkbox" name="domain_find[]" value=""/></td>
+            <td class="font-blue"><span class="keybox">${data.domain}</span></td>
+            <td class="font-gray"><span class="keybox">${data.email}</span></td>
+            <td>
+                <span>${data.ouid}</span>&nbsp;<site class="glyphicon glyphicon-arrow-right font-gray"></site>&nbsp;
+                <#if (data.uid == 0)><span class="font-red">域名未找回</span><#else><span class="font-green">${data.uid}</span></#if>
+            </td>
+            <td><cite class="<#if (data.status==1)>glyphicon glyphicon-ok font-green<#else>glyphicon glyphicon-remove font-red</#if>" title="<#if (data.status==1)>域名已找回<#else>域名未找回</#if>"></cite></td>
+            <td class="font-gray">${data.dateline}</td>
+        </tr>
+    </#macro>
+</script>
+<!-- edit ddd -->
+<script language="javascript">
+    var pageurl = "{$pageurl}";
+    var search_formdata = {
+    startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+    enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+    };
+    var loadlist = function(page){
+        $.ajaxLoadlist(page,pageurl,function(){
+            var keyword = $(".the_searchform input[name='keyword']").val();
+            if(keyword != ""){
+                $(".thelistform").find(".tpl .keybox").each(function(){
+                    var obj = this;
+                    var html = $(obj).html();
+                    $(obj).html($.replace_keyword(html,keyword))
+                });
+            };
+            //全选，全不选
+            $(".list-table").find("input.checkall").unbind("click").bind("click",function(){
+                $.check_all(this);
+            });
+        });
+    }
+    $(function(){
+        //加载搜索
+        $.loadform(search_formdata,"",function(res){
+            pageurl = res.pageurl;
+            loadlist();
+            return true;
+        },null,".the_searchform");
+        //加载列表
+        $(".date-ymd").datetimepicker({
+            language:  'zh-CN',
+            autoclose: 1,
+            startView: 2,
+            minView: 2,
+            maxView: 4,
+            format:"yyyy-mm-dd",
+            pickerPosition: "bottom-right"
+        });
+        loadlist();
+    })
+</script>
+{/block}

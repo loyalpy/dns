@@ -1,0 +1,446 @@
+{block main}
+<div class="main-nav">
+  <div class="name">客户列表</div>
+  <div class="navbtn0">
+  {set $client_st = array_reverse($data_config['client_st'],true)}
+  <a class="btn {if empty($st)}btn-info{else}btn-default{/if} btn-sm" title="所有" href="{url /client_manager/clientlist?st=0}"><cite class="glyphicon glyphicon-th"></cite> 所有</a> 
+  {foreach items=$client_st}
+  <a class="btn {if $st == $key}btn-info{else}btn-default{/if} btn-sm" title="{$item['name']}" href="{url /client_manager/clientlist?st=$key}"><cite class="glyphicon glyphicon-th"></cite> {$item}</a> 
+  {/foreach}
+  </div>
+  <div class="navbtn">
+  <button type="button" class="btn btn-default btn-sm refresh-btn" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;刷新</button> 
+  
+  <!--button-->
+  <a href="javascript:void(0)" data-url="{url /client_manager/clientlist_edit}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增客户</a>
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /client_manager/clientlist?st=$st&do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+	<col />	
+	<col width="220px" />
+	<col width="80px" />
+	<col width="80px" />
+	<col width="60px" />
+	<col width="210px" />
+	<col width="70px" />
+	<col width="130px" />
+	<thead>
+	<tr>  
+	<th>客户名称</th>
+	<th>联系信息</th>
+	<th>客户类型</th>
+	<th>来源</th>
+	<th>性质</th>
+	<th>最后跟进</th>
+	<th>相关销售</th>
+	<th style="display:none;">状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /client_manager/clientlist_edit}" method="post" class="theform form form-2" role="form">
+<div class="tpl"></div>
+</form>
+<div class="linkerlist"></div>
+<div class="dis20"></div>
+<div class="recordlist">
+	<h4>客户跟踪记录</h4>
+	<div class="dis20"></div>
+	<div class="record_tpl"></div>
+	<div class="dis20"></div>
+	<div class="addbox form form-2" style="background:#f8f8f8;border:solid 1px #efefef;">
+	    <div class="dis10"></div>
+		<div class="form-item">
+		<label>跟踪内容：</label>
+		<div class="item-v"><textarea id="Mrecord_content" style="width:400px;height:60px;"></textarea></div>
+		<div class="cl"></div>
+		</div>
+		<div class="form-item">
+		<label></label>
+		<div class="item-v"><button type="button" class="btn btn-danger btn-sm record_editbtn" data-client="${data.id}" data-id="0">添加跟踪内容</button></div>
+		<div class="cl"></div>
+		</div>
+	</div>
+</div>
+<div class="dis20"></div>
+</div>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit_linkerlist">
+<div class="dis20"></div>
+<h4>客户联系人</h4>
+<div class="linkerlist form">
+<div class="dis10"></div>
+<table class="list-table table table-bordered table-condensed" cellpadding="0" cellspacing="0">
+	<thead>
+	<tr class="active">  
+	<th>联系人</th>
+	<th>手机</th>
+	<th>电话</th>
+	<th>QQ</th>
+	<th>Email</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody>
+	<#list data.linker as list>
+	<tr class="<#if (list.one == 1)>success<#else></#if>">
+	<td><input type="text" class="linker low" value="${list.name}" /></td>
+	<td><input type="text" class="linker_mobile" value="${list.mobile}" /></td>
+	<td><input type="text" class="linker_tel" value="${list.tel}" /></td>
+	<td><input type="text" class="linker_qq" value="${list.qq}" /></td>
+	<td><input type="text" class="linker_email" value="${list.email}" /></td>
+	<td><button class="btn btn-primary btn-xs linker_editbtn" data-client="${data.id}" data-id="${list.id}">保存</button> 
+	<#if (list.one == 0)>
+	<button type="button" class="btn btn-default btn-xs linker_delbtn" data-client="${data.id}" data-id="${list.id}">删除</button>
+	</#if>
+	</td>
+	</tr>
+	</#list>
+	<tr>
+	<td><input type="text" class="linker low" value="" /></td>
+	<td><input type="text" class="linker_mobile" value="" /></td>
+	<td><input type="text" class="linker_tel" value="" /></td>
+	<td><input type="text" class="linker_qq" value="" /></td>
+	<td><input type="text" class="linker_email" value="" /></td>
+	<td><button type="button" class="btn btn-danger btn-xs linker_editbtn" data-client="${data.id}" data-id="0">新增</button></td>
+	</tr>
+	</tbody>
+</table>
+</div>
+</script>
+<script type="text/template" id="tpl_list_edit_recordlist">
+    <#list data.list as list>
+	<div class="client_records_item">
+	   <h1><#if (list_index ==0)><cite class="glyphicon glyphicon-adjust"></cite></#if>${list.key}</h1>
+	   <#list list.v as list2>
+	   <div class="list-item">
+	   <div class="date">${list2.date}</div>
+	   <div class="record">${list2.content}<br/>
+	   <p class="author">By: ${list2.author} 
+	   {if $this->userinfo['urole'] == 1}
+	   <a data-id="${list2.id}" onclick="delrecord(this)" href="javascript:void(0);" class="glyphicon glyphicon-remove font-gray2 f11"></a>
+	   {/if}
+	   </p>
+	   </div>
+	   <div class="cl"></div>
+	   </div>
+	   </#list>
+	</div>
+	</#list>
+	<div class="pagebar">${data.pagebar}</div>
+</script>
+<script language="javascript" src="{webroot cache/static/areadata.js}"></script>
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+	<tr class="">
+	<td><a href="javascript:void(0);" title="修改/联系人/跟踪记录" class="editbtn f14" data-id="${data.id}">${data.name}</a><br/>
+	</td>
+	<td>传真：<#if ($.is_empty(data.fax))> - <#else>  ${data.fax} </#if><br/>
+	<font class="font-gray">联系人：&nbsp;${data.linker[0]}
+	&nbsp;${data.linker[1]} ${data.linker[2]}
+	</font>
+	</td>
+	<td class="font-gray">${data.goods_cat}</td>
+	<td class="font-gray">${data.client_sr}</td>
+	<td class="font-gray">${data.client_tp}</td>
+	<td class="font-gray">${data.lastdateline}<br/>
+	${data.records}
+	</td>
+	<td class="font-gray">${data.author}</td>
+	<td class="font-gray" style="display:none;">${data.client_st}</td>
+    <td class="font-gray">
+    <p class="table-item-op">
+    {if $this->check_rpurview(12)}
+	<button class="btn btn-default btn-xs add_workform_btn" data-work_no="" data-client="${data.id}" data-work_tp="up"  type="button">上架服务器</button>
+	{/if}
+	    &nbsp;
+	<a href="javascript:void(0);" title="修改/联系人/跟踪记录" class="editbtn" data-id="${data.id}"><span class="glyphicon glyphicon-edit"></span></a> 
+	<a href="{url /order_manager/orderlist_edit?client=}${data.id}" title="提交订单" data-id="${data.id}"><span class="glyphicon glyphicon-shopping-cart"></span></a>  
+	</p>
+    </td>
+	</tr>
+</#macro>
+</script>
+{javascript bootstrap-datetimepicker/bootstrap-datetimepicker.min.js,bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var init_page = 1;
+var search_formdata = {
+	uid:{type:"uid",label:"销售员",name:"uname",value:"1",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var formdata = {
+	name:{type:"text",label:"客户名称",name:"name",value:"",disabled:0,data_sr:[],css:"high",require:"datatype='*' ajaxurl='{url /client_manager/check_client_name?in_ajax=1}'",desc:"",item_css:"font-red col-md-12"},
+	
+	goods_cat:{type:"select",label:"业务类型",name:"goods_cat",value:"",disabled:0,data_sr:dataConfig_A['goods_cat'],css:"",require:"",desc:"",item_css:"col-md-4"},
+	client_tp:{type:"select",label:"客户性质",name:"client_tp",value:"",disabled:0,data_sr:dataConfig_A['client_tp'],css:"",require:"",desc:"",item_css:"col-md-4"},
+	client_sr:{type:"select",label:"客户来源",name:"client_sr",value:"",disabled:0,data_sr:dataConfig_A['client_sr'],css:"",require:"",desc:"",item_css:"col-md-4"},
+	html_space4:{type:"html",value:"<h5>&nbsp;</h5>"},
+	client_st:{type:"radio",label:"客户状态",name:"client_st",value:"",disabled:0,data_sr:dataConfig_A['client_st'],css:"",require:"",desc:"",item_css:"col-md-6 client_st"},
+	client_lv:{type:"radio",label:"客户等级",name:"client_lv",value:"",disabled:0,data_sr:dataConfig_A['client_lv'],css:"",require:"",desc:"",item_css:"col-md-6 client_st"},
+	
+	
+	html_space5:{type:"html",value:"<h5>&nbsp;</h5>"},
+	
+	linker:{type:"text",label:"联系人",name:"linker",value:"",disabled:0,data_sr:[],css:"",require:"datatype='*'",desc:"联系人不能为空",item_css:"col-md-6 font-red"},
+	linker_tel:{type:"text",label:"联系人电话",name:"linker_tel",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+	linker_mobile:{type:"text",label:"联系人手机",name:"linker_mobile",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+	linker_qq:{type:"text",label:"联系人QQ",name:"linker_qq",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+	linker_email:{type:"text",label:"联系人邮箱",name:"linker_email",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+	
+	html_space2:{type:"html",value:"<h5>&nbsp;</h5>"},
+	
+	address:{type:"text",label:"客户地址",name:"address",value:"",disabled:0,data_sr:[],css:"high",require:"",desc:"",item_css:" col-md-6"},
+	fax:{type:"text",label:"客户传真",name:"fax",value:"",disabled:0,data_sr:[],css:"high",require:"",desc:"",item_css:"col-md-6"},
+	homepage:{type:"text",label:"客户网址",name:"homepage",value:"",disabled:0,data_sr:[],css:"high",require:"",desc:"",item_css:"col-md-6"},
+	ip:{type:"text",label:"当前使用IP",name:"ip",value:"",disabled:0,data_sr:[],css:"high",require:"",desc:"",item_css:"col-md-6"},
+	zcode:{type:"text",label:"客户邮编",name:"zcode",value:"",disabled:0,data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-6"},
+	bz:{type:"textarea",label:"客户备注",name:"bz",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+	
+	id:{type:"hidden",label:"",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+var edit_func = function(id,edit){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = "{url /client_manager/clientlist_edit?id=}"+id;
+	var _tmp = formdata;
+	edit_c = "" + easyTemplate(edit_c,{title:"客户基本信息",id:id});
+	$("#myModal").find(".modal-dialog").width("79%");
+	$("#myModal").find(".modal-content").html(edit_c);
+	if(typeof edit == "undefined"){
+		_tmp.name.type = "ivalue";
+		_tmp.name.css = "f18 font-blue";
+		_tmp.linker.type = "hidden";
+		_tmp.linker_tel.type = "hidden";
+		_tmp.linker_mobile.type = "hidden";
+		_tmp.linker_qq.type = "hidden";
+		_tmp.linker_email.type = "hidden";
+		_tmp.html_space2.type = "hidden";
+		
+		$(".recordlist").show();
+	}else{
+		_tmp.name.type = "text";
+		_tmp.name.css = "high";
+		_tmp.linker.type = "text";
+		_tmp.linker_tel.type = "text";
+		_tmp.linker_mobile.type = "text";
+		_tmp.linker_qq.type = "text";
+		_tmp.linker_email.type = "text";
+		_tmp.html_space2.type = "html";
+		
+		$(".recordlist").hide();
+	}
+	$.loadform(_tmp,url,function(res,thebtn){
+		if(res.error == 0){
+			$.ajaxTips(thebtn,res.message,"success");
+		}else{
+			$.ajaxTips(thebtn,res.message,"error");
+		}
+		if(res.callback == "reload"){
+			setTimeout("window.location.reload()",500);
+		}else if(res.callback == "close"){
+			setTimeout('$("#myModal").modal("hide")',500);
+		}else if(res.callback){
+			setTimeout("window.location.replace('"+res.callback+"')",500);	
+		}	
+		loadlist(1);
+		if(id == 0){
+			 //edit_func(res.id);
+		 }
+		 return false;
+	},function(res){
+		//处理跟踪记录
+		$("#myModal").find(".modal-content .recordlist button.record_editbtn").click(function(){
+			var obj = this;
+			var content = $("textarea#Mrecord_content").val();
+			var client = parseInt($(obj).attr("data-client"));
+			if($.is_empty(content)){
+				$("textarea#Mrecord_content").focus();
+				return false;
+			}
+			$.ajaxPassport({
+				url:"{url /client_manager/clientlist_record_edit}",
+				data:{id:0,client:client,in_ajax:1,content:content},
+				success:function(res){
+					if(res.error == 1){
+						$.ajaxTips(obj,res.message,"error");
+					}else{
+						$.ajaxTips(obj,res.message,"success");
+						loadrecord(1,res.id);
+					}
+				}
+			});
+		});
+		loadrecord(1,res.id);
+		
+		//处理联系人
+		if(res.linker.length>0){
+			var editor_linker = function(obj){
+				var id  = parseInt($(obj).attr("data-id"));
+				var client = parseInt($(obj).attr("data-client"));
+				var parent_obj = $(obj).parent().parent();
+				var linker = parent_obj.find("input.linker").val();
+				var linker_tel = parent_obj.find("input.linker_tel").val();
+				var linker_mobile = parent_obj.find("input.linker_mobile").val();
+				var linker_qq = parent_obj.find("input.linker_qq").val();
+				var linker_email = parent_obj.find("input.linker_email").val();
+                
+				if($.is_empty(linker)){
+					parent_obj.find("input.linker").focus();
+					return false;
+				}
+				if($.is_empty(linker_tel) && $.is_empty(linker_mobile)){
+					parent_obj.find("input.linker_tel").focus();
+					return false;
+				}
+				$.ajaxPassport({
+					url:"{url /client_manager/clientlist_linker_edit}",
+					data:{id:id,client:client,in_ajax:1,linker:linker,linker_tel:linker_tel,linker_mobile:linker_mobile,linker_qq:linker_qq,linker_email:linker_email},
+					success:function(res){
+						if(res.error == 1){
+							$.ajaxTips(obj,res.message,"error");
+						}else{
+							$.ajaxTips(obj,res.message,"success");
+							reload_linkerlist(res);
+						}
+					}
+				});
+			};
+			var delete_linker = function(obj){
+				var id  = parseInt($(obj).attr("data-id"));
+				var client = parseInt($(obj).attr("data-client"));
+				var parent_obj = $(obj).parent().parent();
+				$.ajaxPassport({
+					url:"{url /client_manager/clientlist_linker_del}",
+					data:{id:id,client:client,in_ajax:1},
+					success:function(res){
+						if(res.error == 1){
+							$.ajaxTips(obj,res.message,"error");
+						}else{
+							$.ajaxTips(obj,res.message,"success");
+							reload_linkerlist(res);
+						}
+					}
+				});
+			}
+			var reload_linkerlist = function(res){
+				$("#myModal").find(".modal-content .linkerlist").html(""+easyTemplate($("#tpl_list_edit_linkerlist").html(),res));
+				$("#myModal").find(".modal-content .linkerlist").find("button.linker_editbtn").click(function(){
+						editor_linker(this);
+				});
+				$("#myModal").find(".modal-content .linkerlist").find("button.linker_delbtn").click(function(){
+						delete_linker(this);
+				});
+			}
+			reload_linkerlist(res);
+		}
+	});
+	$('#myModal').modal();
+}
+var delrecord = function(obj){
+	var id = parseInt($(obj).attr("data-id"));
+	if(confirm("您确定要删除该记录吗？")){
+		$.ajaxPassport({
+			url:"{url /client_manager/clientlist_record_del}",
+			data:{id:id,in_ajax:1},
+			success:function(res){
+				if(res.error == 1){
+					$.ajaxTips(obj,res.message,"error");
+				}else{
+					$.ajaxTips(obj,res.message,"success");
+					$(obj).parent().parent().parent().empty().remove();
+				}
+			}
+		});
+	}
+}
+var loadrecord = function(page,client){
+	if(typeof client == "undefined" || client<=0){
+		return false;
+	}
+	$.ajaxPassport({
+		url:"{url /client_manager/clientlist_record}",
+		data:{id:0,client:client,page:page,in_ajax:1},
+		success:function(res){
+			if(res.error == 1){
+			}else{
+				$("#myModal").find(".modal-content .recordlist .record_tpl").html(""+easyTemplate($("#tpl_list_edit_recordlist").html(),res));
+			}
+		}
+	});
+}
+var loadlist = function(page){
+	init_page = page;
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_func($(this).attr("data-id"));
+		 });
+		$(".viewbtn").click(function(){
+			view_func(1,$(this).attr("data-id"));
+		 });
+		$(".t-ajax-button").each(function(i){
+			$.t_ajax_button(this);
+		});
+		
+		//服务器维护单
+		$(".thelistform").find(".add_workform_btn").click(function(){
+			edit_workform("",$(this).attr("data-work_tp"),$(this).attr("data-client"));
+		});
+	});
+}
+$(function(){
+	//加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },function(res){
+	 	get_userlist();
+	 },".the_searchform");
+	 //加载列表
+	 loadlist(1);
+     //增加按钮
+	 $(".addbtn").click(function(){
+		edit_func(0,1);
+	 });
+	 $(".refresh-btn").click(function(){
+	 	loadlist(init_page);
+	 })
+})
+</script>
+{/block}

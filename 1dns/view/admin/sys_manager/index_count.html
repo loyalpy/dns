@@ -1,0 +1,109 @@
+{block head_menu}
+
+{/block}
+{block css}
+<style>
+</style>
+{/block}
+
+{block main}
+<div class="uc-index-row1">
+   <div class="uc-userinfo">
+       <!--<div class="avatar"><a class="tiptitle" data-content="点击修改头像" href="{url account@/ucenter/profile_avatar}" target="_blank"><img class="myavatar_50" width="50" height="50" src="{echo tFun::avatar($uid)}" /></a> </div>-->
+       <div class="avatar"><a class="tiptitle"  href="javascript:void 0;" target="_blank"><img class="myavatar_50" width="50" height="50" src="{echo tFun::avatar($uid)}" /></a> </div>
+       <div class="info"><h1>Hi! <span class="font-org f24">{echo tUtil::substr($this->userinfo['name'],3)}</span>&nbsp;&nbsp;<a href="{url account@/ucenter/profile_basic}" class="font-blue">修改</a></h1>
+       <h2 class="f12 font-gray">问题联系QQ：415480171
+       </h2>
+       </div>
+       <div class="op">
+          {if $this->check_purview('/domain_manager/domain')}
+          <a href="{url /domain_manager/domain}" class="btn btn-default btn-xs">域名管理</a>&nbsp;
+          {/if}
+           {if $this->check_purview("/sys_manager/index_weixinport")}
+           <a target="_blank" href="{url /sys_manager/set_wxmenu}" target="_blank" class="btn btn-default btn-xs">微信菜单生成</a>&nbsp;
+           {/if}
+           <div class="dis5"></div>
+           {if $this->check_purview("/sys_manager/index_import")}
+           <a target="_blank" style="display:none;" href="{url /import_manager/importsdsd}" target="_blank" class="btn btn-default btn-xs">老版数据导入</a>&nbsp;
+           {/if}
+           {if $this->check_purview("/sys_manager/index_batchrash")}
+           <a target="_blank" style="display:none;" href="{url /import_manager/domain_refresh}" target="_blank" class="btn btn-default btn-xs">域名批量刷新</a>&nbsp;
+           {/if}
+          </p>
+       </div>
+       <a type="button" href="{url sys_manager/index}" class="btn btn-warning btn-sm" style="float: right"><cite class="glyphicon glyphicon-align-justify"></cite> 切换统计数据</a>
+       <div class="cl"></div>
+   </div>
+   <div class="sysnotify">
+
+   </div>
+   <div class="cl"></div>
+</div>
+
+{code
+//年份,月份
+$month = R("month","int");
+$year = R("year","int");
+$month = $month?$month:intval(tTime::get_datetime("m"));
+$year = $year?$year:intval(tTime::get_datetime("Y"));
+}
+{/code}
+<script language="javascript" src="{url static@/javascript/highcharts/highcharts.js}"></script>
+<div class="" style="padding: 15px 30px 0px 30px">
+<div class="headbar">
+    <div class="operating">
+	<span class="form">
+	<select name="year" id="Myear" class="form-control" style="width: 70px;display: inline-block">
+        <option value="2016" {if $year == 2016}selected="selected"{/if}>2016</option>
+        <option value="2017" {if $year == 2017}selected="selected"{/if}>2017</option>
+        <option value="2018" {if $year == 2018}selected="selected"{/if}>2018</option>
+        <option value="2019" {if $year == 2019}selected="selected"{/if}>2019</option>
+        <option value="2020" {if $year == 2020}selected="selected"{/if}>2020</option>
+    </select>&nbsp;
+	<select name="month" id="Mmonth" class="form-control"  style="width: 70px;display: inline-block">
+        <option value="1" {if $month == 1}selected="selected"{/if}>1</option>
+        <option value="2" {if $month == 2}selected="selected"{/if}>2</option>
+        <option value="3" {if $month == 3}selected="selected"{/if}>3</option>
+        <option value="4" {if $month == 4}selected="selected"{/if}>4</option>
+        <option value="5" {if $month == 5}selected="selected"{/if}>5</option>
+        <option value="6" {if $month == 6}selected="selected"{/if}>6</option>
+        <option value="7" {if $month == 7}selected="selected"{/if}>7</option>
+        <option value="8" {if $month == 8}selected="selected"{/if}>8</option>
+        <option value="9" {if $month == 9}selected="selected"{/if}>9</option>
+        <option value="10" {if $month == 10}selected="selected"{/if}>10</option>
+        <option value="11" {if $month == 11}selected="selected"{/if}>11</option>
+        <option value="12" {if $month == 12}selected="selected"{/if}>12</option>
+    </select>&nbsp;
+	<button class="btn btn-default btn-sm operating_btn" onclick="$.redirect('{url /sys_manager/index_count?year=}'+$('#Myear').val()+'&month='+$('#Mmonth').val())" type="button">查看</button>
+	</span>
+    </div>
+</div>
+<hr/>
+<div class="list content">
+    <div class="fl" style="width:1050px;margin-left: 25px">
+        <script type="text/javascript" src="{url /sys_manager/index_sys_count_image?t=user_reg_month&w=1000&h=260&month=$month&year=$year}"></script>
+    </div>
+    <div class="dis40"></div>
+    <div class="fl" style="width:1050px;margin-left: 25px">
+        <script type="text/javascript" src="{url /sys_manager/index_sys_count_image?t=user_reg_year&w=1000&h=260&month=$month&year=$year}"></script>
+    </div>
+    <div class="dis40"></div>
+    <div class="cl"></div>
+    <div class="fl" style="width:1050px;margin-left: 25px">
+        <script type="text/javascript" src="{url /sys_manager/index_sys_count_image?t=user_account_month&w=1000&h=260&month=$month&year=$year}"></script>
+    </div>
+    <div class="dis40"></div>
+    <div class="fl" style="width:1050px;margin-left: 25px">
+        <script type="text/javascript" src="{url /sys_manager/index_sys_count_image?t=user_account_year&w=1000&h=260&month=$month&year=$year}"></script>
+    </div>
+    <div class="dis10"></div>
+    <div class="dis30"></div>
+</div>
+</div>
+{/block}
+
+
+{block javascript}
+{include tpl/form}
+
+{/block}

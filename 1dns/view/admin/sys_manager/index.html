@@ -1,0 +1,484 @@
+{block head_menu}
+
+{/block}
+{block css}
+<style>
+</style>
+{/block}
+
+{block main}
+<div class="uc-index-row1">
+   <div class="uc-userinfo">
+       <!--<div class="avatar"><a class="tiptitle" data-content="点击修改头像" href="{url account@/ucenter/profile_avatar}" target="_blank"><img class="myavatar_50" width="50" height="50" src="{echo tFun::avatar($uid)}" /></a> </div>-->
+       <div class="avatar"><a class="tiptitle"  href="javascript:void 0;" target="_blank"><img class="myavatar_50" width="50" height="50" src="{echo tFun::avatar($uid)}" /></a> </div>
+       <div class="info"><h1>Hi! <span class="font-org f24">{echo tUtil::substr($this->userinfo['name'],3)}</span>&nbsp;&nbsp;<a href="{url account@/ucenter/profile_basic}" class="font-blue">修改</a></h1>
+       <h2 class="f12 font-gray">问题联系QQ：415480171
+       </h2>
+       </div>
+       <div class="op">
+          {if $this->check_purview('/domain_manager/domain')}
+          <a href="{url /domain_manager/domain}" class="btn btn-default btn-xs">域名管理</a>&nbsp;
+          {/if}
+           {if $this->check_purview("/sys_manager/index_weixinport")}
+           <a target="_blank" href="{url /sys_manager/set_wxmenu}" target="_blank" class="btn btn-default btn-xs">微信菜单生成</a>&nbsp;
+           {/if}
+           <div class="dis5"></div>
+           {if $this->check_purview("/sys_manager/index_import")}
+           <a target="_blank" style="display:none;" href="{url /import_manager/importsdsd}" target="_blank" class="btn btn-default btn-xs">老版数据导入</a>&nbsp;
+           {/if}
+           {if $this->check_purview("/sys_manager/index_batchrash")}
+           <a target="_blank" style="display:none;" href="{url /import_manager/domain_refresh}" target="_blank" class="btn btn-default btn-xs">域名批量刷新</a>&nbsp;
+           {/if}
+
+           <!--<a target="_blank" href="{url /import_register_domain/ImportDnsRecords}" target="_blank" class="btn btn-default btn-xs">域名解析记录导入</a>&nbsp;-->
+
+           </p>
+       </div>
+       <a type="button" href="{url sys_manager/index_count}" class="btn btn-warning btn-sm" style="float: right"><cite class="glyphicon glyphicon-align-center"></cite> 切换统计图</a>
+       <div class="cl"></div>
+   </div>
+   <div class="sysnotify">
+
+   </div>
+   <div class="cl"></div>
+</div>
+
+{if $this->check_purview("/sys_manager/index_count")}
+<!-- 今日统计 -->
+<div class="uc-index-row1 today-count">
+  <h1>今日统计</h1>
+  {set $start_dateline = strtotime(tTime::get_datetime("Y-m-d",$timestamp))}
+  {set $end_dateline   = ($start_dateline + 86400);}
+  <div class="item">
+  <div class="in">
+  <h1>今日新注册用户</h1>
+  <h2>
+  <a href="{url /user_manager/userlist}" class="count">{echo M("user")->get_one("regdateline>$start_dateline AND regdateline<$end_dateline","count('uid')")}</a>
+  <span class="line">/</span>
+  <span class="total font-green">{echo M("user")->get_one("logdateline>$start_dateline AND logdateline<$end_dateline","count('uid')")}</span>
+  <span class="line">/</span>
+  <span class="total">{echo M("user")->get_one("1","count('uid')")}</span>
+  </h2>
+  </div>
+  </div>
+
+  <div class="item">
+  <div class="in">
+  <h1>今日新加域名解析</h1>
+  <h2>
+  <a href="{url /domain_manager/domain}" class="count">{echo M("domain")->get_one("dateline>$start_dateline AND dateline<$end_dateline","count('domain_id')")}</a>
+  <span class="line">/</span>
+  <span class="total font-green">{echo M("domain")->get_one("service_group<>'free' AND inns=1","count('domain_id')")}</span>
+  <span class="line">/</span>
+  <span class="total font-blue">{echo M("domain")->get_one("inns=1","count('domain_id')")}</span>
+  <span class="line">/</span>
+  <span class="total">{echo M("domain")->get_one("1","count('domain_id')")}</span>
+  </h2>
+
+  </div>
+  </div>
+
+  <div class="item">
+  <div class="in">
+  <h1>今日新加域名注册</h1>
+  <h2>
+  <a href="{url /domain_register/domain}" class="count">{echo M("register_domain")->get_one("reg_time>=$start_dateline AND reg_time<=$end_dateline","count('id')")}</a>
+  <span class="line">/</span>
+  <span class="total">{echo M("register_domain")->get_one("1","count('id')")}</span>
+  </h2>
+  </div>
+  </div>
+
+  <div class="item">
+  <div class="in">
+  <h1>今日会员充值</h1>
+  <h2>
+    <a href="{url /order_manager/recharge}" class="count">{set $a = M("recharge")->get_one("dateline>$start_dateline AND dateline<$end_dateline AND status=1 AND indel=0","sum(amount)")}
+    {echo $a?$a:"0.00"}
+    </a>
+  <span class="line"></span><br/>
+  <span class="total">{echo M("recharge")->get_one("status=1 AND indel=0","sum(amount)")}</span>
+  </h2>
+  </div>
+  </div>
+
+    <br/>
+    <div class="dis30"></div>
+
+  <div class="item">
+  <div class="in">
+  <h1>今日域名解析订单</h1>
+  <h2>
+      <a href="{url /order_manager/parser}" class="count">
+          {set $a = M("order")->get_one("dateline>$start_dateline AND dateline<$end_dateline AND indel=0 AND status <> 0","count(order_id)")}
+          {echo $a?$a:"0"}
+      </a>
+      <span class="line"></span><br/>
+      <span class="total">{echo M("order")->get_one("indel=0 AND status <> 0","count(order_id)")}</span>
+  </h2>
+  </div>
+  </div>
+
+
+    <div class="item">
+        <div class="in">
+            <h1>今日域名注册订单</h1>
+            <h2>
+                <a href="{url /order_manager/register}" class="count">
+                    {set $a = M("register_order")->get_one("dateline>$start_dateline AND dateline<$end_dateline AND indel=0 AND status <> 0","count(order_id)")}
+                    {echo $a?$a:"0"}
+                </a>
+                <span class="line"></span><br/>
+                <span class="total">{echo M("register_order")->get_one("indel=0 AND status <> 0","count(order_id)")}</span>
+            </h2>
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="in">
+            <h1>今日管理员充值</h1>
+            <h2>
+                <a href="{url /user_manager/user_accountlog}" class="count">
+                    {set $a = M("user_accountlog")->get_one("dateline>$start_dateline AND dateline<$end_dateline AND type=2 AND ftype = 'balance' AND auid <>0","sum(amount)")}
+                    {echo $a?$a:"0"}
+                </a>
+                <span class="line"></span><br/>
+                <span class="total">{echo M("user_accountlog")->get_one("type=2 AND ftype = 'balance' AND auid > 0","sum(amount)")}</span>
+            </h2>
+        </div>
+    </div>
+
+
+  <div class="cl"></div>
+</div>
+<!-- end 今日统计 -->
+{/if}
+
+{if $this->check_purview("/sys_manager/index_serverstatus") && $this->check_purview("/domain_service/ns_group_btnopra")}
+<!-- 服务器状态统计 -->
+<div class="uc-index-row1 server-status">
+<h1>DNS服务器状态</h1>
+{set $nsservers = M("@domain_ns_group")->get_list(true,"type='ns'")}
+{foreach items=$nsservers}
+    <div class="item">
+        <div class="in">
+            <div class="inner">
+                <h1>
+                    {$item['name']}({$item['ns_group']})&nbsp;
+                    <a  type="button" href="javascript:void (0);" class="btn btn-default btn-xs find-count-ns" data-mac1="{$item['data'][0]['mac']}" data-mac2="{$item['data'][1]['mac']}" data-ip2="{$item['data'][1]['ip']}" data-ip1="{$item['data'][0]['ip']}">统计图</a>
+                </h1>
+                {foreach items=$item['data'] item=$server}
+                <h3>
+                    <font class="f14 font-blue">{$server['ip']}</font> /{$server['domain']}
+                </h3>
+                <h2>
+                    <a href="javascript:void (0);" class="count count-query-ns" data-mac="{$server['mac']}">0</a>
+                    <font class="font-gray2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+                      <span class="interface-status">
+                      <cite class="glyphicon status_img glyphicon-remove font-red"></cite>
+                      <button type="button" class="btn btn-xs btn-default glyphicon glyphicon-refresh refresh-stat" data-mark="reload" data-port="{$server['port']}" data-host="{$server['ip']}">
+                      </button>
+                      </span>
+                    &nbsp;&nbsp;&nbsp;
+                      <span class="dns-status">
+                    <cite data-content="" class="tiptitle glyphicon status_img glyphicon-remove font-red"></cite>
+                    <button type="button" class="btn btn-xs btn-default glyphicon glyphicon-refresh refresh-dns-stat" data-mark="reload" data-port="{$server['port']}" data-host="{$server['ip']}">
+                    </button>
+                      </span>&nbsp;&nbsp;
+                </h2>
+                <div class="dis10"></div>
+                {/foreach}
+            </div>
+        </div>
+    </div>
+{/foreach}
+<div class="cl"></div>
+</div>
+<!-- end 服务器状态统计 -->
+{/if}
+
+
+{if $this->check_purview("/sys_manager/index_beanstalk")}
+<div class="uc-index-row1">
+<h1>消息队列</h1>
+<iframe scrolling="no" src="{url admin@/admin/beanstalk/public/?server=115.231.26.213:11300}" style="border:none;" frameborder="0" width="100%" height="150" ></iframe>
+</div>
+{/if}
+
+
+{if $this->check_purview("/sys_manager/index_online")}
+<!--serverinfo-->
+<div class="uc-index-row1">
+   <div class="uc-rowbox">
+    <div class="head"><cite class="glyphicon glyphicon-user f14"></cite> &nbsp;当前在线:<b class="font-org f18"> {echo M("session")->get_one('1',"count('sid')");}</b>人&nbsp;&nbsp;
+会员：<b class="font-org f18"> {echo M("session")->get_one('uid>0',"count('sid')");}</b>人
+    </div>
+    <div class="bod">
+      <div class="onlines">
+      {set $onlines = M("session AS a LEFT JOIN @user as b ON a.uid=b.uid")->query("","a.expiry,a.uid,a.ip,a.pc,a.ie,b.uname","uid DESC,expiry DESC")}
+      {if !empty($onlines)}
+      {foreach items=$onlines}
+       <div class="item e">
+       {if $item['uid']}
+       <a href="javacript:void(0)" class="e" title="{$item['uname']} - {$item['ip']}/{$item['pc']}/{$item['ie']}">{$item['uname']}</a>
+       {else}
+       <a href="javacript:void(0)" class="e" title="{$item['ip']}/{$item['pc']}/{$item['ie']}">{$item['ip']}/{$item['pc']}/{$item['ie']}</a>
+       {/if}
+       </div>
+      {/foreach}
+      {/if}
+      </div>
+      <div class="cl"></div>
+    </div>
+   </div>
+</div>
+<!--end serverinfo-->
+{/if}
+
+{set $s_record = M("domain_record")->get_one("inlock = 1","count(record_id)")}
+{set $u_record = M("user")->get_one("ulevel = 0 AND utype = 2","count(uid)")}
+{set $domain_qy = M("domain_qy")->get_one("status = 0","count(qy_id)")}
+{set $tg_user = M("tg_user")->get_one("status = 1","count(id)")}
+{if !empty($s_record) || !empty($u_record) || !empty($domain_qy)}
+<div id="Dsystip" class="systip" style="right: -180px;">
+    <div class="sys-tip-box">
+        {if !empty($s_record)}
+        <div class="tip-item">
+            <label>待审核URL：</label>
+            <b class="font-org">{$s_record}</b> 个&nbsp;&nbsp;
+            <a href="{url domain_manager/records?c=lock}" class="txt-blue">查看</a>
+        </div>
+        {/if}
+        {if !empty($u_record)}
+        <div class="tip-item">
+            <label>待审核企业：</label>
+            <b class="font-org">{$u_record}</b> 个&nbsp;&nbsp;
+            <a href="{url user_manager/userlist_com}" class="txt-blue">查看</a>
+        </div>
+        {/if}
+        {if !empty($tg_user)}
+        <div class="tip-item">
+            <label>审核推广用户：</label>
+            <b class="font-org">{$tg_user}</b> 个&nbsp;&nbsp;
+            <a href="{url tg_manager/tg_user}" class="txt-blue">查看</a>
+        </div>
+        {/if}
+        {if !empty($domain_qy)}
+        <div class="tip-item">
+            <label>待解封域名：</label>
+            <b class="font-org">{$domain_qy}</b> 个&nbsp;&nbsp;
+            <a href="{url domain_manager/domain_qy}" class="txt-blue">查看</a>
+        </div>
+        {/if}
+    </div>
+    <div class="sys-tip-close"><a class="txt-gray" onclick="$(this).parent().parent().hide();" href="javascript:void(0);">
+        <i class="glyphicon glyphicon-remove"></i>&nbsp;
+        关闭</a></div>
+</div>
+{/if}
+{/block}
+
+
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{url static@/javascript/highcharts/highcharts.js}"></script>
+<script language="javascript">
+$(function(){
+    //右下角审核弹框提醒
+    $('#Dsystip').animate({'right': 10}, 300);
+    setTimeout(function () {
+        $('#Dsystip').animate({'right':-180},300);
+    } , 5000);
+    //刷新请求
+    $(".refresh-stat").click(function () {
+        check_status(this);
+    });
+    $(".refresh-dns-stat").click(function () {
+        check_dns_status(this);
+    });
+    //初始话操作
+    $(".refresh-dns-stat").click();
+    $(".refresh-stat").click();
+	$("a.tiptitle").popover({html:true,trigger:"hover",});
+    //域名解析查询量统计
+    $(".count-query-ns,.query-ns-total,.query-ns-totals").click(function () {
+        query_ask(this);
+    });
+    $(".count-query-ns,.query-ns-total,.query-ns-totals").click();
+    //查看统计域名解析查询量统计图
+    $(".find-count-ns").unbind("click").bind("click",function () {
+        find_ns_function(this);
+    });
+})
+var check_status = function (obj) {
+    var host = $(obj).data("host");
+    var port = $(obj).data("port");
+    $.ui.loading();
+    $.ajaxPassport({
+        url: "{url  /domain_service/ns_group_btnopra?do=chkstat}",
+        success: function (res) {
+            if (res.error == 0 && res.status_code == 200) {
+                $(obj).parent().find("cite.status_img").removeClass("glyphicon-remove font-red").addClass("glyphicon-ok font-green");
+            } else {
+                $(obj).parent().find("cite.status_img").removeClass("glyphicon-ok font-green").addClass("glyphicon-remove font-red");
+            }
+            $.ui.close_loading();
+        },
+        data: {port: port, host: host}
+    })
+}
+var check_dns_status = function (obj) {
+    var host = $(obj).data("host");
+    var port = $(obj).data("port");
+    $.ui.loading();
+    $.ajaxPassport({
+        url: "{url  /domain_service/ns_group_btnopra?do=status}",
+        success: function (res) {
+            if (res.error == 0 && !$.is_empty(res.message) && res.message.indexOf("8JDNS") > 0) {
+                $(obj).parent().find("cite.status_img").removeClass("glyphicon-remove font-red").addClass("glyphicon-ok font-green");
+            } else {
+                $(obj).parent().find("cite.status_img").removeClass("glyphicon-ok font-green").addClass("glyphicon-remove font-red");
+            }
+            $(obj).parent().find("cite.status_img").data("content",res.message);
+            $(obj).parent().find("cite.status_img").popover({html:true,trigger:"hover",});
+            $.ui.close_loading();
+        },
+        data: {port: port, host: host}
+    })
+}
+var query_ask = function (obj) {
+    var mac = $(obj).data("mac");
+    mac = typeof mac == "undefined"?0:mac;
+    $.ui.loading($(obj));
+    $.ajaxPassport({
+        url:"{url sys_manager/index_mac_query}",
+        success:function (res) {
+            $.ui.close_loading($(obj));
+            $(obj).html(res.message);
+        },
+        data:{mac:mac}
+    });
+}
+</script>
+<script type="text/template" id="tpl_find_ns_t">
+    <#macro rowedit data>
+        <div class="dis30"></div>
+        <div class="" style="padding: 15px 30px 0px 70px">
+            <div class="list content">
+                <div class="fl" style="width:1080px;">
+                    <div class="countimage-box" id="user_reg_month" style="width: 1080px; height:320px; margin: 0 auto"><img alt="正在加载中" class="loading" src="" /></div>
+                </div>
+                <div class="dis30"></div>
+            </div>
+        </div>
+        <div class="dis30"></div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    var find_ns_function = function (obj) {
+        var mac1 = $(obj).data("mac1");
+        var mac2 = $(obj).data("mac2");
+
+        var ip1 = $(obj).data("ip1");
+        var ip2 = $(obj).data("ip2");
+        $.ui.loading();
+        $.ajaxPassport({
+            url:"{url sys_manager/index_find_ask}",
+            success:function (res) {
+                $.ui.close_loading();
+                if (res.error == 0) {
+                    var edit_c = "" + easyTemplate($("#tpl_find_ns_t").html());
+                    $("#myModal").find(".modal-dialog").width("1200");
+                    $("#myModal").find(".modal-content").html(edit_c);
+                    $('#myModal').modal();
+
+
+                    var total1 = 0;
+                    var g1ns1 = new Array();
+                    var g1ns2 = new Array();
+                    for(var x in res.msg['mac1']){
+                        g1ns1.push(x);
+                        g1ns2.push(res.msg['mac1'][x]);
+                        total1 = total1+ parseInt(res.msg['mac1'][x]);
+                    }
+
+                    var total2 = 0;
+                    var g1ns3 = new Array();
+                    var g1ns4 = new Array();
+                    for(var x in res.msg['mac2']){
+                        g1ns3.push(x);
+                        g1ns4.push(res.msg['mac2'][x]);
+                        total2 = total2+ parseInt(res.msg['mac2'][x]);
+                    }
+
+
+
+                    $("#user_reg_month").highcharts({
+                        chart: {
+                            type: "line",
+                            marginRight: 130,
+                            marginBottom: 25
+                        },
+                        title: {
+                            text: "八戒DNS服务器("+ip1+"/"+ip2+")近一个月统计图",
+                            x: -20 //center
+                        },
+                        subtitle: {
+                            text: ip1+"请求数:"+total1+"人次 | "+ip2+"请求数:"+total2+"人次",
+                            x: -20
+                        },
+                        xAxis: {
+                            categories: g1ns1,
+                            tickInterval:3
+                        },
+                        yAxis: {
+                            title: {
+                                text: "请求数"
+                            },
+                            plotLines: [{
+                                value: 0,
+                                width: 1,
+                                color: "#808080"
+                            }]
+                        },
+                        tooltip: {
+                            valueSuffix: "次",
+                            shadow:false,
+                            shared: true,
+                            crosshairs: true,
+                            borderColor: "#bbbbbb",
+                            borderRadius: 0,
+                            borderWidth: 1
+                        },
+                        legend: {
+                            layout: "vertical",
+                            align: "right",
+                            verticalAlign: "top",
+                            x: -10,
+                            y: 100,
+                            borderWidth: 0
+                        },
+                        series: [{
+                            name: ip1,
+                            data: g1ns2,
+                            color:"#48BEF4",
+                            index:1,
+                        },{
+                            name: ip2,
+                            data: g1ns4,
+                            color:"#90ED7D",
+                            marker: {
+                                symbol: "diamond"
+                            }
+                        }
+                        ]
+                    });
+                }else{
+                    $.ui.error(res.message);
+                }
+            },
+            data:{mac1:mac1,mac2:mac2}
+        });
+    }
+</script>
+{/block}

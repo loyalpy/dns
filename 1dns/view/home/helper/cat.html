@@ -1,0 +1,80 @@
+{block header}{/block}
+{block main}
+<div class="site-helper">
+    <div class="helper-top">
+        <div class="search">
+            <form class="the_searchform form" method="POST" action="{url /helper/cat}">
+                <input type="text" name="keyword" placeholder="请输入关键词,找到您想要的答案" value="{$keyword}"/>
+                <button type="submit" style="display: none">提交</button>
+            </form>
+        </div>
+    </div>
+    <div class="dis40"></div>
+    <div class="help-box help-box-t aps">
+        <div class="com-bod-2">
+            <div class="left-nav">
+                <div class="dis7"></div>
+                <div class="in" id="help_left">
+                    <div class="head">帮助分类</div>
+                    {foreach $items = $res_level}
+                    <dl>
+                        <dt {if $pid == $item['id']}class="open"{/if}><a  href="javascript:void(0);"><cite></cite>{$item['name']}</a></dt>
+                        <dd {if $pid != $item['id']}style="display:none;"{/if}>
+                            <ul>
+                                {if count($item['childrens'])>0}
+                                    {foreach $items = $item['childrens'] item = $item1}
+                                    <li class="e"><a class="e txt-blue {if $fid == $item1['id']}c{/if}" href="{url /helper/cat/fid/}{$item1['id']}" title="{$item1['name']}"><cite></cite>{$item1['name']}<span class="txt-gray f11">({$item1['threads']})</span></a></li>
+                                    {/foreach}
+                                {/if}
+                            </ul>
+                        </dd>
+                    </dl>
+                    {/foreach}
+                </div>
+                <div class="dis30"></div>
+            </div>
+            <div class="right-c">
+                <div class="dis10"></div>
+                <div class="list">
+                    <ul>
+                        {if empty($t_list['list'])}
+                        <tr><td><font color="red">您搜索的文章不存在，请重新搜索</font></td></tr>
+                        {/if}
+                        {foreach $items = $t_list['list']}
+                        <li class="e">
+                            <a href="{url /helper/article/tid/}{$item['tid']}" class="txt-black">&bull;&nbsp;&nbsp;<span class="keybox">{$item['subject']}</span></a>
+                        </li>
+                        {/foreach}
+                    </ul>
+                </div>
+                <div class="dis30"></div>
+                <div class="pagebar">{$t_list['pagebar']}</div>
+            </div>
+            <div class="cl"></div>
+        </div>
+    </div>
+    <div class="dis40"></div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+    var keyword = "{$keyword}";
+    $(function(){
+        $(".img").click(function(){
+            $("button").click();
+        });
+    });
+    $("#help_left").find("dl dt").click(function(){
+        $("#help_left").find("dl dt").removeClass("open");
+        $(this).addClass("option");
+        $("#help_left").find("dl dd").hide();
+        $(this).parent().find("dd").show();
+    });
+    $(".right-c").find(".keybox").each(function(){
+        var obj = this;
+        var html = $(obj).html();
+        $(obj).html($.replace_keyword(html,keyword))
+    });
+</script>
+{/block}

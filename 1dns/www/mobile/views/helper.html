@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>八戒DNS帮助</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+	<!--标准mui.css-->
+	<link rel="stylesheet" href="../static/css/mui.min.css">
+	<style>
+		.mui-card .mui-control-content {
+			padding: 10px;
+		}
+		.mui-control-content {
+			height: 400px;
+		}
+		.mui-table h4,.mui-table h5,.mui-table .mui-h5,.mui-table .mui-h6,.mui-table p{
+			margin-top: 0;
+		}
+		.mui-table h4{
+			line-height: 21px;
+			font-weight: 500;
+		}
+		.mui-search{
+			margin: 0px 0px -10px 0px;
+		}
+
+	</style>
+</head>
+<body>
+<div class="mui-input-row mui-search">
+	<input type="search" name="keyword" value="" class="mui-input-clear" placeholder="请输入关键词">
+</div>
+<div class="mui-content"></div>
+
+<script type="text/template" id="tpl_helpnav">
+	<div style="padding: 10px 10px;">
+		<div id="segmentedControl" class="mui-segmented-control navlisth">
+			<#list data as help>
+				<a class="mui-control-item  <#if (help_index == 0)>mui-active</#if>" id="item${help.id}">
+					${help.name}
+				</a>
+			</#list>
+		</div>
+	</div>
+	<div class="navlisth-content">
+		<#list data as help>
+		<div id="content_item${help.id}" class="mui-control-content <#if (help_index == 0)>mui-active</#if>">
+			<div id="scroll" class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="mui-table-view">
+						<#list help.childrens as help2>
+						<li class="mui-table-view-cell">
+							<a href="helpdetail.html?id=${help2.id}">${help2.name}？</a>
+						</li>
+						</#list>
+					</ul>
+				</div>
+			</div>
+		</div>
+		</#list>
+	</div>
+</script>
+
+<script src="../static/js/mui.min.js"></script>
+<script src="../static/js/lib/jquery-1.11.2.min.js "></script>
+<script src="../static/js/lib/app.1.0.js "></script>
+<script src="../static/js/app/helper.js"></script>
+</body>
+</html>

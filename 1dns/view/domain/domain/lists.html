@@ -1,0 +1,207 @@
+{block main}
+<div class="aps1">
+    <div class="domain-content">
+        <div class="domain-c-nav" style="display: none;">
+            <ul>
+                <li class="active"><a href="{url home@/}">八戒DNS首页</a></li>
+                <li class="active"><a href="{url domain@/}">域名注册</a></li>
+                <li>域名查询结果</li>
+            </ul>
+            <div class="cl"></div>
+        </div>
+        <div class="dis10"></div>
+        <div class="domain-c">
+            <div class="domain-m">
+            <ul>
+                <li class="c1 {if $type == 0}active{/if}" ><a href="javascript:;">单选模式</a></li>
+                <li class="c2 {if $type == 1}active{/if}" ><a href="#collapseExample" class="more-check-m" aria-expanded="false" aria-controls="collapseExample" data-toggle="collapse">多选模式</a></li>
+            </ul>
+            </div>
+            <div class="domain-p"><a href="{url /domain/price_info}" target="_blank">价格预览</a> <cite class="glyphicon glyphicon-paperclip"></cite>
+            </div>
+            <div class="cl"></div>
+        </div>
+        <div class="domain-s-box">
+            <form  method="post" action="{url /domain/lists}" >
+                <div class="ser">
+                    <input type="text" name="domain" class="search" value="{$domain}" autocomplete="off" placeholder="输入您想注册的域名，例如：8jdns">
+                    <input type="hidden" name="suffix" value="{$suffix}"/>
+                    <input type="hidden" name="type" value="{$type}"/>
+                    <input type="hidden" name="suffixs" value=""/>
+                    <a href="javascript:void(0)" class="show-multiple"><span class="suffix">{$suffix}</span> <span class="caret"></span></a>
+                </div>
+                <div class="collapse" id="collapseExample" >
+                    <div class="well">
+                        <ul>
+                            {foreach $items = $suffix_arr}
+                            <li><input type="checkbox" name="suffix-more" value="{$item}" {if in_array($item,array(".com",".net",".cn")) || in_array($item,$suffixs)}checked{/if}/><span>{$item}</span></li>
+                            {/foreach}
+                        </ul>
+                        <div class="cl"></div>
+                    </div>
+                </div>
+                <div class="ser-btn">
+                    <input type="submit" class="search-btn" value=""/>
+                </div>
+            </form>
+            <div class="search-extension">
+                <ul class="search-extension-list">
+                    {foreach $items = $suffix_arr}
+                    <li class="select-list hot_tlds">{$item}</li>
+                    {/foreach}
+                </ul>
+                <div class="cl"></div>
+            </div>
+        </div>
+        <div class="dis20"></div>
+        <div class="serch-result-box">
+            <div class="serch-result">
+                <div class="serch-re-title"><strong>查询结果</strong></div>
+                <div class="serch-re-1" {if !empty($domain)}style="display:none"{/if}>查询内容为空，请输入您要查询的内容！</div>
+                <div class="mod-box-bd" {if empty($domain)}style="display:none"{/if}>
+                    <div class="mod-sub-box hot-list">
+                        <div class="mod-sub-box-bd">
+                            <ul class="result-list select-rs-list">
+                                {if count($suffixs)>0}
+                                    {foreach $items = $suffixs}
+                                    <li>
+                                        <div class="d-ib domain-cell">
+                                            <div class="domain sold"><span class="d">{$domain}{$item}</span><span class="s" style="display: none;">{$item}</span></div>
+                                        </div>
+                                        <div class="mod-select-else-fr">
+                                            <div class="d-ib price-cell">正在查询</div>
+                                            <div class="d-ib action-cell"><a href="/domain/check_info?domain={$domain}{$item}" target="_blank">查询注册信息</a></div>
+                                        </div>
+                                    </li>
+                                    {/foreach}
+                                {else}
+                                <li>
+                                    <div class="d-ib domain-cell">
+                                        <div class="domain sold"><span class="d">{$domain}{$suffix}</span><span class="s" style="display: none;">{$suffix}</span></div>
+                                    </div>
+                                    <div class="mod-select-else-fr">
+                                        <div class="d-ib price-cell">正在查询</div>
+                                        <div class="d-ib action-cell"><a href="/domain/check_info?domain={$domain}{$item}" target="_blank">查询注册信息</a></div>
+                                    </div>
+                                </li>
+                                {/if}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="serch-re-title" {if empty($domain)}style="display:none"{/if}><strong>您还可以选择</strong></div>
+                <div class="mod-box-bd" {if empty($domain)}style="display:none"{/if}>
+                    <div class="mod-sub-box hot-list">
+                        <div class="mod-sub-box-bd">
+                            <ul class="result-list select-rs-list">
+                                {foreach $items = $suffix_arr}
+                                    {if count($suffixs)>0}
+                                        {if !in_array($item,$suffixs)}
+                                        <li {if $key > 18-(count($suffixs)-3)}style="display:none" class="domain-more-h"{/if}>
+                                            <div class="d-ib domain-cell">
+                                                <div class="domain sold"><span class="d">{$domain}{$item}</span><span class="s" style="display: none;">{$item}</span></div>
+                                            </div>
+                                            <div class="mod-select-else-fr">
+                                                <div class="d-ib price-cell">正在查询</div>
+                                                <div class="d-ib action-cell"><a href="/domain/check_info?domain={$domain}{$item}" target="_blank">查询注册信息</a></div>
+                                            </div>
+                                        </li>
+                                        {/if}
+                                    {else}
+                                        {if $item != $suffix}
+                                        <li {if $key > 12}style="display:none" class="domain-more-h"{/if}>
+                                            <div class="d-ib domain-cell">
+                                                <div class="domain sold"><span class="d">{$domain}{$item}</span><span class="s" style="display: none;">{$item}</span></div>
+                                            </div>
+                                            <div class="mod-select-else-fr">
+                                                <div class="d-ib price-cell">正在查询</div>
+                                                <div class="d-ib action-cell"><a href="/domain/check_info?domain={$domain}{$item}" target="_blank">查询注册信息</a></div>
+                                            </div>
+                                        </li>
+                                        {/if}
+                                    {/if}
+                                {/foreach}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="domain-more">查看更多后缀 <i class="glyphicon glyphicon-chevron-down"></i></div>
+                </div>
+            </div>
+            <div class="serch-cart">
+                <div class="serch-c-title"><strong>购物车(<span class="cart-num">{echo count($cart)}</span>)</strong></div>
+                <div class="serch-c-1 a-c-1" {if count($cart) > 0}style="display: none"{/if}>
+                    <cite class="glyphicon glyphicon-shopping-cart"></cite>
+                    <span>尚未选择域名</span>
+                </div>
+                <div class="pending-buy a-c-2" {if count($cart) <= 0}style="display: none"{/if}>
+                    <ul class="pen-d" style="display: block;">
+                        {foreach $items = $cart}
+                        <li><span class="pen-d-s"><span class="ellipsis">{$item['domain']}</span></span><a href="javascript: void(0);" class="btn-del"><i class="glyphicon glyphicon-remove"></i></a></li>
+                        {/foreach}
+                    </ul>
+                    <div class="buy-aciton" style="display: block;"><a href="#" role="button" class=" orange">
+                        <a type="button" class="btn btn-warning" href="/cart/cart">立即购买</a></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cl"></div>
+        <div class="dis10"></div>
+        <button type="button" class="btn btn-warning batch-op-add">全部加入清单</button>
+    </div>
+</div>
+<div class="dis60"></div>
+<!-- 登录框弹出 -->
+<!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" style="display: none">-->
+    <!--Launch demo modal-->
+<!--</button>-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">请登录</h4>
+            </div>
+            <div class="modal-body" style="text-align: center;font-size: 18px;margin: 30px 0;">
+                <i class="glyphicon glyphicon-question-sign" style="font-size: 20px;color: #FF8800"></i>&nbsp;&nbsp;亲！请先登录再加入购物车!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a type="button" class="btn btn-primary" href="{url account@/login?refer=domain./domain/lists?domain=}{$domain}">登录</a>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+    var type = "{$type}";
+    var uid = "{$uid}";
+    if (type == 1) {
+        $("#collapseExample").addClass("in");
+        $(".domain-s-box .ser").addClass("ser-more");
+        $(".domain-s-box .ser").find(".show-multiple").hide();
+    }
+    //域名查询时
+    $(".search-btn").click(function(){
+        if (type == 1) {
+            var suffixs = new Array();
+            $("#collapseExample").find("li input[name='suffix-more']:checked").each(function(){
+                var obj = this;
+                suffixs.push($(obj).val());
+            });
+            if (suffixs.length <= 0) {
+                alert("请选择域名需要搜索的域名后缀！");
+                return false;
+            }
+            $("input[name='suffixs']").val(suffixs.join(","));
+            return true;
+        }else{
+            $("input[name='suffixs']").val('');
+            return true;
+        }
+    });
+</script>
+<script language="javascript" src="{skin js/domain_register.js}"></script>
+{/block}

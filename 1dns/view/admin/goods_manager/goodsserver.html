@@ -1,0 +1,174 @@
+{block main}
+<div class="main-nav">
+  <div class="name">产品服务器</div>
+  <div class="navbtn0">
+  {if !isset($server_st8) || $server_st8 == 0}
+  {set $expiry_s = array(1=>"已到期",3=>"3天内到期",7=>"7天内到期",30=>"一个月内到期")}
+  <a class="btn {if $expiry == 0}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /goods_manager/goodsserver?expiry=0}"><cite class="glyphicon glyphicon-th"></cite> 所有</a> 
+  {foreach items=$expiry_s}
+  <a class="btn {if $expiry == $key}btn-info{else}btn-default{/if} btn-sm" title="{$item}" href="{url /goods_manager/goodsserver?expiry=$key}"><cite class="glyphicon glyphicon-th"></cite> {$item}</a> 
+  {/foreach}
+  {/if}
+  </div>
+  <div class="navbtn">
+  <button type="button" class="btn btn-default btn-sm refresh-btn" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;刷新</button> 
+  <!--button-->
+  {if $this->check_purview("/goods_manager/goodsserver_edit")}
+  <a href="javascript:void(0)" data-url="{url /goods_manager/goodsserver_edit}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增服务器</a>
+  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /goods_manager/goodsserver?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+	<col width="250px" />
+	<col width="110px" />
+	<col />	
+	<col width="70px" />  
+	<col width="80px" />  
+    <col width="80px" />
+    <col width="80px" />
+    <col width="80px" />
+	<col width="130px" />
+	<thead>
+	<tr>
+	<th>服务器编号</th>
+	<th>所在机房</th>
+	<th>IP信息</th>
+	<th>支付</th>
+	<th>开始时间</th>
+	<th>到期时间</th>
+	<th>购买人/销售</th>
+	<th>状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block css}
+<link href="{webroot common/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+<script language="javascript" src="{webroot cache/static/areadata.js}"></script>
+{include tpl/form}
+{include goods_manager/goodsserver_edit}
+
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr class="<#if (data.is_expiry == 1)>danger<#else></#if> order_server_${data.id}">
+	<td><a href="javascript:void(0);" class="font-blue tiptitle edit_serverbtn" data-work_no="" data-id="${data.id}" data-server_no="${data.server_no}" data-content="配置/外形：${data.server_cfg} /${data.server_us}<br/>路由器: ${data.netno}&nbsp;&nbsp;&nbsp;机柜：${data.jiguino}">${data.server_no}</a><br/><font class="font-gray">${data.goods_no}</font>
+	<br />
+	<#if (parseInt(data.inlock) == 1)>
+	<font class="font-org">(锁定${$.time_to_string(data.inlock_expiry)})</font>
+	</#if>
+	</td>
+	<td>${data.idc}</td>
+	<td>${data.server_ips.replace(/,/g," /")}</td>
+	<td>${$.show_dataconfig('pay_type',data.pay_type)}</td>
+	<td>${data.start_dateline}</td>
+	<td><#if (data.is_expiry == 1)><font class="fb font-red">${data.expiry}</font><#else>${data.expiry}</#if></td>
+	<td>
+	<#if ($.is_empty(data.buy_uname))> - <#else>${data.buy_uname}</#if>
+	<#if ($.is_empty(data.uname))> - <#else> - ${data.uname}</#if>
+	</td>
+	<td><#if (data.server_st == 9)><font class="font-green">正常使用</font><#else> 可用 </#if></td>
+	<td>
+	    <p class="table-item-op">
+	    <button type="button" title="" class="btn btn-default btn-xs rsync_goodsserver_btn" data-id="${data.id}">同步</button>
+	    <button type="button" title="" class="btn btn-default btn-xs edit_goodsserver_btn" data-server_no="${data.server_no}" data-id="${data.id}">修改</button>
+	    <button type="button" title="" class="btn btn-default btn-xs del_goodsserver_btn" data-id="${data.id}">删除</button>
+		</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+
+{javascript bootstrap-datetimepicker/bootstrap-datetimepicker.min.js,bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var init_page = 1;
+var search_formdata = {
+	server_st:{type:"select",label:"状态",name:"server_st",value:"{$condi['server_st']}",disabled:0,data_sr:dataConfig_A['server_st'],css:"low",    require:"",desc:"",item_css:"item-200"},
+	idc:{type:"select",label:"机房",name:"idc",value:"{$condi['idc']}",disabled:0,data_sr:dataConfig_A['idc'],css:"low",    require:"",desc:"",item_css:"item-200"},
+	keyword:{type:"text",label:"关键词",name:"keyword",value:"{$condi['keyword']}",data_sr:[],css:"",require:"",desc:"",item_css:"item-200"},
+    btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(res){
+		init_page = page;
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		//删除
+		$(".del_goodsserver_btn").click(function(){
+			del_goodsserver(this);
+		});
+		//编辑
+		$(".edit_goodsserver_btn").click(function(){
+			var obj = this;
+			var id = parseInt($(obj).attr("data-id"));
+			var server_no = $(obj).attr("data-server_no");
+			edit_goodsserver(server_no,id);
+		});
+		//同步
+		$(".rsync_goodsserver_btn").click(function(){
+			rsync_goodsserver(this);
+		});
+		
+		$(".thelistform").find("a.tiptitle").popover({html:true,trigger:"hover",});
+	});
+}
+
+$(function(){
+	  //加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },function(res){
+	 },".the_searchform");
+	 
+	 $(".date-ymd").datetimepicker({
+		language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"   
+	});
+	 loadlist(1); 
+	 $(".refresh-btn").click(function(){
+	 	loadlist(init_page);
+	 })
+	 
+	 
+	  $(".addbtn").click(function(){
+		edit_goodsserver(0);
+	 });
+	 
+})
+</script>
+{/block}

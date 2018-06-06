@@ -1,0 +1,227 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/safety_center}"  >安全设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_basic}" class="cur">个人资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_basic_com}">企业资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_msg}" >系统通知&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_passwd}"  >修改密码&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">个人管理<span style="font-size: 14px;color: #5EB95E">(当前类型：{if ($userinfo['utype']==2)}企业账户{else}个人账户{/if})</span></span></h1>
+    </div>
+    <hr/>
+    <div class="dis30"></div>
+    <div class="am-msg-content">
+        <form class="am-form am-form-horizontal" name="reg_testdate">
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">真实姓名</label>
+                <div class="am-u-sm-2">
+                    <input type="text" class="am-form-field am-radius" name="realname" value="{$userinfo['realname']}">
+                    <small>请填写真实姓名</small>
+                </div>
+                <div class="am-u-sm-1"></div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">性别</label>
+                <div class="am-u-sm-9">
+                    <input type="radio" name="sex" value="0" {if ($userinfo['sex']==0)}checked="checked"{/if}/> 保密&nbsp;&nbsp;
+                    <input type="radio" name="sex" value="2" {if ($userinfo['sex']==2)}checked="checked"{/if}/> 男&nbsp;&nbsp;
+                    <input type="radio" name="sex" value="1" {if ($userinfo['sex']==1)}checked="checked"{/if}/> 女
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">生日</label>
+                <div class="am-u-sm-9 birthday">
+                    <select class=" am-input-sm" name="year" onChange="YYYYDD(this.value)">
+                        <option value="">请选择 年</option>
+                    </select>
+                    <select class=" am-input-sm" name="month" onChange="MMDD(this.value)">
+                        <option value="">选择 月</option>
+                    </select>
+                    <select class=" am-input-sm" name="day">
+                        <option value="">选择 日</option>
+                    </select>
+                </div>
+            </div>
+
+            <!--<div class="am-form-group">-->
+                <!--<label class="am-u-sm-2" style="margin-right: -50px;">电子邮件</label>-->
+                <!--<div class="am-u-sm-9">-->
+                    <!--<input type="email" class="am-form-field am-radius" name="email" value="{$userinfo['email']}">-->
+                    <!--<small>请输入您的电子邮件</small>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">公司名称</label>
+                <div class="am-u-sm-5">
+                    <input type="text" class="am-form-field am-radius" name="company" value="{$userinfo['company']}">
+                    <small>请输入您的公司名称</small>
+                </div>
+                <div class="am-u-sm-1"></div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">岗位</label>
+                <div class="am-u-sm-5">
+                    <input type="text" class="am-form-field am-radius" name="depart" value="{$userinfo['depart']}">
+                    <small>请输入您的岗位</small>
+                </div>
+                <div class="am-u-sm-1"></div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">地区</label>
+                <div id="city" class="am-u-sm-9 birthday">
+                    <select class="prov am-input-sm" name="s_province"></select>
+                    <select class="city am-input-sm" name="s_city"></select>
+                    <select class="dist am-input-sm" name="s_county"></select>
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label  class="am-u-sm-2" style="margin-right: -50px;">签名</label>
+                <div class="am-u-sm-5">
+                    <textarea class="" rows="5" name="signname">{$userinfo['signname']}</textarea>
+                    <small>请用一句话表述您的个性</small>
+                </div>
+                <div class="am-u-sm-1"></div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;"></label>
+                <div class="am-u-sm-9">
+                    <button type="button" class="am-btn am-btn-success am-radius msg-save">保存修改</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript" src="{url /static/javascript/area/jquery.cityselect.js}"></script>
+<!--提交修改事件-->
+<script type="text/javascript">
+    $(".am-msg-content").find("button,a").bind("focus",function(){
+        $(this).blur();
+    });
+    $(".msg-save").unbind("click").bind("click",function(){
+        var realname = $("input[name='realname']").val();
+        var sex = $("input[name='sex']:checked").val();
+
+        //出生日期
+        var year = $("select[name='year']").val();
+        var month = $("select[name='month']").val();
+        var day = $("select[name='day']").val();
+        if ($.is_empty(year) || $.is_empty(month) || $.is_empty(day)) {
+            alert("请选择日期");
+            return false;
+        }
+        var birthdays = year+"-"+(month>10?month:"0"+month)+"-"+(day>10?day:"0"+day);
+        //地区
+        var county = $.is_empty($("select[name='s_county']").val())?'':","+$("select[name='s_county']").val();
+        var areas = $("select[name='s_province']").val()+","+$("select[name='s_city']").val()+county;
+
+//        var email = $("input[name='email']").val();
+        var company = $("input[name='company']").val();
+        var depart = $("input[name='depart']").val();
+        var signname = $("textarea").val();
+        $.ajaxPassport({
+            url:"{url /ucenter/profile_basic}",
+            success:function(res){
+                if (res.error == 1) {
+                    $.ui.error(res.message);
+                } else {
+                    $.ui.success(res.message);
+                }
+            },
+            data:{realname:realname,sex:sex,company:company,depart:depart,signname:signname,birthdays:birthdays,areas:areas,id:1}
+        });
+    });
+</script>
+<!--三级地区联动-->
+<script type="text/javascript">
+    var prov = $.is_empty('{$userinfo['area'][0]}')?"浙江省":"{$userinfo['area'][0]}";
+    var city = $.is_empty('{$userinfo['area'][1]}')?"杭州":"{$userinfo['area'][1]}";
+    var dist = $.is_empty('{$userinfo['area'][2]}')?"西湖区":"{$userinfo['area'][2]}";
+    $("#city").citySelect({
+        url:"{url /static/javascript/area/city.min.js}",
+        prov:prov, //省份
+        city:city, //城市
+        dist:dist, //区县
+        nodata:"none" //当子集无数据时，隐藏select
+    });
+</script>
+<!--三级日期联动-->
+<script type="text/javascript">
+    function YYYYMMDDstart(){
+        MonHead = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        //先给年下拉框赋内容
+        if ({$userinfo['birthday'][0]} != 1970) {
+            var y  = {$userinfo['birthday'][0]};
+            var ym = {$userinfo['birthday'][1]}-1;
+            var ymd = {$userinfo['birthday'][2]};
+        }else{
+            var y  = new Date().getFullYear();
+            var ym  = new Date().getMonth();
+            var ymd  = new Date().getDate();
+        }
+        for (var i = (y-30); i < (y+30); i++) //以今年为准，前30年，后30年
+            document.reg_testdate.year.options.add(new Option(" "+ i +" 年", i));
+
+        //赋月份的下拉框
+        for (var i = 1; i < 13; i++)
+            document.reg_testdate.month.options.add(new Option(" " + i + " 月", i));
+
+        document.reg_testdate.year.value = y;
+        document.reg_testdate.month.value = ym + 1;
+        var n = MonHead[ym];
+        var YYYYvalue = '';
+        if (new Date().getMonth() ==1 && IsPinYear(YYYYvalue)) n++;
+        writeDay(n); //赋日期下拉框
+        document.reg_testdate.day.value = ymd;
+    }
+    if(document.attachEvent)
+        window.attachEvent("onload", YYYYMMDDstart);
+    else
+        window.addEventListener('load', YYYYMMDDstart, false);
+    function YYYYDD(str) //年发生变化时日期发生变化(主要是判断闰平年)
+    {
+        var MMvalue = document.reg_testdate.month.options[document.reg_testdate.month.selectedIndex].value;
+        if (MMvalue == ""){ var e = document.reg_testdate.day; optionsClear(e); return;}
+        var n = MonHead[MMvalue - 1];
+        if (MMvalue ==2 && IsPinYear(str)) n++;
+        writeDay(n)
+    }
+    function MMDD(str)   //月发生变化时日期联动
+    {
+        var YYYYvalue = document.reg_testdate.year.options[document.reg_testdate.year.selectedIndex].value;
+        if (YYYYvalue == ""){ var e = document.reg_testdate.day; optionsClear(e); return;}
+        var n = MonHead[str - 1];
+        if (str ==2 && IsPinYear(YYYYvalue)) n++;
+        writeDay(n)
+    }
+    function writeDay(n)   //据条件写日期的下拉框
+    {
+        var e = document.reg_testdate.day; optionsClear(e);
+        for (var i=1; i<(n+1); i++)
+            e.options.add(new Option(" "+ i + " 日", i));
+    }
+    function IsPinYear(year)//判断是否闰平年
+    {
+        return(0 == year%4 && (year%100 !=0 || year%400 == 0));
+    }
+    function optionsClear(e)
+    {
+        e.options.length = 1;
+    }
+</script>
+{/block}

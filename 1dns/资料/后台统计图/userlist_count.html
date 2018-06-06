@@ -1,0 +1,55 @@
+{code 
+//年份,月份
+		$month = R("month","int");
+		$year = R("year","int");
+		$month = $month?$month:intval(tTime::get_datetime("m"));
+		$year = $year?$year:intval(tTime::get_datetime("Y"));
+}
+{/code}
+{js highcharts/highcharts.js}
+<div class="headbar">
+    <div class="operating">
+	<button class="operating_btn" onclick="$.redirect('{url /sysadmin_user/userlist}')" type="button">返回会员列表</button>&nbsp;&nbsp;&nbsp;
+	<span class="form">
+	<select name="year" id="Myear">
+	<option value="2013" {if $year == 2013}selected="selected"{/if}>2013</option>
+	<option value="2012" {if $year == 2012}selected="selected"{/if}>2012</option>
+	<option value="2014" {if $year == 2014}selected="selected"{/if}>2014</option>
+	<option value="2015" {if $year == 2015}selected="selected"{/if}>2015</option>
+	<option value="2016" {if $year == 2016}selected="selected"{/if}>2016</option>
+	</select>&nbsp;
+	<select name="month" id="Mmonth">
+	<option value="1" {if $month == 1}selected="selected"{/if}>1</option>
+	<option value="2" {if $month == 2}selected="selected"{/if}>2</option>
+	<option value="3" {if $month == 3}selected="selected"{/if}>3</option>
+	<option value="4" {if $month == 4}selected="selected"{/if}>4</option>
+	<option value="5" {if $month == 5}selected="selected"{/if}>5</option>
+	<option value="6" {if $month == 6}selected="selected"{/if}>6</option>
+	<option value="7" {if $month == 7}selected="selected"{/if}>7</option>
+	<option value="8" {if $month == 8}selected="selected"{/if}>8</option>
+	<option value="9" {if $month == 9}selected="selected"{/if}>9</option>
+	<option value="10" {if $month == 10}selected="selected"{/if}>10</option>
+	<option value="11" {if $month == 11}selected="selected"{/if}>11</option>
+	<option value="12" {if $month == 12}selected="selected"{/if}>12</option>
+	</select>
+	<button class="operating_btn" onclick="$.redirect('{url /sysadmin_user/userlist_count?year=}'+$('#Myear').val()+'&month='+$('#Mmonth').val())" type="button">查看</button>
+	</span>
+	</div>
+</div>
+<div class="list content">
+<div class="fl" style="width:600px;">
+<script type="text/javascript" src="{url /sysadmin/sys_count_image?t=user_reg_month&w=600&h=260&month=$month&year=$year}"></script>
+</div>
+<div class="fr" style="width:500px;">
+<script type="text/javascript" src="{url /sysadmin/sys_count_image?t=user_reg_year&w=500&h=260&month=$month&year=$year}"></script>
+</div>
+<div class="cl"></div>
+<div class="fl" style="width:600px;">
+<script type="text/javascript" src="{url /sysadmin/sys_count_image?t=user_account_month&w=600&h=260&month=$month&year=$year}"></script>
+</div>
+<div class="fr" style="width:520px;">
+<script type="text/javascript" src="{url /sysadmin/sys_count_image?t=user_account_year&w=520&h=260&month=$month&year=$year}"></script>
+</div>
+<div class="dis10"></div>
+<div class="dis30"></div>
+</div>

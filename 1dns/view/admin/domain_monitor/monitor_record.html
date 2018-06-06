@@ -1,0 +1,126 @@
+{block head_menu}
+    <div class="menu">
+		<ul>
+			{if $this->check_purview("/domain_monitor/monitor")}
+			<li><a href="{url  /domain_monitor/monitor}">监控域名</a></li>
+			{/if}
+			{if $this->check_purview("/domain_monitor/monitor_record")}
+			<li><a href="{url  /domain_monitor/monitor_record}"  class="cur">域名监控线路队列</a></li>
+			{/if}
+		</ul>
+    </div>
+{/block}
+
+{block main}
+<div class="main-nav">
+  <div class="name">线路队列列表</div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_monitor/monitor_record?do=get_url}">
+	<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive table-checkall" cellpadding="0" cellspacing="0">
+	<col width="50px"/>
+	<col />
+	<col width="100px"/>
+	<col width="80px"/>
+	<col width="150px"/>
+	<col width="150px"/>
+	<col width="180px"/>
+	<thead>
+	<tr>
+	<th><input type="checkbox" data-name="records[]" class="checkall"/></th>
+	<th>域名</th>
+	<th>节点</th>
+	<th>频率</th>
+	<th>时间</th>
+	<th>当前状态</th>
+	<th>状态说明</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+{include tpl/form}
+
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td><input type="checkbox" name="records[]" value=""/></td>
+    <td class="font-blue">
+		<span class="keybox">${data.RRname}.${data.domain}:${data.monitor_port}</span><br/>
+		<span class="keybox font-black">${data.ip}</span><br/>
+		<span class="keybox font-green"><#if ($.is_empty(acls[data.acl]))>自定义线路:${cust_line[data.acl.replace('cust','')].name}<#else>${acls[data.acl].name}</#if></span>
+	</td>
+    <td><span class="keybox"></span>-</td>
+    <td><span class="font-gray">${data.monitor_rate}分钟/次</span></td>
+    <td>${data.dateline}</td>
+    <td>
+		<#if (data.status == 0)>
+			<span class="font-red">服务器已宕机</span>
+			<#else>
+				<#if (data.status_code == 200)>
+					<span class="font-green">服务器完全正常</span>
+					<#elseif (data.status_code == 404)>
+						<span class="font-red">Not Found</span>
+						<#else>
+							<span class="font-red">Request time out</span>
+				</#if>
+		</#if>
+	</td>
+    <td><#if (data.reason != '')>${data.reason}<#else> - </#if></td>
+	</tr>
+</#macro>
+</script>
+
+
+<script language="javascript">
+	var acls = {echo JSON::encode(C("category","domain_acl")->json(0,'ident'))};
+	var cust_line = {echo JSON::encode(M("@domain_acl_set")->get_cust_list())};
+	var pageurl = "{$pageurl}";
+	var search_formdata = {
+		email: {type: "uid", label: "域名", name: "email", value: "", disabled: 0, data_sr:[], css: "", require: "", desc: "", item_css: ""},
+		keyword:{type:"text",label:"关键词",name:"keyword",value: "",data_sr:[],css:"",require:"",desc:"",item_css:""},
+		btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+	};
+	var loadlist = function(page){
+		$.ajaxLoadlist(page,pageurl,function(res){
+			var keyword = $(".the_searchform input[name='keyword']").val();
+			if(keyword != ""){
+				$(".thelistform").find(".tpl .keybox").each(function(){
+					var obj = this;
+					var html = $(obj).html();
+					$(obj).html($.replace_keyword(html,keyword))
+				});
+			};
+		});
+		//全选，全不选
+		$(".table-checkall").find("input.checkall").unbind("click").bind("click",function(){
+			$.check_all(this);
+		});
+	}
+	$(function(){
+		//加载搜索
+		$.loadform(search_formdata,"",function(res){
+			pageurl = res.pageurl;
+			loadlist();
+			return true;
+		},function(){
+			get_domainlist(1,'',"",".the_searchform");
+		},".the_searchform");
+		//加载列表
+		loadlist();
+	})
+</script>
+{/block}

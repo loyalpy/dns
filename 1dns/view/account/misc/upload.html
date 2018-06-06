@@ -1,0 +1,94 @@
+<div class="attach-box">
+    {if $option['btn_setfm']}
+	<input type="hidden" name="fm_id" value="{$option['fm_id']}" />
+	<input type="hidden" name="fm" value="{$option['fm']}" />
+	{/if}
+	<p class="btn-upload">
+		<button class="btn btn-danger btn-xs" type="button">
+		<span class="glyphicon glyphicon-picture"></span> {$option['upload_btn_txt']}
+		</button>
+		<span class="btn-swfupload"><span id="spanUPButton"></span></span>
+		<span class="btn_cpbtn"><button clip="" type="button" class="btn btn-xs btn-success copyclip all_copyclip">拷贝所有图片</button></span>
+	</p>
+	<div id="swfupload_filebox"></div>
+	<script type="text/template" class="tpl">
+	<#macro form data>
+	<div class="attach_${data.id}">
+		<div class="swfitem-img"><img width="50" height="50" class="purview" src="${data.imgpath}" alt="${data.name}" /></div>
+		<div class = "swfitem-desc"><textarea class="form-control" rows="2" name="attach_ids[${data.id}]">${data['desc']}</textarea></div>
+		<div class = "swfitem-op">
+		    {if $option['btn_setfm']}
+			<button type="button" class="btn btn-default btn-xs setfm">主图</button> 
+			{/if}
+			{if $option['btn_insert']}
+			<button type="button" class="btn btn-default btn-xs insert">插入</button> 
+			{/if}
+			{if $option['btn_delete']}
+			<button type="button" class="btn btn-default btn-xs delete">删除</button>
+			{/if} 
+            <#if (data.imgpath)>
+			<button type="button" clip="http://{echo tServer::get_host()}${data.imgpath.replace('-50-50','')}" class="btn btn-default btn-xs copyclip">复制</button>
+            </#if>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+	</#macro>
+	</script>
+</div>
+{javascript utils/swfupload.core.js,utils/jquery.swfupload.event.js}
+<script language="javascript">
+	  $(function(){
+		var settings = {
+			flash_url : "{webroot common/flash/moreupload.swf}",
+			upload_url: "{$option['upload_url']}",
+			post_params: {$option['post_params_json']},
+			file_size_limit : "{$option['upmaxsize']}KB",
+			file_queue_limit: {$option['file_queue_limit']},
+			file_types : "{$option['upload_types_str']}",
+			button_image_url : "",
+			button_placeholder_id : "spanUPButton",
+			button_width: 101,
+			button_height: 18,
+			debugEnabled:true,
+			button_text : "",
+			//文件队列处理
+			file_queued_handler : swfupload_event.fileQueued,
+			file_dialog_complete_handler: swfupload_event.fileDialogComplete,
+			file_queue_error_handler : swfupload_event.fileQueueError,
+			//单个上传处理
+			upload_start_handler : swfupload_event.uploadStart,
+			upload_progress_handler : swfupload_event.uploadProgress,
+			upload_success_handler : swfupload_event.uploadSuccess,
+			upload_complete_handler : swfupload_event.uploadComplete,
+			//自定义设置
+			custom_settings : {
+				filebox : "swfupload_filebox",
+				fileinsert:function(file_id){
+					{$option['insert_js']}
+				},
+				delete_url:"{$option['delete_url']}",
+				inp_fm:"{$option['inp_fm']}",
+				inp_fm_id:"{$option['inp_fm_id']}",
+				fm_id:"{$option['fm_id']}"
+			}
+		};
+		var upl = new SWFUpload(settings);
+		var all_images = "";
+		var tmp = "";
+		{if !empty($option['attachlist'])}
+		  {foreach items=$option['attachlist']}
+		  tmp = "http://{echo tServer::get_host()}{webroot attach}/{$option['path']}/{$item['path']}/{$item['filename']}-50-50.{$item['ext']}";
+		  all_images += "<img src='http://{echo tServer::get_host()}{webroot attach}/{$option['path']}/{$item['path']}/{$item['filename']}.{$item['ext']}' /><br/>";
+		  new swfupload_filebox({id:{$item['id']},imgpath:tmp,desc:"{$item['description']}",loaded:1}, upl.customSettings);
+		  {/foreach}
+		   $(".all_copyclip").attr("clip",all_images);
+		   $('.copyclip').zclip({
+		       path: "{webroot common/javascript/jquery.zclip/ZeroClipboard.swf}",
+		       copy: function(){
+		          var obj = this;
+		          return $(obj).attr("clip");
+		  　　　 }
+		   });
+		{/if}
+	 });
+</script>

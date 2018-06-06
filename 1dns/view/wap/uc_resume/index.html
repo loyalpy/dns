@@ -1,0 +1,31 @@
+{block main}
+<div class="am-continaer">
+<dl class="list">
+<dd>
+<div class="am-u-sm-12">您的简历完善度:<font class="am-text-warning">{$this->userinfo['resume']['resume_completed']}</font>%</div>
+<div class="am-cf"></div>
+</dd>
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-6"><a href="{url /uc_resume/edit_basic}" class="">基本资料/求职信息</a></div>
+<div class="am-u-sm-6 am-text-right"></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6"><a href="{url /uc_resume/edit_work}" class="">工作经验</a></div>
+<div class="am-u-sm-6 am-text-right"></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6"><a href="{url /uc_resume/edit_edu}" class="">教育经历</a></div>
+<div class="am-u-sm-6 am-text-right"></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6"><a href="{url /uc_resume/edit_attach}" class="">附件</a></div>
+<div class="am-u-sm-6 am-text-right"></div>
+<div class="am-cf"></div>
+</dd>
+</dl>
+</div>
+{/block}

@@ -1,0 +1,260 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/index}"  class="showtype ">全部域名&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/transfer}"  class="showtype">域名转入&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/template}"  class="showtype cur">信息模板&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/order}"  class="showtype"> 我的订单&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1 style="float: left"><span class="list_tit_name">域名信息管理模板</span> <span class="list_tit_count am-text-sm am-text-success">(0)</span></h1>
+        <a type="button" href="{url /ucenter/template_info?do=add}" class="am-btn am-btn-success am-btn-sm" style="float: right"><i class="am-icon-plus"></i> 创建新的模板信息</a>
+    </div>
+    <div class="clear"></div>
+    <div class="dis10"></div>
+    <div class="listbody" style="position: relative;"></div>
+    <div class="dis30"></div>
+    <div class="now-dns-bot">
+        <div class="dis10"></div>
+        <dl>
+            <dt>温馨提示：</dt>
+            <!--{set $register_type = tCache::read("data_config")}-->
+            <!--{set $register_type =  isset($register_type['domain_register_type'])?implode("/",$register_type['domain_register_type']):'';}-->
+            <!--<dd>• {$register_type}域名需选择实名认证的信息模板。</dd>-->
+            <dd>• 上传实名制资料后的模板需等待1-2个工作日的审核时间，有关联域名的模板不能删除。</dd>
+            <dd>• 信息模版必须填写完整，才可在域名注册、域名过户等功能中使用。</dd>
+            <dd>• 模版区分为个人、企业两种类型，均为通用模版，即无论是国内域名还是国际域名，进行域名注册、域名过户等均可使用。</dd>
+            <dd>• 为了便于您快速注册域名等，您可设置并维护相关模版信息，每个账户ID下最多可维护20个信息模版。</dd>
+        </dl>
+    </div>
+</div>
+<div class="my-domian-transfer"></div>
+{/block}
+
+{block javascript}
+<!--域名列表-->
+<script type="text/template" id="tpl_domain_list">
+    <#macro rowedit data>
+        <table class="am-table am-table-bordered am-table-hover domain-register-table">
+            <col />
+            <col  width="70px"/>
+            <col  width="130px"/>
+            <col width="190px" />
+            <col width="120px" />
+            <col width="200px" />
+            <thead>
+            <tr>
+                <th>模板名称</th>
+                <th>类型</th>
+                <th>域名所有人</th>
+                <th>联系邮箱</th>
+                <th>实名审核状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="tpl am-form">
+            <#if (data.list.length > 0)>
+                <#list data.list as info>
+                        <tr>
+                            <td>${info.tpl_name}(<span class="getwith" title="关联域名" data-name="${info.tpl_name}" style="cursor:pointer;color: blue">${info.dnlists}</span>)</td>
+                            <td><#if (info.utype == 1)>个人<#else>企业</#if></td>
+                            <td>${info.aller_name_cn}</td>
+                            <td>${info.email}</td>
+                            <td>
+                                <#if (info.is_use == 0)><span style="color:orange;">未提交实名资料</span>
+                                    <#elseif (info.is_use == 1)><span style="color:red;">审核不通过</span>
+                                    <#elseif (info.is_use == 2)><span style="color: green">审核通过</span>
+                                    <#elseif (info.is_use == 3)><span style="color:green;">实名资料审核中</span>
+                                    <#elseif (info.is_use == 4)><span style="color:red;">实名资料上传失败</span>
+                                </#if>
+                            </td>
+                            <td>
+                                <div class="set-m-m">
+                                    <#if (info.is_tpl == 1)>
+                                        <a type="button" class="am-ext-btn" style="color: green">注册默认</a>&nbsp;
+                                        <#else>
+                                            <a type="button" class="am-ext-btn set-m-tpl" data-id="${info.id}" style="cursor: pointer">设为默认</a>&nbsp;
+                                    </#if>
+                                </div>
+                                <a type="button" href="{url /ucenter/template_info?do=edit&id=}${info.id}" class="am-ext-btn">修改</a>&nbsp;
+                                <#if (info.dnlists == 0)>
+                                <button type="button"  class="am-ext-btn Del" data-id="${info.id}" >删除</button>
+                                </#if>
+                            </td>
+                        </tr>
+                </#list>
+                <#else>
+                    <tr>
+                        <td class="am-text-sm" colspan="6">
+                            <a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">没有域名模板?</a></td>
+                    </tr>
+            </#if>
+            </tbody>
+        </table>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    $(function () {
+        //加载域名列表
+        load_tpl_list(1);
+    });
+    var load_tpl_list = function(page){
+        $.ui.loading($(".listbody"),0);
+        $.ajaxPassport({
+            url:"{url /ucenter/template}",
+            success:function(res){
+                $.ui.close_loading($(".listbody"));
+                var listhtml = ""+ easyTemplate($("#tpl_domain_list").html(),res);
+                $(".listbody").html(listhtml);
+
+                $("a").bind("focus",function(){
+                    $(this).blur();
+                });
+                $(".list_tit_count").html("("+res['list'].length+")");
+
+                //删除模板
+                $(".Del").click(function () {
+                    var id = $(this).data('id');
+                    $.ui.confirm(function () {
+                        if ($.is_empty(id)) {
+                            $.ui.error("模板不存在！");
+                            return false;
+                        }
+                        $.ui.loading();
+                        $.ajaxPassport({
+                            url:"{url /ucenter/template_del}",
+                            success:function(res){
+                                $.ui.close_loading();
+                                if (res.error == 1) {
+                                    $.ui.error(res.message);
+                                }else{
+                                    $.ui.success(res.message);
+                                    setTimeout(function () {
+                                        window.location.replace("{url /ucenter/template}");
+                                    },500);
+                                }
+                            },
+                            data:{id:id},
+                        });
+                    },"你确定要删除此模板吗？");
+                });
+                //设置为默认模板
+                $(".set-m-tpl").click(function () {
+                    var tpl_id = $(this).data('id');
+                    var obj = this;
+                    $.ui.confirm(function () {
+                        if ($.is_empty(tpl_id)) {
+                            $.ui.error("模板不存在！");
+                            return false;
+                        }
+                        $.ui.loading();
+                        $.ajaxPassport({
+                            url:"{url /ucenter/template_set}",
+                            success:function(res){
+                                $.ui.close_loading();
+                                if (res.error == 1) {
+                                    $.ui.error(res.message);
+                                }else{
+                                    $.ui.success(res.message);
+                                    setTimeout(function () {
+                                        window.location.replace("{url /ucenter/template}");
+                                    },500);
+                                }
+                            },
+                            data:{id:tpl_id},
+                        });
+                    },"你确定要设置为默认模板吗？");
+                });
+                $(".getwith").click(function () {
+                    var obj = this;
+                    var name = $(obj).data("name");
+
+                    $.ajaxPassport({
+                        url:"{url ucenter/get_tpl_dn}",
+                        success:function (res) {
+                            var result = {name:name};
+                            if (res.error == 1) {
+                                result.dn = 0;
+                            }else{
+                                result.dn = res.message;
+                            }
+                            var html = "" + easyTemplate($("#tpl_domain_cart").html(),result);
+                            $(".my-domian-transfer").html(html);
+                            $(".my-domian-transfer").find('#doc-modal-1-t').modal({width: 600});
+                        },
+                        data:{tpl_name:name}
+                    });
+
+                });
+            },
+            data:{page:page,do:"get"},
+        });
+    }
+</script>
+<!--关联域名-->
+<script type="text/template" id="tpl_domain_cart">
+    <#macro rowedit data>
+        <div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1-t">
+            <div class="am-modal-dialog">
+                <div class="am-modal-hd" style="border-bottom: 1px solid silver;text-align: left;color:black;padding-bottom: 16px;">
+                    <i class="am-icon-code-fork" style="color: #EB8500;"></i>&nbsp;&nbsp;关联域名&nbsp;&nbsp;<span style="font-size: 12px;color: grey">小贴士：有关联域名的模板不能做删除操作！</span>
+                    <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+                </div>
+                <div class="dis10"></div>
+                <div class="am-modal-bd" style="font-size: 14px;padding: 10px 30px 80px 30px;text-align: center;">
+                    <table class="am-table">
+                        <col width="200px"/>
+                        <col/>
+                        <thead>
+                        </thead>
+                        <tbody>
+                        <tr >
+                            <td style="border: 0px;text-align: right">模板名称：</td>
+                            <td style="border: 0px;text-align: left">${data.name}</td>
+                        </tr>
+                        <tr >
+                            <td style="border: 0px;text-align: right">关联域名：</td>
+                            <td style="border: 0px;text-align: left">
+                                <#if (data.dn == 0)>0<#else>${data.dn.length}</#if>个
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="dis10"></div>
+                    <table class="am-table am-table-bordered">
+                        <col width="200px"/>
+                        <col width="200px"/>
+                        <col/>
+                        <thead>
+                        <tr >
+                            <th style="text-align: center">域名</th>
+                            <th style="text-align: center">注册时间</th>
+                            <th style="text-align: center">到期时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#if (data.dn != 0)>
+                            <#list data.dn as dn>
+                            <tr>
+                                <td>${dn.domain}</td>
+                                <td>${dn.reg_time}</td>
+                                <td>${dn.exp_time}</td>
+                            </tr>
+                            </#list>
+                            <#else>
+                                <tr><td colspan="3" style="text-align: left;color: darkgray;">&nbsp;&nbsp;无关联域名！</td></tr>
+                        </#if>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </#macro>
+</script>
+{/block}

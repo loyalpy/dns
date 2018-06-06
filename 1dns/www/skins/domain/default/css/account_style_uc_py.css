@@ -1,0 +1,370 @@
+/***************************************************************my domain index************************************************************************/
+.domain-register-table tr td{font-size: 14px;}
+.domain-register-table tr td.d span{font-size: 16px;position: relative;top:-3px;color: #0095E2}
+
+
+
+/***************************************************************my domain basic************************************************************************/
+.basic-top{
+    border-left: 1px solid #CCCCCC;
+    height: 23px;
+    line-height: 23px;
+}
+.am-uc-right table.basic-table{
+    margin-top: 30px;
+    padding-left: 120px;
+
+}
+.am-uc-right table.basic-table tr td{
+    border: 0px;
+    font-size: 14px;
+    height: 45px;
+}
+.am-uc-right table.basic-table tr td.l{
+    text-align: right;
+    color: gray;
+}
+
+.am-uc-right table.basic-table tr td a{margin-left: 18px;font-weight: bold;}
+.basic-t-t p{font-size: 12px;}
+.basic-t-t a{font-size: 12px;color: #00a1cb}
+
+/***************************************************************my domain basic_edit************************************************************************/
+
+.am-uc-right table.basic-edit-table tr td{
+    font-size: 14px;
+    height: 40px;
+    line-height: 40px;
+}
+.am-uc-right table.basic-edit-table tr td.l{
+    text-align: right;
+}
+.am-uc-right table.basic-edit-table tr td.l span{color: orange}
+.am-uc-right table.basic-edit-table tr td input.i{
+    width: 260px;
+    height: 35px;
+    line-height: 35px;
+    display: inline-block;
+    font-size: 14px;
+}
+.am-uc-right table.basic-edit-table tr td i.t{
+    display: none;
+    color: orange;
+}
+
+.am-uc-right table.basic-edit-table tr td select.i1{
+    width: 140px;
+    display: inline-block;
+    font-size: 14px;
+}
+
+.add-c-sub{
+    border-top: 1px solid #DDDDDD;
+}
+.add-c-sub button{
+    margin-top: 20px;
+    margin-left: 210px;
+}
+
+/***************************************************************my domain basic_dns************************************************************************/
+.am-uc-right .now-dns{
+    margin-top: 40px;
+    font-size: 14px;
+    width: 80%;
+    margin-left: 50px;
+}
+.am-uc-right .now-dns .now-dns-table .l{
+    text-align: right;
+    padding-right: 15px;
+}
+.am-uc-right .now-dns .now-dns-table tr td{
+    border: 0px;
+    height: 60px;
+    line-height: 60px;
+}
+.am-uc-right .now-dns .now-dns-table tr td input{
+    width: 280px;
+    height: 35px;
+    line-height: 35px;
+    margin-top: 15px;
+    display: inline-block;
+}
+.am-uc-right .now-dns .now-dns-table tr td i.s{
+    color: orange;
+    position: relative;
+    top:8px;
+    left:3px;
+    display: none;
+}
+.am-uc-right .now-dns-sub{
+    border-top: 1px solid #DDDDDD;
+    padding-top: 20px;
+}
+.am-uc-right .now-dns-sub button{
+    margin-left: 256px;
+}
+.now-dns-bot{
+    background-color: #FCF8E2;
+    font-size: 12px;
+    padding: 20px 30px;
+    color: #996633;
+    border-left: 2px solid #EDD28A;
+}
+.now-dns-bot dd{
+    height: 28px;
+}
+.s-dns-2{
+    display: none;
+}
+
+
+/***************************************************************my domain basic_rz************************************************************************/
+
+.basic-rz .fabu-stepbox span{
+    font-size: 16px;
+}
+
+table.basic-rz-table{
+    width: 70%;
+    margin-left: 80px;
+}
+table.basic-rz-table td.l{
+    text-align: right;
+    padding-right: 20px;
+}
+table.basic-rz-table tr td{
+    border: 0px;
+    font-size: 14px;
+    height: 42px;
+    line-height: 42px;
+}
+table.basic-rz-table tr td .sfz-tips{
+    margin-top: -5px;
+}
+table.basic-rz-table tr td input{
+    width: 260px;
+    margin-top: 5px;
+    display: inline-block;
+}
+table.basic-rz-table tr td i.i{
+    color: orange;
+    position: relative;
+    top: 3px;
+    left:3px;
+    display: none;
+}
+.am-uc-right .basic-rz-sub{
+    border-top: 1px solid #DDDDDD;
+    padding-top: 20px;
+}
+.am-uc-right .basic-rz-sub button{
+    margin-left: 286px;
+}
+.basic-rz-sub-2{
+    margin-top: 20px;
+    margin-left: 200px;
+}
+.basic-rz-sub-2 .sub-2-l{
+    float: left;
+    margin-right: 20px;
+}
+.basic-rz-sub-2 .sub-2-l i{
+    font-size: 24px;
+    color: green;
+}
+.basic-rz-sub-2 .sub-2-r{
+    float: left;
+    text-align: left;
+    font-size: 14px;
+}
+
+.basic-rz-sub-3{
+    margin-top: 20px;
+    margin-left: 260px;
+}
+.basic-rz-sub-3 .sub-3-l{
+    float: left;
+    margin-right: 20px;
+}
+.basic-rz-sub-3 .sub-3-l i{
+    font-size: 24px;
+    color: green;
+}
+.basic-rz-sub-3 .sub-3-r{
+    float: left;
+    text-align: left;
+    font-size: 14px;
+}
+
+.sfz-tips-1{
+    display: none;
+}
+
+.am-form span.set-m-tpl{
+    color: orange;
+    cursor:pointer;
+}
+.template-info-table tr td .am-icon-check{color:#6AB23A;display: none}
+.set-m-m{display: inline-block}
+
+/***************************************************************my domain transfer************************************************************************/
+
+.am-uc-right .domain-transfer-box{
+    margin: 40px 0 0 240px;
+}
+.domain-transfer{margin: 0 auto;padding:0;font-size: 14px;height: auto;background-color: #fff;}
+.domain-transfer .nav{border-bottom: 1px solid #dedede;border-top: 1px solid #dedede;text-align: center;padding:20px 30px;background-color: #fff;}
+.domain-transfer .nav> ul {padding:0 !important;margin:0 !important;display: inline-block;}
+.domain-transfer .nav li{float: left;margin-right:34px;}
+.domain-transfer .un-use .icon span.s{color:gray;-moz-transition-duration: 0.8s;background-position: -30px 50%;border: 1px solid #CCCCCC;border-radius: 60px;display: block;float: left;height: 27px;line-height:24px;width: 27px;text-align:center;text-indent:0;margin: 0 15px 0 0px;position: relative;top:3px;}
+.domain-transfer .un-use .icon span.cur{border: 1px solid #1BA208;color:#1BA208;}
+.domain-transfer .un-use .icon font{color:gray;position: relative;top:5px;}
+.domain-transfer .un-use .icon font.cur{color:#1BA208;font-weight: bold;}
+.domain-transfer  span.cart_icon_right{margin-left: 34px;background-image: url(../images/cart_icon_right.png);-moz-transition-duration: 0.8s;background-color: #FFFFFF;display: block;float: right;height: 30px;width: 20px;text-align:center;text-indent:0;position: relative;top:3px;}
+
+/***************************************************************left top right************************************************************************/
+.am-uc-top{
+    border-bottom: 1px solid #DCDCDC;
+    width: 96%;
+    margin: 0 auto;
+    height: 50px;
+    line-height: 50px;
+    margin-left: 45px;
+    font-size: 22px;
+    color: #333;
+}
+
+/***************************************************多域名切换***************************************/
+.domain-li-d {
+    position: relative;
+}
+
+.domain-li-d a.hover {
+}
+
+.domain-li-d .domain-li-dup {
+    position: absolute;
+    display: none;
+    left: 0px;
+    top: 48px;
+    z-index: 9999;
+    border: 1px #d2d2d2 solid;
+    border-top: 0 none;
+    padding: 8px 12px;
+    width: 380px;
+    background: #fff;
+    color: #666;
+    border-radius: 2px;
+}
+
+.domain-li-d .domain-li-dup table {
+    font-size: 14px;
+}
+.domain-li-d .domain-li-dup table tr td,.domain-li-d .domain-li-dup table tr th{
+    padding: 3px 8px !important;
+}
+.domain-li-d .domain-li-dup table tr td a {
+    margin-left: -10px;
+}
+.domain-li-d .domain-li-dup table tr td a.a-a {
+    font-size: 12px;
+}
+.domain-li-d .domain-li-dup table tr td a,cite{
+    height: 25px;
+    line-height: 25px;
+}
+.domain-li-d .domain-li-dup p {
+    font-size: 14px;
+    text-align: right;
+}
+
+.domain-li-dup table tr td .tr-td-a:hover {
+    color: #00b4de;
+}
+
+.domain-li-dup table tr td .am-icon-line-chart:hover {
+    color: #00b4de;
+}
+
+.am-icon-line-chart1 {
+    color: darkgray;
+}
+
+
+/***************************************************域名安全设置***************************************/
+.basic-safty-set{
+    padding-top: 25px
+}
+.basic-safty-set table{
+    border-top: 1px solid #DDDDDD;
+    border-bottom: 1px solid #DDDDDD
+}
+ .basic-safty-set table tr td{
+     vertical-align: middle;
+     line-height: 35px;
+     height: 50px;
+ }
+
+.w-onoff {
+    vertical-align: middle;
+    width: 50px;
+    height: 20px;
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: middle;
+    zoom: 1;
+    background-image: url(../images/domain_safty_set.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    cursor: pointer
+}
+
+.w-onoff .w-onoff-handle {
+    display: block;
+    width: 50px;
+    height: 20px;
+    transition: background-position 0.2s ease;
+    background-image: url(../images/domain_safty_set.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px
+}
+
+.w-onoff-on {
+    background-position: 0px -40px
+}
+
+.w-onoff-off {
+    background-position: 0px -60px
+}
+
+.w-onoff-disable {
+    background-position: 0px -80px;
+    cursor: default
+}
+
+.w-offon-disable {
+    background-position: 0px -80px;
+    cursor: default
+}
+
+.w-onoff-on .w-onoff-handle {
+    background-position: 0px 0px;
+}
+
+.w-onoff-off .w-onoff-handle {
+    background-position: -28px 0px;
+}
+
+.w-onoff-disable .w-onoff-handle {
+    background-position: 0px 0px;
+}
+
+.w-offon-disable .w-onoff-handle {
+    background-position: -28px 0px;
+}
+
+
+
+
+
+

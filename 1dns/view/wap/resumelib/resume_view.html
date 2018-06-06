@@ -1,0 +1,156 @@
+{block main}
+<dl class="am-padding-sm am-text-sm am-margin-bottom-sm">
+          <dt style="border-top:none;"><h2 class="am-text-xl">{$data['name']}</h2></dt>         
+          <dd><span>{$data['job_name']}</span> | <span class="font-blue">{if $data['resume_st']}{echo App::get_conf("data_config.resume_st.".$data['resume_st'])}{else}找工作中{/if}</span>
+		            <span>{if $data['job_age']}{echo App::get_conf("data_config.job_age.".$data['job_age'])}经验{else}无工作经验{/if}</span>
+		            <span class="noborder">{if $data['job_edu']}{echo App::get_conf("data_config.job_edu.".$data['job_edu'])}{else}无学历{/if}</span>
+		            <span style="display:none;">{if $data['job_zy']}{echo App::get_conf("data_config.job_zy.".$data['job_zy'])}{else}无专业{/if}</span>
+		            <span style="display:none;" class="noborder">{$data['city_from']}</span></dd>
+           <dd><span class="am-text-xs am-text-gray am-text-normal">更新时间：{echo tTime::format_dateline("Y-m-d H:i:s",$data['lastupdate']);}</span></dd>
+          {if $data['tag_resume']}
+          <dt><strong class="am-text-orange">标签:</strong></dt>
+          <dd>
+           <span class="am-btn am-btn-secondary am-btn-xs">{echo tFun::get_tag_more('tag_resume',$data['tag_resume'],'</span>&nbsp;<span class="am-btn am-btn-secondary am-btn-xs">');}</span>
+		   <div class="am-cf"></div>
+		  </dd>
+		  {/if}
+          <dt><strong class="am-text-orange">基本信息:</strong></dt>
+          <dd><ul>            
+			  <li><span>政治面貌：</span>{if $data['job_gov']}{echo App::get_conf("data_config.job_gov.".$data['job_gov'])}{else}无{/if}</li>
+			  <li><span>婚姻状况：</span>{if $data['marry']}{echo App::get_conf("data_config.marry.".$data['marry'])}{else}无{/if}</li>
+              <li title=""><span>所在地：</span>{echo tFun::get_conf('city',$data['city'])}</li>
+              <li><span>籍贯：</span>{$data['city_from']}</li>
+              <li><span>身 高：</span>{if $data['height']}{$data['height']} cm {else} 无{/if}</li>
+              <li><span>体 重：</span>{if $data['weight']}{$data['weight']} kg {else} 无{/if}</li>
+              <li><span>民族：</span>{if $data['mingzu']}{echo App::get_conf("data_config.mingzu.".$data['mingzu'])}{else}汉{/if}</li>
+            </ul></dd>
+         <dt><strong class="am-text-orange">求职信息:</strong></dt>
+          <dd><ul>            
+			  <li><span>工种：</span>{$data['job_name']}</li>
+			  <li><span>工种分类：</span>{echo tFun::get_conf_more('job_cate',$data['job_cate'])}</li>
+              <li><span>意向地：</span>{echo tFun::get_conf_more('city',$data['job_area'])}</li>
+              <li><span>意向薪资：</span>{if $data['job_salary']}{echo App::get_conf("data_config.job_salary.".$data['job_salary'])}{else}面议{/if}</li>
+            </ul>
+         </dd> 
+		  
+          {if isset($data['ext_comment'])}
+        <!-- 自我评价 -->
+        <dt><strong class="am-text-orange">食宿环境：</strong></dt>
+          <dd>
+          {echo nl2br($data['ext_comment']);}
+          </dd>
+        {/if}
+        
+        
+        {if isset($data['ext_edu']) && $data['ext_edu']}
+        <!-- 教育经历 -->
+        <dt>教育经历：</dt>
+        <dd>
+            {foreach items=$data['ext_edu']}
+            <div class="item">
+			  <span class="fl f14">
+			  <font class="font-blue f14">{$item['startdate']}年-{if $item['enddate']>3000}至今{else}{$item['enddate']}年{/if}</font>&nbsp;&nbsp;
+			  {$item['school']}&nbsp;&nbsp;{$item['zhuanye']}
+			  </span>
+			  <div class="cl"></div>
+			</div>
+			{/foreach}
+        </dd>
+        {/if}        
+        {if isset($data['ext_work']) && $data['ext_work']}
+        <!-- 工作经历 -->
+        <dt>工作经历：</dt>
+        <dd>
+            {foreach items=$data['ext_work']}
+            <div class="item">
+			  <span class="fl f14">
+			  <font class="font-blue f14">{$item['startdate']}年-{if $item['enddate']>3000}至今{else}{$item['enddate']}年{/if}</font>&nbsp;&nbsp;
+			  {$item['company']}&nbsp;&nbsp;{$item['post']}
+			  </span>
+			  <div class="cl"></div>
+			</div>
+			{/foreach}
+        </dd>
+        {/if}
+        
+        
+        
+</dl>
+
+<!-- 菜单 -->
+{if $this->userinfo['utype'] == 1}
+{elseif $this->userinfo['utype'] == 2}
+<div class="quick-menu" id="quick_menu_box" style="display:none;">
+ {if $prevnext}
+ <div class="quick-prevnext">
+ {if $prevnext['prev'] === false}
+ <a class="dis-prev" href="javascript:void(0);"></a>
+ {else}
+ <a class="prev" href="{url /resumelib/resume_view/?rs=$rs&r=}{$prevnext['prev']}"></a>
+ {/if}
+ {if $prevnext['next'] === false}
+ <a class="dis-next" href="javascript:void(0);"></a>
+ {else}
+ <a class="next" href="{url /resumelib/resume_view/?rs=$rs&r=}{$prevnext['next']}"></a>
+ {/if}
+ </div>
+ {/if}
+ <h1>快捷菜单</h1>
+ <div class="body">
+  <ul>
+  {if $libinfo['lib_st'] > 4}
+  <li><a href="javascript:void(0)" class="font-green">{echo App::get_conf('data_config.lib_st.'.$libinfo['lib_st'])}</a></li>
+  {else}
+  {foreach items=App::get_conf('data_config.lib_st')}
+  {if $key > 0 && $key <5}
+  <li><a {if $libinfo['lib_st'] == $key} class="font-gray"{else}class="font-blue btn-set-libst" data-id="{$libinfo['lib_id']}" data-st="{$key}"{/if} href="javascript:void(0)">{$item}</a></li>
+  {/if}
+  {/foreach}
+  {/if}
+  </ul>
+  <div style="padding:12px 8px;text-align:center;">
+  {if $libinfo['lib_st'] < 5}
+  <a href="javascript:void(0);" data-id="{$libinfo['lib_id']}" class="btn btn-org btn-invite" >邀请面试</a>
+  {/if}
+  <div class="dis9"></div>
+  {if $refer}
+  <a class="btn" href="{url $refer}">返回列表</a>
+  {/if}
+  <div class="dis9"></div>
+    <span class="txt-gray">请及时处理!</span>
+    <div class="dis9"></div>
+  </div>
+ </div>
+</div>
+{elseif $this->userinfo['utype'] == 3}
+{/if}
+{/block}
+
+{block leftnav}{/block}
+{block javascript}
+<script type="text/javascript" src="{url /static/resumelib.js}"></script>
+{if $this->userinfo['utype'] == 2}
+{include resumelib/tpl}
+<script language="javascript">
+$(function(){
+	$(".btn-set-libst").unbind("click").bind("click",function(){
+		var obj = this;
+		var st = $(obj).attr("data-st");
+		var lib_id = $(obj).attr("data-id");
+		myresumelib.setst(lib_id,st);
+	})
+	$(".btn-invite").unbind("click").bind("click",function(){
+		var obj = this;
+		var lib_id = $(obj).attr("data-id");
+		myresumelib.invite(lib_id);
+	})	
+	var q_right = parseInt(($(document).width()-950)/2)-($.ie6?40:30);
+	$("#quick_menu_box").css({right:q_right}).fadeIn("fast");
+	window.onresize = function(){
+	 	var q_right = parseInt(($(document).width()-950)/2)-($.ie6?40:30);
+		$("#quick_menu_box").css({right:q_right});
+	}
+})
+</script>
+{/if}
+{/block}

@@ -1,0 +1,92 @@
+<div class="tselect" data-name="${data.name}" data-label="请选择${data.label}">
+           <a href="javascript:void(0)" class="tselect-text e"></a>
+           <input type="hidden" name="${data.name}" value="${data.value}" ${data.require} />
+		   <input type="hidden" name="${data.name}_text" value="${data.value}" />           
+           <div class="tselect-box" style="display:none">
+           <div class="in">
+           <a class="sel<#if (data.disabled == 1)>1<#else>0</#if>" data-v="" href="javascript:void(0);">不选</a>
+           <#list data.data_sr as list>
+		   <a data-v="${list.key}" title="${list.v}" class="sel<#if (data.disabled == 1 && data.value != list.key)>1<#else>0</#if> e" href="javascript:void(0);">${list.v}</a>
+		   </#list>
+           </div>
+           </div>
+		</div>		
+
+
+
+
+formobj.find(".tselect").each(function(){
+				var obj = this;
+				var init_n = $(obj).attr("data-name");
+				var init_l = $(obj).attr("data-label");
+				var init_v = $(obj).find("input[name='"+init_n+"']").val();
+				
+				$(obj).find(".tselect-text").unbind("click").click(function (e) {					
+					    formobj.find(".tselect").parent().parent().css("z-index",0);
+					    formobj.find(".tselect").find(".tselect-box").hide();
+					    formobj.find('.input-tips').hide();
+				    	formobj.find('.input-tips').parent().parent().css("z-index",0);
+					    
+			            if ($(obj).find(".tselect-box").css('display') == 'none') {
+			            	$(obj).parent().parent().css("z-index",99);
+			            	$(obj).find(".tselect-box").show();
+			            } else {
+			            	$(obj).parent().parent().css("z-index",0);
+			            	$(obj).find(".tselect-box").hide();			            	
+			            }
+			            e.stopPropagation();
+			            return false;
+			        });  
+				
+				$(obj).find("a.sel0").unbind("click").click(function(e){
+					var obj1 = this;
+					var v = $(obj1).attr("data-v");
+					var cur_v = $(obj).find("input[name='"+init_n+"']").val();
+					if($.is_empty(v)){
+						$(obj).find(".tselect-text").html(init_l);
+					}else{
+						$(obj).find(".tselect-text").html($(obj1).html());
+					}
+					$(obj).find("input[name='"+init_n+"']").val(v);
+					$(obj).find('.tselect-box').hide();
+                	$(obj).parent().parent().css("z-index",0);
+					if(v != cur_v && typeof $(obj).find("input[name='"+init_n+"']").data("onchange") == "function"){
+						$(obj).find("input[name='"+init_n+"']").data("onchange")(obj);
+					}
+					e.stopPropagation();
+				});
+				//初始
+				if($.is_empty(init_v)){
+					$(obj).find(".tselect-text").html(init_l);
+				}else{
+					$(obj).find(".tselect-text").html($(obj).find("a.sel0[data-v='"+init_v+"']").html());
+				}
+			});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.tselect {width:100%;position:relative;}
+.tselect .tselect-text {color:#333;padding:0 30px 0 10px;display:inline-block;background:#fff url(../images/job_icon_db.gif) right center no-repeat;border:solid 1px #c9c9c9; height:32px;line-height:32px;
+/*
+-moz-box-shadow:2px 2px 2px #f3f3f3 inset;              
+-webkit-box-shadow:2px 2px 2px #f3f3f3 inset;           
+box-shadow:2px 2px 2px #f3f3f3 inset; 
+*/
+}
+.tselect .tselect-box {width:100%;min-width:150px;position:absolute; top:39px;left:0;background:#fff;box-shadow:3px 3px 4px #CCCCCC}
+.tselect .tselect-box .in {border:solid 1px #c9c9c9;display:block;max-height:600px;overflow-y:auto;}
+.tselect .tselect-box .in a {display:block;height:28px;line-height:28px;padding:0 12px;color:#777;}
+.tselect .tselect-box .in a:hover {background:#daecf5;}

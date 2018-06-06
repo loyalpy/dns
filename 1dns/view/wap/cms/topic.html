@@ -1,0 +1,76 @@
+{block title}{if $data['threads']['seo_title']}{$data['threads']['seo_title']}{else}{$data['threads']['subject']}-{$site['seo_title']}{/if}{/block}
+{block seo}
+	<meta name="keywords" content="{if $data['threads']['seo_keyword']}{$data['threads']['seo_keyword']}{else}{$data['subject']},{$site_config['seo_keyword']}{/if}" />
+	<meta name="description" content="{if $data['threads']['seo_description']}{$data['threads']['seo_description']}{else}{$data['subject']},{$site_config['seo_description']}{/if}" />
+{/block}   
+{block main}
+<div class="wrap">
+    <div class="loca"><a href="/index.html">首页</a>  
+   	{if isset($topcate['name']) && $topcate['name']} &gt;  <a href="{url /cms/news/fid/$topcate[id]}">{$topcate['name']}</a>{/if}
+	
+    {if isset($cate['name']) && $cate['name']} &gt;  <a href="{url /cms/news/fid/$cate[id]}">{$cate['name']}</a>{/if}
+	
+	&gt; 
+    <a href="###">{$data['threads']['subject']}</a> 
+    </div>
+</div>
+<div class="wrap" id="artview">
+    <!--mainbar-->
+	<div class="mainbar cf">
+    	<div id="artarea">
+        <h1>{$data['threads']['subject']}</h1>
+        <div class="artinfo">
+        	<span>来源：{$site['site_name']}</span><span>时间：{echo tTime::get_datetime('Y年m月d日 H:i',$data['threads']['dateline'])}</span>
+        </div>
+        <div class="review">
+          {foreach items=$data['list']}
+		  {if $item['first'] == 1}
+		  	<div class="threads_html_box">{echo htmlspecialchars_decode($item['message'])}</div>
+		  {/if}
+		  {/foreach}
+        </div>
+        <div class="pnlink">
+           {if $prevnext['prev'] || $prevnext['next']}
+	       <div class="prevnext">
+	       {if $prevnext['prev']}
+	       <p class="f14"><span class="txt-gray">下一篇：</span><a class="font-blue" href="{echo U('/cms/topic/tid/'.$prevnext['prev']['tid'])}" title="{$prevnext['prev']['subject']}">{$prevnext['prev']['subject']}</a></p>
+	       {/if}
+	       {if $prevnext['next']}
+	       <p class="f14"><span class="txt-gray">上一篇：</span><a class="font-blue" href="{echo U('/cms/topic/tid/'.$prevnext['next']['tid'])}" title="{$prevnext['next']['subject']}">{$prevnext['next']['subject']}</a></p>
+	       {/if}
+	       </div>
+	       {/if}
+		</div>
+        </div>
+    </div>
+    <!--mainbar end-->
+    <!--sidebar-->
+	<div class="sidebar cf">
+	    <div class="search-form">
+		 <form action="{url /cms/news/fid/$fid}" method="POST">
+	      <input type="hidden" name="hash" value="{hash}" />
+	      <input type="text" style="width:214px;" name="keyword" value="{$keyword}"  class="key txt-gray2" />
+	      <button type="submit" class="fbtn"></button>
+	     </form>
+	    </div>
+	    <div class="dis20"></div>
+    	<div class="block">
+        	<h3>推荐</h3>
+            <div class="siderand">
+            {if $tuinews}
+            <ul>
+            {foreach items=$tuinews}
+            <li><a href="{url /cms/topic/tid/$item[tid]}" title="{$item['subject']}">{$item['subject']}</a></li>
+            {/foreach}
+            </ul>
+            {/if}
+            </div>         
+    	</div>
+    	<div class="sp10"></div>
+	</div>
+    <!--sidebar end-->
+</div>
+<div class="dis60"></div>
+{/block}
+
+{block friendlink}{/block}

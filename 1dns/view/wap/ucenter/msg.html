@@ -1,0 +1,69 @@
+{block leftnav}{/block}
+{block main}
+<div class="aps">
+{code
+	        $title = R("title","string");
+		    $type = R("type","string");
+		    $type = $type?$type:"error";
+		    
+		    $exttype = R("exttype","string");
+		    
+		    $info = R("info","string");
+		    $extstr = R("extstr","string");
+		    $extstr = $extstr?$extstr:"如有疑问，请联系".App::get_conf('site.tel');
+		    $extinfo = $extstr?explode("###",$extstr):array();
+		    
+		    $btnstr = R("btnstr","string");
+		    $btninfo = $btnstr?explode("###",$btnstr):array();
+	    }
+	    {/code}
+	    
+	    <div class="uc-msg">	    
+	     <!--提示信息-->
+	       {if $type == "success"}
+			   <div class="tipmsg3">
+			      <div class="dis60"></div>
+			      <p class="am-text-success"><cite class="am-success am-icon-sm am-icon-check-circle" style="position:relative;top:3px;"></cite>  &nbsp;&nbsp;<font class="font-org f18 yh">{$info}</font></p>
+			      {if $extinfo}
+			      <div class="dis15"></div>
+			      {foreach items=$extinfo}
+			      <p class="am-text-sm">{$item}</p>
+			      {/foreach}
+			      {/if}
+			   </div>
+			   <div class="dis30"></div>			   
+			      {if $btninfo}
+			      <div class="uc-msg-btn">
+			      {foreach items=$btninfo}
+			      {set $tmp = explode("#",$item);}
+			      <a href="{$tmp[0]}" class="am-btn am-btn-default am-btn-sm">{$tmp[1]}</a><div class="dis5"></div>
+			      {/foreach}
+			      </div>
+			      {/if}			   
+			   <div class="dis60"></div>
+			   <!--end提示信息-->
+		   {else}
+		       <div class="tipmsg3">
+		       <div class="dis60"></div>
+			   <p class="am-text-danger"><cite class="am-danger am-icon-sm am-icon-times-circle" style="position:relative;top:3px;"></cite> &nbsp;&nbsp;<font class="font-org f18 yh">{$info}</font></p>
+			   {if $extinfo}
+			   <div class="dis15"></div>
+			   {foreach items=$extinfo}
+			   <p class="am-text-sm">{$item}</p>
+			   {/foreach}
+			   {/if}
+			   </div>
+			   <div class="dis30"></div>			   
+			      {if $btninfo}
+			      <div class="uc-msg-btn">
+			      {foreach items=$btninfo}
+			      {set $tmp = explode("#",$item);}
+			      <a href="{$tmp[0]}" class="am-btn am-btn-default am-btn-sm">{$tmp[1]}</a><div class="dis5"></div>
+			      {/foreach}
+			      </div>
+			      {/if}			   
+			   <div class="dis60"></div>
+		   {/if}
+		</div>
+</div>
+{/block}

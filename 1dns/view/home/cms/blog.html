@@ -1,0 +1,99 @@
+{block title}{if isset($cate['name']) && $cate['name']}{$cate['name']}{else}八戒DNS{/if}-{$site['seo_title']}{/block}
+{block seo}
+	<meta name="keywords" content="{$cate['name']},八戒DNS,{$site_config['seo_keyword']}" />
+	<meta name="description" content="{$cate['name']},八戒DNS,{$site_config['seo_description']}" />
+{/block}
+{block header}{/block}
+{block main}
+<div class="news-wrap">
+	<div class="artview">
+	   <!--sidebar-->
+		<div class="sidebar">
+			<div class="artarea">
+				{if $data['list']}
+					{foreach items=$data['list']}
+					<dl>
+						<dt><a href="{url /cms/topic/tid/$item[tid]}" target="_blank">{echo tFun::keyword_replace($keyword,$item['subject'])}</a></dt>
+						<dd class="art"><a href="{url /cms/topic/tid/$item[tid]}" target="_blank">{echo tFun::keyword_replace($keyword,tUtil::substr($item['description'],120,1))}..</a></dd>
+						<dd class="time">
+							<!--<span>{echo tTime::get_datetime("Y-m-d H:i",$item['dateline'])}</span>-->
+							<div class="s">分享<img src="{skin images/index/upp.jpg}"></div>
+							<a class="more" href="{url /cms/topic/tid/$item[tid]}">查看详情</a>
+							<ul class="share" style="display: none;">
+								<li style="position: relative;top:-3px;">分享到：</li>
+								<li class="sina"><a href="javascript:void(0);"  onclick="return go_share(this,'sina');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/sina.jpg}"></a></li>
+								<li class="tengx"><a  href="javascript:void(0);"  onclick="return go_share(this,'tengx');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/tengx.jpg}"></a></li>
+								<li class="kaixin"><a  href="javascript:void(0);"  onclick="return go_share(this,'kaixin');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/kaixin.jpg}"></a></li>
+								<li class="douban"><a  href="javascript:void(0);"  onclick="return go_share(this,'douban');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/douban.jpg}"></a></li>
+								<li class="sohu"><a  href="javascript:void(0);" onclick="return go_share(this,'sohu');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/sohu.jpg}"></a></li>
+							</ul>
+						</dd>
+
+					</dl>
+					{/foreach}
+				{else}
+				<div class="f14 font-red"><img src="{skin images/noresult.png}" />  <span style="position:relative;top:-20px;">很抱歉，暂无信息</span></div>
+				{/if}
+			</div>
+			<div class="pagebar">
+				{$data['pagebar']}
+			</div>
+		</div>
+		<!--sidebar end-->
+		<!--mainbar-->
+		<div class="mainbar">
+			<div class="search-form">
+				<form action="{url /cms/blog/fid/$fid}" method="POST">
+					<input type="hidden" name="hash" value="{hash}" />
+					<img class="img" src="{skin images/helper/search.jpg}">
+					<input type="text" name="keyword" value="{if $keyword}{$keyword}{else}{/if}"  class="key" />
+					<button type="submit" style="display: none">提交</button>
+				</form>
+			</div>
+			<div class="dis30"></div>
+			<h1>官方博客目录</h1>
+			<div class="dis10"></div>
+			<div class="cmslist-nav">
+				<ul>
+					{foreach items = $cates}
+					<li><a class="{if isset($cate['id']) && $cate['id'] == $item['id']}curr{/if}" href="{url /cms/blog/fid/$item[id]}">{$item['name']}<font class="font-org">({$item['threads']})</font></font></a></li>
+					{/foreach}
+				</ul>
+			</div>
+			<div class="dis30"></div>
+			<h1>推荐</h1>
+			<div class="dis10"></div>
+			<div class="siderand">
+				{if $tuinews}
+				<ul>
+					{foreach items=$tuinews}
+					<li><a href="{url /cms/topic/tid/$item[tid]}" title="{$item['subject']}" >{$item['subject']}</a></li>
+					{/foreach}
+				</ul>
+				{/if}
+			</div>
+		</div>
+		<!--mainbar end-->
+	</div>
+</div>
+{/block}
+{block javascript}
+<script language="javascript" src="{url static@/javascript/utils/share.js}"></script>
+<script type="text/javascript">
+	$(function(){
+		$(".img").click(function(){
+			$("button").click();
+		});
+		$(".s").unbind("click").bind("click",function(){
+			var obj = this;
+			if($(obj).parent().find(".share").css('display') == 'none'){
+				$(obj).parent().find(".share").show();
+			}else{
+				$(obj).parent().find(".share").hide();
+			}
+		})
+
+	});
+</script>
+{/block}
+{block friendlink}{/block}

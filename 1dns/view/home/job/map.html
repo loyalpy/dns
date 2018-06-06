@@ -1,0 +1,307 @@
+{block title}地图找工作-{$site['seo_title']}{/block}
+{block css}
+<style type="text/css">
+.icon-pin{width:16px; height:16px;background: url(../images/pin.png) no-repeat 0 -16px;}
+
+.header .inbox{ width: 98%;}
+
+.map-main{ background: #fff;}
+.navwarp{ margin-bottom: 0;}
+
+html,body,.mapBox,.mapContent{ height: 100%; font-size: 14px;overflow: hidden;}
+
+.map-list-warp{border-right: #B7BDC5 solid 1px; margin-right: -1px;box-shadow: 1px 0 4px rgba(0,0,0,0.2); height: 100%;}
+.map-box-warp{overflow: hidden;*zoom:1;position: relative; border-left: #B7BDC5 solid 1px;                 height: 100%;}
+.map-box{  height: 100%; }
+.map-list-warp .map-search{ padding:8px 0 0 0;}
+.map-box-warp .map-search{position: absolute; top: 20px; left:80px; z-index: 100;}
+
+.map-header{ padding: 16px;}
+
+/*搜索*/
+.lx{font-family: simsun; font-size: 24px; display: inline-block;*display: inline;*zoom:1;overflow: hidden; line-height: normal;}
+.lx-rb{ width: 0.5em; height: 0.5em; *vertical-align: bottom; color: #999;}
+.div-input{display: inline-block;*display: inline;*zoom:1; font-weight: 100;
+    border: #ddd solid 1px; color: #666; background: #fff; padding: 0 12px;
+    position: relative; cursor: pointer;}
+.div-input:hover{ color: #333;}
+.div-input .lx-rb{ position: absolute; right: 0; bottom: 0;}
+.diy-input{border: #ddd solid 1px; color: #666; padding: 0 6px; width: 214px;   font-size: 14px;}
+.diy-btn{color:#fff; background-color: #00a1cb;	border:#00a1cb solid 1px; cursor:pointer; font-size: 14px;}
+
+.map-search {}
+.map-search .div-input,.map-search .diy-input{ height: 32px; line-height: 32px; float: left;}
+.map-search .diy-btn{ height: 33px; *line-height: 33px; }
+.map-search .btn-search{float: right; *border: none;*width: 74px;}
+
+.map-list-warp{ position: relative; z-index: 110; float: left; width: 325px;}
+
+/*条件筛选*/
+.map-criteria{ background: #F6F6F6; border-bottom: #B7BDC5 solid 1px;  padding:8px; position: relative; z-index: 100;/*line-height:26px; overflow: hidden;*zoom:1;*/}
+.map-criteria .div-input strong{ width: 100%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; display: inline-block; *display: inline;*zoom:1;}
+
+.map-criteria-1{ height: 32px;}
+
+.map-criteria-skin1 li{ margin-top:8px; overflow: hidden;*zoom:1;}
+.map-criteria-skin1 .div-input{height: 30px; line-height: 30px;}
+.map-criteria-skin1 .div-first{ width:41%; float: left;}
+.map-criteria-skin1 .div-last{ width: 40%; float: right;}
+
+/*更多筛选条件*/
+.more-conditions{ /*display: none;*/ height: 0; overflow:hidden;*zoom:1; *position: relative;}
+.btn-more-conditions{ position: absolute; bottom: -23px; left: 0; z-index: 100; text-align: center; color: #999;
+    width: 100%; height: 23px; line-height: 18px; display: block; background: url("../images/more-ver.png") no-repeat center top; cursor: pointer;}
+.btn-more-conditions .ficon{ margin: 0;}
+.btn-more-conditions:hover{ color: #333;}
+
+.more-on{ height: 84px;}
+.div-pin{ background:#ddd;}
+.more-on .icon-pin{ background-position: 0 0;}
+
+.div-pin .p1{ display:inline;}
+.div-pin .p2{ display: none;}
+.more-on .div-pin .p1{ display: none;}
+.more-on .div-pin .p2{ display:inline;}
+
+/*侧边信息*/
+.map-info-list-warp{ overflow-x:hidden;overflow-y:auto;}
+.map-info-list-warp .map-info-list{ padding-top:12px;}
+
+.map-info-list li{position:relative;overflow:hidden;*zoom:1;cursor:pointer;  border-bottom: #ddd dashed 1px; padding: 10px 12px 12px 12px;}
+.map-info-list li:hover,.map-info-list li.cur{background-color:#f6f8fa;}
+.map-info-list .in{ overflow: hidden;*zoom:1;}
+
+.icon-point{background:url("../js/map/map-ico-tag.png") no-repeat left bottom;
+    width:18px;height:28px;text-align:center; color: #fff; font-size: 12px; line-height: 20px; font-family: Arial;}
+.map-info-list .icon-point{float: left; margin-right:8px; margin-top: 5px;}
+.map-info-list .cur .icon-point,.map-info-list li:hover .icon-point{ background-position: left top;}
+
+.map-info-list .tit{ text-align: left;}
+.map-info-list .tit,.map-info-list .tit a{font-size: 14px;font-weight: 100; float: none;}
+.map-info-list .co,.map-info-list .co a{font-size: 14px; color: #666;}
+.map-info-list .co{ text-align: left; font-weight: 100;}
+.map-info-list .des{overflow:hidden;color:#666; line-height: 1.75; display: none;}
+.map-info-list .attr{ margin-top: 6px; color: #999; font-size: 12px;}
+.map-info-list .attr span{ padding-right: 6px;}
+.map-info-list .tit .h,
+.map-info-list .co,
+.map-info-list .attr{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.map-info-list .more{ font-family: simsun;}
+.map-info-list .tit .h{ display:inline-block; *display: inline;*zoom:1; vertical-align: middle; max-width: 80%; _width: 80%; color: #66c;}
+.map-info-list .tit .limore{ font-size: 12px; padding-left: 6px;}
+
+/*悬赏职位 赏字显示*/
+.type-2 .tit .h{ padding-left: 20px; background: url(../js/map/shang.png) no-repeat left center;max-width: 72%; _width: 72%;}
+
+/*面包屑导航*/
+.map-warp .breadnav,.map-warp .breadnav a{ font-size: 12px;/*color: #CCCBCA;*/ color: #666;}
+.map-warp .breadnav{ position: absolute; top: 0; left: 0; z-index: 100;
+    width:100%;text-align: center; height: 20px; line-height: 20px; padding-top: 4px;}
+.map-warp .breadnav a{display: inline-block; *display: inline;*zoom:1; vertical-align: top; padding: 0 6px; margin:0 4px;
+    /*border:#A3A2A0 solid 1px;*/ border: #D5D5D5 solid 1px;}
+.map-warp .breadnav .ficon{ margin-left: 4px;}
+.map-warp .breadnav a:hover{ /*color: #fff; border-color: #fff;*/ border-color: #999; color: #333;}
+.map-warp .breadnav a:hover .ficon{ color: #FF6633}
+.map-warp .breadnav-mask{
+    width: 100%; height: 30px; border-bottom: #b7bdc5 solid 1px; box-shadow: 0px 1px 4px rgba(0,0,0,0.2);
+    position: absolute; top: 0; left: 0; z-index: 99; background: #fff; opacity:0.7;filter:alpha(opacity=70);}
+
+/*按写字楼或者职位*/
+.bl-btn-tabs{ overflow: hidden;*zoom:1; padding-right: 1px;}
+.bl-btn-tabs .btn-tab{ height: 28px; line-height: 28px; border:#cbcbcb solid 1px; padding: 0 10px; float: left; font-size: 14px; background: #fff; margin-right: -1px; cursor: pointer;}
+.bl-btn-tabs .cur{ background: #00a1cb; border-color: #00a1cb; color: #fff;}
+.bl-btn-tabs .btn-tab-first{ border-radius: 4px 0 0 4px;}
+.bl-btn-tabs .btn-tab-last{ border-radius: 0 4px 4px 0;}
+
+.map-warp .bl-btn-tabs{ position: absolute; top: 46px; left:72px; z-index: 1000;}
+
+/*白菜弹出*/
+.bc-pop{ position: absolute; z-index: 1000; background-color: #fff; display: none;   box-shadow:1px 1px 4px rgba(0,0,0,0.1)}
+.bc-pop .pop-tit{ line-height: 32px; font-size: 14px; padding: 0 10px;}
+.bc-pop .fn-close{ position: absolute; top: 8px; right: 6px; font-size: 18px;}
+
+.bc-pop-def{border: #ddd solid 1px;   color:#666}
+.bc-pop-def .pop-tit{ border-bottom: #eee solid 1px;  color:#666}
+
+/*城市列表*/
+.city-warp{ padding: 6px;}
+.city-warp a{ color: #3d6dcc;cursor: pointer;}
+.city-warp a:hover{ text-decoration: underline }
+.city-warp .cur-city{padding: 8px 6px; border-bottom: #eee solid 1px;}
+.city-warp .cur-city .cc{ padding-right: 4px;}
+.city-warp .city-hot{ padding: 8px 0; border-bottom: #eee solid 1px;}
+.city-warp .city-hot a{padding:2px 6px;}
+
+.city-warp .btn{ padding-top: 8px; padding-bottom: 4px;}
+.city-warp .btn-tab{ display: inline-block; *display:inline;*zoom:1; border: #CBCBCB solid 1px; background: #FAFAFA;
+    line-height: 24px; padding:0 12px; margin-right: -1px; color: #666; font-size: 14px; cursor: pointer}
+.city-warp .btn-tab:first-child{border-radius:4px 0 0 4px;}
+.city-warp .btn-tab:last-child{border-radius:0 4px 4px 0;}
+.city-warp .btn-tab:hover{text-decoration: none;}
+.city-warp .btn .cur{ background-color: #F0F0F0; color: #333;}
+
+.city-warp .city-abc{padding: 8px 0; border-bottom: #eee solid 1px;}
+.city-warp .city-abc a{padding:2px 6px;}
+.city-warp .city-abc .tab-c a{ padding-right: 5px; padding-left: 5px;}
+
+.city-warp .city-info{ padding: 10px 0 0 4px; height:300px; overflow: auto; position: relative;}
+.city-warp .city-list{ overflow: hidden;*zoom:1; margin-bottom: 10px;line-height: 1.75; padding-left: 20px; position:relative}
+.city-warp .city-list dt{ float: left; font-weight: 700; width: 45px;}
+.city-warp .city-list dt .abc{ display: block; position: absolute; left: 0; top: 0; font-size: 14px; color: #666;}
+.city-warp .city-list dd{overflow: hidden;*zoom:1;}
+.city-warp .city-list dd a{ padding-right: 12px; display: inline-block; *display: inline;*zoom:1;}
+
+.city-search{ float: right;}
+.city-search .div-input{ height: 24px; *line-height: 24px; vertical-align: top; margin-right: -1px; padding: 0 6px; width: 110px; cursor:text;}
+.city-search .fn-btn{ padding-top: 1px; padding-bottom: 1px;}
+
+/*弹窗中的ul列表*/
+.pop-ul-list{}
+.pop-ul-list li{ padding: 8px 10px; cursor: pointer; border-bottom: #eee solid 1px;}
+.pop-ul-list li:hover{ background: #7a56a0; color: #fff;}
+
+.job-type-list{ padding:12px 8px 8px 8px; font-size: 0; margin-right: -6px;}
+.job-type-list a{ display: inline-block;*display: inline;*zoom:1; padding: 3px 8px; border: #ddd solid 1px; margin-right: 6px; margin-bottom: 6px;
+color: #666; transition:none;}
+/*.job-type-list .ly1 a{ color: #2e8aef}
+.job-type-list .ly2 a{ color: #009cae}
+.job-type-list .ly3 a{ color: #009cae}
+.job-type-list .ly4 a{ color: #00a100}*/
+.job-type-list a:hover{ border-color: #7a56a0; background: #7a56a0; color: #fff;}
+.job-type-list strong{ display: block; border-bottom: #ddd solid 1px; padding-bottom: 2px; margin-bottom: 8px;}
+
+/*地图富标注*/
+.tip-map-point{position: absolute; margin: 0pt; padding: 0pt; left: -3px; top: -42px; overflow: visible;}
+.tip-map-point .s1 {float: left;background: url(../images/tip-bg-01.png) no-repeat scroll 0 0;height: 32px;}
+
+.tip-map-point .s1 em {background: url(../images/tip-bg-01.png) no-repeat scroll 100% -32px;height: 32px;padding: 0 10px;
+    float: left; display: block; color: #fff;line-height: 25px;font-style: normal;white-space: nowrap;}
+.tip-map-point .s1:hover{background-position: 0 -68px;}
+.tip-map-point .s1 em:hover{background-position: 100% -100px;}
+
+/*地图标记上弹出的tip样式*/
+.BMapLib_SearchInfoWindow .BMapLib_bubble_title{ font-weight: 700;}
+.BMapLib_SearchInfoWindow ul{ padding: 4px; line-height: 2; color: #666;}
+.BMapLib_SearchInfoWindow .address,
+.BMapLib_SearchInfoWindow .job,
+.BMapLib_SearchInfoWindow .other-job{
+    overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+
+/*修正*/
+.navwarp,.footer {display:none;}
+/*.BMapLib_SearchInfoWindow .other-job{ max-height:44px; overflow: hidden; line-height: 1.75;}*/
+@media screen and (max-width:1024px){
+    #FuntypeList { font-size: 12px; color: #666;}
+    #FuntypeList td{display: block; float: left; padding-top: 0; padding-bottom: 0;}
+    #FuntypeAlpha .fun_tit{ width: 100%; text-align: left; font-size: 14px; margin-top:8px; margin-bottom: 4px; padding-bottom: 4px; border-bottom: #ddd solid 1px; }
+    #FuntypeList .bgcolor td{ background-color: transparent;}
+    #IndustryAlpha td.industry-sel, #FuntypeAlpha td.fun-sel{ padding-top: 3px; padding-bottom: 3px;}
+    #FuntypeList{ height: 500px; overflow: hidden; overflow-y: auto;}
+}
+
+.loading-warp{ text-align: center; color: #666;}
+.map-info-list .loading-warp{padding: 30px;}
+.mapContent .loading-warp{ padding: 100px 30px 30px 30px;}
+</style>
+{/block}
+{block main}
+<div class="map-main">
+    <div class="map-warp" id="mapSearchWrap" style="height: 850px;">
+        <div class="map-list-warp">
+            <form id="formMapCriteria">
+                <div class="map-criteria">
+                    <div class="map-criteria-skin1 map-criteria-1">
+                        <div class="div-input div-first" id="selectCity">
+                            <input type="hidden" value="杭州市" name="city">
+                            <strong>杭州市</strong>
+                            <span class="lx lx-rb"></span>
+                        </div>
+                        <div class="div-input div-last js-funType" id="funType">
+                            <input type="hidden" class="fn-hid-input" data-nolimit="true" value="" name="funType">
+                            <strong>职能类别</strong>
+                            <span class="lx lx-rb"></span>
+                        </div>
+                    </div>
+                   
+                    <div class="fn-cf map-search">
+                        <input type="text" name="key" value="" placeholder="输入职位关键字" class="diy-input searchInputJs">
+                        <input type="submit" name="submit" class="diy-btn btn-search searchBtnJs" value="立即搜索">
+                        <div class="cl"></div>
+                    </div>             
+                </div>
+            </form>
+            <div class="map-info-list-warp resultWrapJs" id="resultWrapJs">
+               
+            </div>
+        </div>
+        <div class="map-box-warp">
+            <div class="breadnav hideOnPanorama">万才网-o2o悬赏式招工平台</div>
+            <div class="breadnav-mask hideOnPanorama"></div>
+            <div class="switch-type bl-btn-tabs hideOnPanorama searchTypeJs">
+                <a class="btn-tab btn-tab-first btnOffice cur">按写字楼</a>
+                <a class="btn-tab btn-tab-last btnJob">按职位</a>
+            </div>
+            <div id="map_canvas" class="map-box" style="overflow: hidden; position: relative; z-index: 0; color: rgb(0, 0, 0); text-align: left; background-color: rgb(243, 241, 236);">
+            </div>
+        </div>
+   
+</div>
+
+{/block}
+{block javascript}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1CPGHP2b3Vazq05P6TS7WV6Y"></script>
+<script language="javascript">
+function init_layout (){
+	$("#mapSearchWrap").height($(document).height()- 56);
+	$("#resultWrapJs").height($("#mapSearchWrap").height()-91);
+}
+var mybaidu = {
+		map: null,
+		local: null,
+		init_map: function() {
+			var lng = $("#Mlng").val() || 120.243918,
+				lat = $("#Mlat").val() || 30.216384;
+			
+			this.map = new BMap.Map("map_canvas"), this.map.enableScrollWheelZoom(), this.map.addControl(new BMap.NavigationControl);
+			var point = new BMap.Point(lng, lat);
+			
+			this.map.centerAndZoom(point, 15);
+			var marker = new BMap.Marker(point),
+				infowindow = new BMap.InfoWindow('<div style="font:bold 14px/20px 宋体;color:#333">' + $("#Mname").val() + '</div><div style="font: 12px/20px 宋体;color:#333">地址：' + $("#Mpos").val() + "</div>");
+			
+			marker.addEventListener("click", function(){
+				this.openInfoWindow(infowindow)
+			}), marker.enableDragging(!0), marker.addEventListener("dragend", function(a) {
+				$("#Mlng").val(a.point.lng), $("#Mlat").val(a.point.lat)
+			}), this.map.addOverlay(marker), this.map.addEventListener("click", function(a) {
+				mybaidu.map.removeOverlay(marker), 
+				$("#Mlng").val(a.point.lng), 
+				$("#Mlat").val(a.point.lat), 
+				marker = new BMap.Marker(new BMap.Point(a.point.lng, a.point.lat)), 
+				mybaidu.map.addOverlay(marker), marker.enableDragging(!0), marker.addEventListener("dragend", function(a) {
+					$("#Mlng").val(a.point.lng), $("#Mlat").val(a.point.lat)
+				})
+			}), 
+			this.local = new BMap.LocalSearch(mybaidu.map, {
+				renderOptions: {
+					map: mybaidu.map
+				}
+			})
+		},
+		search_map: function(a) {
+			this.local.search(a)
+		}
+}
+$(function(){
+	init_layout();
+	mybaidu.init_map();
+	$(window).resize(function(){
+		init_layout();
+	 });
+})
+</script>
+{/block}
+{block copyright}{/block}
+{block service_link}{/block}
+{block friendlink}{/block}

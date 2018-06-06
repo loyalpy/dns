@@ -1,0 +1,105 @@
+/* ColorBox Core Style */
+#colorbox, #cboxOverlay, #cboxWrapper{position:absolute; top:0; left:0; z-index:9999; overflow:hidden;}
+#cboxOverlay{position:fixed; width:100%; height:100%;}
+#cboxMiddleLeft, #cboxBottomLeft{clear:left;}
+#cboxContent{position:relative;}
+#cboxLoadedContent{overflow:auto;}
+#cboxLoadedContent iframe{display:block; width:100%; height:100%; border:0;}
+#cboxTitle{margin:0;}
+#cboxLoadingOverlay, #cboxLoadingGraphic{position:absolute; top:0; left:0; width:100%;}
+#cboxPrevious, #cboxNext, #cboxClose, #cboxSlideshow{cursor:pointer; border:none;}
+
+/* ColorBox example user style */
+
+#cboxOverlay{background:#000;}
+
+#caseStudy #colorbox{background: #000;}
+        #caseStudy #cboxContent{padding: 0;}
+        #caseStudy #cboxLoadedContent{background:#000; padding:0px;}
+        #caseStudy #cboxTitle{display: none;}
+        #caseStudy #cboxCurrent{display: none !important;}
+        #caseStudy #cboxSlideshow{display: none;}
+        #caseStudy #cboxPrevious{display: none;}
+        #caseStudy #cboxPrevious.hover{}
+        #caseStudy #cboxNext{display: none;}
+        #caseStudy #cboxNext.hover{}
+        #caseStudy #cboxLoadingOverlay{background:#000;}
+        #caseStudy #cboxLoadingGraphic{background:url(./img/loading.gif) center center no-repeat;}
+        #caseStudy #cboxClose{position:absolute; top:7px; right:7px; display:block; background:url(./img/nav-controls.png) 0 0px no-repeat; width:36px; height:36px; text-indent:-8484px;}
+        #caseStudy #cboxClose.hover{background-position:0 -36px;}
+	 .filmwrapper { padding: 65px 85px; background-color:#000;border: 1px solid #222; }
+        
+#ourBeliefs #colorbox{background: #000; border: 1px solid #222;}
+    	#ourBeliefs #cboxContent{padding: 65px 85px;}
+        #ourBeliefs #cboxLoadedContent{background:#000; padding:5px;}
+        #ourBeliefs #cboxTitle{position:absolute; top:25px; left:25px; color:#ccc;font-size: 2.2em;}
+        #ourBeliefs #cboxCurrent{display: none !important;}
+        #ourBeliefs #cboxSlideshow{position:absolute; top:-20px; right:90px; color:#fff;}
+        #ourBeliefs #cboxPrevious{display: none !important;}
+        #ourBeliefs #cboxPrevious.hover{}
+        #ourBeliefs #cboxNext{display: none !important;}
+        #ourBeliefs #cboxNext.hover{}
+        #ourBeliefs #cboxLoadingOverlay{background:#000;}
+        #ourBeliefs #cboxLoadingGraphic{background:url(./img/loading.gif) center center no-repeat;}
+        #ourBeliefs #cboxClose{position:absolute; top:7px; right:7px; display:block; background:url(./img/nav-controls.png) 0 0px no-repeat; width:36px; height:36px; text-indent:-8484px;}
+        #ourBeliefs #cboxClose.hover{background-position:0 -36px;}
+
+#home #colorbox{background: #000; border: 1px solid #222;}
+    	#home #cboxContent{padding: 65px 85px;}
+        #home #cboxLoadedContent{background:#000; padding:5px;}
+        #home #cboxTitle{position:absolute; top:25px; left:25px; color:#ccc;font-size: 2.2em;}
+        #home #cboxCurrent{display: none !important;}
+        #home #cboxSlideshow{position:absolute; top:-20px; right:90px; color:#fff;}
+        #home #cboxPrevious{display: none !important;}
+        #home #cboxPrevious.hover{}
+        #home #cboxNext{display: none !important;}
+        #home #cboxNext.hover{}
+        #home #cboxLoadingOverlay{background:#000;}
+        #home #cboxLoadingGraphic{background:url(./img/loading.gif) center center no-repeat;}
+        #home #cboxClose{position:absolute; top:7px; right:7px; display:block; background:url(./img/nav-controls.png) 0 0px no-repeat; width:36px; height:36px; text-indent:-8484px;}
+        #home #cboxClose.hover{background-position:0 -36px;}
+                
+#ourWork #colorbox{background: #000;}
+        #ourWork #cboxContent{padding:0;}
+        #ourWork #cboxLoadedContent{background:#000; padding:0px;}
+        #ourWork #cboxTitle{display: none;}
+        #ourWork #cboxCurrent{display: none !important;}
+        #ourWork #cboxSlideshow{display: none;}
+        #ourWork #cboxPrevious{display: none;}
+        #ourWork #cboxPrevious.hover{}
+        #ourWork #cboxNext{display: none;}
+        #ourWork #cboxNext.hover{}
+        #ourWork #cboxLoadingOverlay{background:#000;}
+        #ourWork #cboxLoadingGraphic{background:url(./img/loading.gif) center center no-repeat;}
+        #ourWork #cboxClose{position:absolute; top:7px; right:7px; display:block; background:url(./img/nav-controls.png) 0 0px no-repeat; width:36px; height:36px; text-indent:-8484px;}
+        #ourWork #cboxClose.hover{background-position:0 -36px;}
+        
+#ourCompany #colorbox{background: #000;}
+        #ourCompany #cboxContent{padding: 0;}
+        #ourCompany #cboxLoadedContent{background:#000; padding:0px;}
+        #ourCompany #cboxTitle{display: none;}
+        #ourCompany #cboxCurrent{display: none !important;}
+        #ourCompany #cboxSlideshow{display: none;}
+        #ourCompany #cboxPrevious{display: none;}
+        #ourCompany #cboxPrevious.hover{}
+        #ourCompany #cboxNext{display: none;}
+        #ourCompany #cboxNext.hover{}
+        #ourCompany #cboxLoadingOverlay{background:#000;}
+        #ourCompany #cboxLoadingGraphic{background:url(./img/loading.gif) center center no-repeat;}
+        #ourCompany #cboxClose{position:absolute; z-index: 100; top:7px; right:7px; display:block; background:url(./img/nav-controls.png) 0 0px no-repeat; width:36px; height:36px; text-indent:-8484px;}
+        #ourCompany #cboxClose.hover{background-position:0 -36px;}
+		
+#jkrPlatform #colorbox, #jkrAcademy #colorbox, #jkrFilm #colorbox, #championsOfDesign #colorbox{background: #000; border: 1px solid #222;}
+    	#jkrPlatform #cboxContent, #jkrAcademy #cboxContent, #jkrFilm #cboxContent, #championsOfDesign #cboxContent{padding: 65px 85px;}
+        #jkrPlatform #cboxLoadedContent, #jkrAcademy #cboxLoadedContent, #jkrFilm #cboxLoadedContent, #championsOfDesign #cboxLoadedContent{background:#000; padding:5px;}
+        #jkrPlatform #cboxTitle, #jkrAcademy #cboxTitle, #jkrFilm #cboxTitle, #championsOfDesign #cboxTitle{position:absolute; top:25px; left:25px; color:#ccc;font-size: 2.2em;}
+        #jkrPlatform #cboxCurrent, #jkrAcademy #cboxCurrent, #jkrFilm #cboxCurrent, #championsOfDesign #cboxCurrent{display: none !important;}
+        #jkrPlatform #cboxSlideshow, #jkrAcademy #cboxSlideshow, #jkrFilm #cboxSlideshow, #championsOfDesign #cboxSlideshow{position:absolute; top:-20px; right:90px; color:#fff;}
+        #jkrPlatform #cboxPrevious, #jkrAcademy #cboxPrevious, #jkrFilm #cboxPrevious, #championsOfDesign #cboxPrevious{display: none !important;}
+        #jkrPlatform #cboxPrevious.hover, #jkrAcademy #cboxPrevious.hover, #jkrFilm #cboxPrevious.hover, #championsOfDesign #cboxPrevious.hover{}
+        #jkrPlatform #cboxNext, #jkrAcademy #cboxNext, #jkrFilm #cboxNext, #championsOfDesign #cboxNext{display: none !important;}
+        #jkrPlatform #cboxNext.hover, #jkrAcademy #cboxNext.hover, #jkrFilm #cboxNext.hover, #championsOfDesign #cboxNext.hover{}
+        #jkrPlatform #cboxLoadingOverlay, #jkrAcademy #cboxLoadingOverlay, #jkrFilm #cboxLoadingOverlay, #championsOfDesign #cboxLoadingOverlay{background:#000;}
+        #jkrPlatform #cboxLoadingGraphic, #jkrAcademy #cboxLoadingGraphic, #jkrFilm #cboxLoadingGraphic, #championsOfDesign #cboxLoadingGraphic{background:url(./img/loading.gif) center center no-repeat;}
+        #jkrPlatform #cboxClose, #jkrAcademy #cboxClose, #jkrFilm #cboxClose, #championsOfDesign #cboxClose{position:absolute; top:7px; right:7px; display:block; background:url(./img/nav-controls.png) 0 0px no-repeat; width:36px; height:36px; text-indent:-8484px;}
+        #jkrPlatform #cboxClose.hover, #jkrAcademy #cboxClose.hover, #jkrFilm #cboxClose.hover, #championsOfDesign #cboxClose.hover{background-position:0 -36px;}		

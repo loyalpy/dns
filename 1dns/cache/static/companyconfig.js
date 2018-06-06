@@ -1,0 +1,10 @@
+var companyConfig ={},companyConfig_A = [];
+companyConfig['1'] = {"id":"1","uid":"0","name":"\u901f\u8054\u79d1\u6280","domain":"http:\/\/199.1.1.1","appkey":"D3614F463B2D42ABA2700556D42740D0","logo":"0","faren":"\u738b\u603b","area":"0","address":"","createdate":"0000-00-00","kind":"0","trade":"0","scope":"0","trade_name":"","culture":"","linker":"","phone":"","mobile":"","email":"","fax":"","qq":"","ww":"","busline":"","lat":"0","lng":"0","hidcontact":"0","zhizhao":"0","zhizhao_sh":"0","about":"\u676d\u5dde\u901f\u8054\u4fe1\u606f\u79d1\u6280\u6709\u9650\u516c\u53f8","hits":"0","viewed":"0","views":"0","dateline":"0","sort":"0","utype":"0","ugroup":"0","udata":"","uexpiry":"0","mybz":"","inlock":"0","idc":["6","5","4","3","2","1"]};
+companyConfig_A.push({v:'速联科技',key:'1'});
+
+companyConfig['2'] = {"id":"2","uid":"0","name":"\u72ec\u521b\u79d1\u6280","domain":"http:\/\/www.haoidc.com","appkey":"115C343463041F8763D7552FDCE43C9F","logo":"0","faren":"\u5e9e\u603b","area":"0","address":"","createdate":"0000-00-00","kind":"0","trade":"0","scope":"0","trade_name":"","culture":"","linker":"","phone":"","mobile":"","email":"","fax":"","qq":"","ww":"","busline":"","lat":"0","lng":"0","hidcontact":"0","zhizhao":"0","zhizhao_sh":"0","about":"\u676d\u5dde\u72ec\u521b\u79d1\u6280\u6709\u9650\u516c\u53f8","hits":"0","viewed":"0","views":"0","dateline":"0","sort":"0","utype":"0","ugroup":"0","udata":"","uexpiry":"0","mybz":"","inlock":"0","idc":["4","3","2","1"]};
+companyConfig_A.push({v:'独创科技',key:'2'});
+
+companyConfig['3'] = {"id":"3","uid":"0","name":"\u4e91\u76fe","domain":"http:\/\/www.yundun.com","appkey":"B0169350CD35566C47BA83C6EC1D6F82","logo":"0","faren":"","area":"0","address":"","createdate":"0000-00-00","kind":"0","trade":"0","scope":"0","trade_name":"","culture":"","linker":"","phone":"","mobile":"","email":"","fax":"","qq":"","ww":"","busline":"","lat":"0","lng":"0","hidcontact":"0","zhizhao":"0","zhizhao_sh":"0","about":"","hits":"0","viewed":"0","views":"0","dateline":"0","sort":"0","utype":"0","ugroup":"0","udata":"","uexpiry":"0","mybz":"","inlock":"0","idc":[]};
+companyConfig_A.push({v:'云盾',key:'3'});
+

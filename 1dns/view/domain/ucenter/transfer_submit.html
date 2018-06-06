@@ -1,0 +1,104 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/index}"  class="showtype ">全部域名&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/transfer}"  class="showtype cur">域名转入&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/template}"  class="showtype ">信息模板&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/order}"  class="showtype"> 我的订单&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div class="am-alert am-alert-secondary basic-t-t" data-am-alert>
+        <button type="button" class="am-close">&times;</button>
+        <p style="color: #F68300">提示：八戒DNS与新网合作，您的域名将转入新网，八戒DNS将为您提供后续服务。</p>
+    </div>
+    <div class="domain-transfer">
+        <div class="nav">
+            <ul>
+                <li class="un-use use1">
+                    <div class="icon">
+                        <span class="s cur">1</span>
+                        <font class="cur">填写域名密码</font>
+                        <span class="cart_icon_right"></span>
+                    </div>
+                </li>
+                <li class="un-use use2">
+                    <div class="icon">
+                        <span  class="s">2</span>
+                        <font class="">支付订单</font>
+                        <span class="cart_icon_right"></span>
+                    </div>
+                </li>
+                <li class="un-use use3">
+                    <div class="icon">
+                        <span class="s">3</span>
+                        <font class="">转入处理</font>
+                        <span class="cart_icon_right"></span>
+                    </div>
+                </li>
+                <li class="un-use use4">
+                    <div class="icon">
+                        <span class="s">4</span>
+                        <font >邮箱验证,转入成功</font>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="domain-transfer-box">
+        <div class="am-input-group">
+            <span class="am-input-group-label"><i class="am-icon-globe"></i></span>
+            <input type="text" name="domain"  class="am-form-field"  placeholder="请您填写需要转入的域名" style="font-size: 14px;width: 276px;">
+        </div>
+        <div class="dis20"></div>
+        <div class="am-input-group">
+            <span class="am-input-group-label"><i class="am-icon-lock" style="width: 13px"></i></span>
+            <input type="password" name="code"  class="am-form-field"  placeholder="请您填写域名转移密码" style="font-size: 14px;width:276px;">
+        </div>
+        <div class="dis30"></div>
+        <input type="hidden" name="hash"  value="{hash}">
+        <button type="button" class="am-btn am-btn-primary am-radius transfer-submit" style="font-size: 15px;">提交</button>&nbsp;&nbsp;
+        <a href="{url /ucenter/transfer}" type="button" class="am-btn am-btn-default am-radius" style="font-size: 15px;">返回</a>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+    var supper_domain = '{echo "(".implode(")|(",tValidate::support_domain()).")"}';
+    $(function () {
+        $(".transfer-submit").unbind("click").bind("click",function () {
+            var domain = $(".domain-transfer-box").find("input[name='domain']").val();
+            var code = $(".domain-transfer-box").find("input[name='code']").val();
+            var hash = $(".domain-transfer-box").find("input[name='hash']").val();
+            if (!$.dns.is_domain2(domain) || $.is_empty(domain)) {
+                $.ui.error("非法域名！");
+                return false;
+            }
+            if ($.is_empty(code)) {
+                $.ui.error("域名转移码不能为空！");
+                return false;
+            }
+            $.ui.loading();
+            $.ajaxPassport({
+                url:"{url /ucenter/transfer_submit}",
+                type:"POST",
+                success:function (res) {
+                    $.ui.close_loading();
+                    if (res.error == 0) {
+                        setTimeout(function () {
+                            window.location.replace("{url /ucenter/transfer_pay?domain=}"+res.message);
+                        },500);
+                    }else{
+                        $.ui.error(res.message);
+                    }
+                },
+                data:{domain:domain,code:code,hash:hash}
+            });
+        });
+    });
+
+</script>
+{/block}

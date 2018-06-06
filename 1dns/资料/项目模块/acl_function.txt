@@ -1,0 +1,163 @@
+//地址库管理
+	public function namedconf_ipdata(){
+		$do = R("do","string");
+		switch($do){
+			//ip导入
+			case "import":
+				if(tUtil::check_hash()){
+					set_time_limit(1800);
+					//获取线路ID
+					$aclid = R("aclid","int");
+					if(empty($aclid)){
+						tAjax::json_error("请选择控制器");
+					}
+					//上传附件
+					$attach_name = "ipdatafile";
+					$error_message = "";
+					if(empty($_FILES[$attach_name]) === false){
+						$up_obj = new tUpload(2048,array("txt","conf"));
+						$file_store_path = ROOT_PATH."attach/tmp/";
+						$return_file = "";
+						$up_obj->set_dir($file_store_path);
+						$upstate = $up_obj->execute();
+						if(isset($upstate[$attach_name])){
+							if($upstate[$attach_name][0]['flag']==-1){
+								$error_message = '上传的文件类型不符合';
+							}else if($upstate[$attach_name][0]['flag']==-2){
+								$error_message = '大小超过限度';
+							}else if($upstate[$attach_name][0]['flag']==1){
+								$file_path = $file_store_path.$upstate[$attach_name][0]['name'].".".$upstate[$attach_name][0]['ext'];
+								$import_content = file_get_contents($file_path);
+								if($import_content == ""){
+									$error_message = '文件内容为空！';
+								}else{
+									$import_arr = explode(";",$import_content);
+									if(count($import_arr)<2){
+										$import_content = str_replace("\n",";",$import_content);
+										$import_arr = explode(";",$import_content);
+									}
+									if(empty($import_arr) || count($import_arr) == 0){
+										$error_message = '没有可用的IP导入！';
+									}
+								}
+								tFile::unlink($file_path);
+							}
+						}else{
+							$error_message = '上传合法的txt,conf文件！';
+						}
+					}else{
+						$error_message = "上传合法的txt,conf文件";
+					}
+					//如果有错误则输出错误
+					if($error_message){
+						tAjax::json_error($error_message);
+					}
+					//处理导入数据处理
+					$mode = R("mode","int");
+					$inserts = 0;
+					if($mode == 1){
+						foreach($import_arr as $v){
+							$v = trim($v);
+							if($v && M("dns_ipdata")->get_one("aclid=$aclid AND addr='{$v}'","count(*)") == 0){
+								$ins = array(
+								   "addr"=>$v,
+								   "aclid"=>$aclid
+								);
+								M("dns_ipdata")->set_data($ins);
+								if(M("dns_ipdata")->add())$inserts++;								
+							}
+						}
+					}elseif($mode == 2){
+						M("dns_ipdata")->del("aclid=$aclid");
+						$db = tDB::get_db();
+						$sql = "";
+						$chunk_arr = array_chunk($import_arr,15000);
+						foreach($chunk_arr as $v){
+							if(count($v)>0){
+								$sql = "INSERT INTO `rc_dns_ipdata`(`addr`,`aclid`) VALUES";
+								foreach($v as $v2){
+									$v2 = trim($v2);
+									if($v2){
+										$insert_val[] = "('{$v2}','{$aclid}')";
+										$inserts++;	
+									}
+								}
+								$sql .= implode(",",$insert_val);
+								unset($insert_val);
+								$db->query($sql);
+							}
+						}
+					}
+					tAjax::json_success($inserts);
+				}else{
+					tAjax::success($this->fetch("sysadmin_dns/namedconf_ipdata_import"));
+				}
+				break;
+		    //ip导出
+			case "export":
+				$aclid = R("aclid","int");
+				$db = tDB::get_db();
+				$sql = "SELECT aclid,group_concat(addr SEPARATOR ';\n') AS ipdata FROM `rc_dns_ipdata` WHERE aclid='{$aclid}' GROUP BY aclid";
+                $db->query("SET group_concat_max_len = 3088000");
+				$result = $db->query($sql);
+				
+				header('Content-Type: application/txt'); 
+                header('Content-Disposition: attachment; filename="ipdata'.$aclid.'.txt"'); 
+                //$output = fopen('php://output','w') or die("Can't open php://output"); 
+                file_put_contents('php://output',$result[0]['ipdata']);
+                //fclose($output) or die("Can't close php://output");
+				/*
+                $cls_file = new tFile(ROOT_PATH."attach/tmp/ipdata_".$aclid.".ipdata","w");
+                $cls_file->write($result[0]['ipdata']);
+                $cls_file->save();
+                header("Location:".tUrl::get_host().U("/attach/tmp/ipdata_".$aclid.".ipdata"));
+                */
+				break;
+			case "del":
+				$return = array("error"=>0,"message"=>"删除成功！");
+				$id = R("id","int");
+				$data = M("dns_ipdata")->get_row("id='{$id}'");
+				if(isset($data['id'])){
+					M("dns_ipdata")->del("id='{$id}'");
+					$return['callback'] = U("/sysadmin_dns/namedconf_ipdata");
+					tAjax::respons($return);
+				}
+				break;
+			case "edit":
+				if(tUtil::check_hash()){
+					$id = R("id","int");
+					$data = Ra("aclid,addr","int,string","post");
+					M("dns_ipdata")->set_data($data);
+					if($id == 0){
+						if(M("dns_ipdata")->get_one("addr='{$data['addr']}' AND aclid='{$data['aclid']}'","count(*)")>0){
+							tAjax::json_error("该地址段已经存在，请不要重复添加");
+						}
+						$id = M("dns_ipdata")->add();
+					}elseif($id>0){
+						if(M("dns_ipdata")->get_one("addr='{$data['addr']}' AND aclid='{$data['aclid']}' AND id<>{$id}","count(*)")>0){
+							tAjax::json_error("该地址段已经存在");
+						}
+						M("dns_ipdata")->update("id='{$id}'");
+					}
+					tAjax::respons(array("error"=>0,"message"=>"操作成功！","callback"=>U("/sysadmin_dns/dns_ipdata")),"json");
+				}else{
+					$id = R("id","int");
+					$aclid = R("aclid","int");
+					$data = array();
+					if($id>0){
+						$data = M("dns_ipdata")->get_row("id=$id");
+					}
+					if(!isset($data['id'])){
+						$data = array(
+						  'aclid'=>$aclid,
+						);
+					}
+					$this->assign("data",$data);
+					tAjax::success($this->fetch("sysadmin_dns/namedconf_ipdata_edit"));
+				}
+				break;
+			default:
+				$this->display();
+				break;
+		}
+	}

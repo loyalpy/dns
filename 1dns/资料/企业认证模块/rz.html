@@ -1,0 +1,433 @@
+{block main}
+<div class="in-content">
+<div class="main-nav">
+  <div class="name yh">认证信息</div>
+ </div>
+ <div class="dis10"></div>
+ <div class="rzbox">
+ <div class="item item-mobile {if $this->userinfo['mobilerz']}item-mobile-on{else}item-mobile-off{/if}">
+    <div class="icon"><cite></cite></div>
+    <div class="text">
+    	<h1>手机：{if $this->userinfo['mobile']}{echo substr($this->userinfo['mobile'],0,3)}******{echo substr($this->userinfo['mobile'],-2)} {if $this->userinfo['mobilerz']}<button type="button" data-type="modify" class="btn btn-primary rz_mobile_btn">修改当前手机号</button>{/if}{else}<font class="font-red">尚未提供 </font><button class="btn btn-primary rz_mobile_btn" data-type="rz" type="button "> 立即提供并认证</button>{/if}</h1>
+    	<h2>请勿随意泄露手机号，以防不法分子利用造成损失</h2>
+    </div>
+    <div class="cl"></div>
+ </div>
+
+ <div class="item item-email {if $this->userinfo['emailrz']}item-email-on{else}item-email-off{/if}">
+    <div class="icon"><cite></cite></div>
+    <div class="text">
+    	<h1>邮箱：{if $this->userinfo['email']}{echo substr($this->userinfo['email'],0,3)}***@***{echo substr($this->userinfo['email'],-6)} {if !$this->userinfo['emailrz']}<button type="button" class="btn btn-primary rz_email_btn">立即验证</button>{else}<button type="button" class="btn btn-primary rz_email_btn">修改邮箱</button>{/if}{else}<font class="font-red">尚未提供 </font><button class="btn btn-primary  rz_email_btn" type="button"> 立即提供并认证</button>{/if}</h1>
+    	<h2>邮箱必须认证,否则您的邮箱收不到系统的发送的邮件信息</h2>
+    </div>
+    <div class="cl"></div>
+ </div>
+ </div>
+ <div class="dis20"></div>
+ <div class="com-row">
+    <div class="com-head">
+    其他认证
+    </div>
+    <div class="com-bod otherrz">
+     <div class="tips-org">
+     <p><span class="scolor">小贴士：</span>以下认证信息仅作为万才网审核使用，不会被其他用户查看！上传成功后客服会在最短时间审核并反馈审核结果。</p>
+     </div>
+     <!-- d -->
+     <div class="dis20"></div>
+     {if in_array($utype,array(1,2,3))}
+     <div class="item-rz rz-idcard-box">
+        <div class="item-top">
+        <h1>身份认证</h1>
+        <div class="topdesc">
+           <span class="fl font-gray2">做一个有身份的人。</span>
+           {if isset($rz['idcard'])}
+           		{if $rz['idcard']['status'] == 0}
+           		<span class="fr rz_txtstatus font-red">上传待认证</span>
+           		{elseif $rz['idcard']['status'] == 1}
+           		<span class="fr rz_txtstatus font-red">变更待认证</span>
+           		{elseif $rz['idcard']['status'] == 2}
+           		<span class="fr rz_txtstatus font-red">认证失败</span>
+           		{elseif $rz['idcard']['status'] == 3}
+           		<span class="fr rz_txtstatus font-green">已认证</span>
+           		{/if}
+           {else}
+           <span class="fr rz_txtstatus font-red">未上传</span>
+           {/if}
+        </div>
+        </div>
+        <div class="item-bod">
+        <img src="{if isset($rz['idcard'])}{url static@/}{$rz['idcard']['path']}{else}{url static@/images/ucenter/idcard.jpg}{/if}" out="{if isset($rz['idcard'])}{url static@/}{$rz['idcard']['path']}{else}{url static@/images/ucenter/idcard.jpg}{/if}" over="{url static@/images/ucenter/idcard_hover.jpg}" />
+        </div>
+        <div class="item-foot">
+        <span class="font-gray2">请上传手持身份证正面靠墙照片，大小不超过2M。</span>
+        <a href="javascript:;" class="font-blue overbtn">查看示例»</a>
+        </div>
+        <div class="item-btn">
+        	<div class="file_select" style="margin-left:120px;">
+			<span class="">
+			<form action="{url /ucenter/rz_upload}" method="post" enctype="multipart/form-data" class="uploadform">
+			<input name="attach_file" type="file"><input type="hidden" name="name" value="idcard" /><input type="hidden" name="hash" value="{hash}" />
+			</form>
+			</span>
+			</div>
+        </div>
+     </div>
+     {/if}
+     {if in_array($utype,array(2,3))}
+     <div class="item-rz rz-zhizhao-box">
+        <div class="item-top">
+        <h1>营业执照认证</h1>
+        <div class="topdesc">
+           <span class="fl font-gray2">让合作伙伴更加相信我。</span>
+           {if isset($rz['zhizhao'])}
+           		{if $rz['zhizhao']['status'] == 0}
+           		<span class="fr rz_txtstatus font-red">上传待认证</span>
+           		{elseif $rz['zhizhao']['status'] == 1}
+           		<span class="fr rz_txtstatus font-red">变更待认证</span>
+           		{elseif $rz['zhizhao']['status'] == 2}
+           		<span class="fr rz_txtstatus font-red">认证失败</span>
+           		{elseif $rz['zhizhao']['status'] == 3}
+           		<span class="fr rz_txtstatus font-green">已认证</span>
+           		{/if}
+           {else}
+           <span class="fr rz_txtstatus font-red">未上传</span>
+           {/if}
+        </div>
+        </div>
+        <div class="item-bod">
+        <img src="{if isset($rz['zhizhao'])}{url static@/}{$rz['zhizhao']['path']}{else}{url static@/images/ucenter/zhizhao.jpg}{/if}" out="{if isset($rz['zhizhao'])}{url static@/}{$rz['zhizhao']['path']}{else}{url static@/images/ucenter/zhizhao.jpg}{/if}" over="{url static@/images/ucenter/zhizhao_hover.jpg}" />
+        </div>
+        <div class="item-foot">
+        <span class="font-gray2">请上传营业执照副本照片或扫描件，大小不超过2M。</span>
+        <a href="javascript:;" class="font-blue overbtn">查看示例»</a>
+        </div>
+        <div class="item-btn">
+           <div class="file_select" style="margin-left:120px;">
+			<span class="">
+			<form action="{url /ucenter/rz_upload}" method="post" enctype="multipart/form-data" class="uploadform">
+			<input name="attach_file" type="file">
+			<input type="hidden" name="name" value="zhizhao" />
+			<input type="hidden" name="hash" value="{hash}" />
+			</form>
+			</span>
+			</div>
+        </div>
+     </div>
+     {/if}
+     {if in_array($utype,array(2,3))}
+     <div class="item-rz rz-chengruoshu-box">
+        <div class="item-top">
+        <h1>招聘信息承诺书</h1>
+        <div class="topdesc">
+           <span class="fl font-gray2">我承诺招聘信息真实可靠。</span>
+           {if isset($rz['chengruoshu'])}
+           		{if $rz['chengruoshu']['status'] == 0}
+           		<span class="fr rz_txtstatus font-red">上传待认证</span>
+           		{elseif $rz['chengruoshu']['status'] == 1}
+           		<span class="fr rz_txtstatus font-red">变更待认证</span>
+           		{elseif $rz['chengruoshu']['status'] == 2}
+           		<span class="fr rz_txtstatus font-red">认证失败</span>
+           		{elseif $rz['chengruoshu']['status'] == 3}
+           		<span class="fr rz_txtstatus font-green">已认证</span>
+           		{/if}
+           {else}
+           <span class="fr rz_txtstatus font-red">未上传</span>
+           {/if}
+        </div>
+        </div>
+        <div class="item-bod">
+        <img src="{if isset($rz['chengruoshu'])}{url static@/}{$rz['chengruoshu']['path']}{else}{url static@/images/ucenter/chengruoshu.jpg}{/if}" out="{if isset($rz['chengruoshu'])}{url static@/}{$rz['chengruoshu']['path']}{else}{url static@/images/ucenter/chengruoshu.jpg}{/if}" over="{url static@/images/ucenter/chengruoshu_hover.jpg}" />
+        </div>
+        <div class="item-foot">
+        <span class="font-gray2">请上传您的招聘信息承诺书照片或扫描件，加盖公章。</span>
+        <a href="javascript:;" class="font-blue">点击下载»</a>
+        </div>
+        <div class="item-btn">
+           <div class="file_select" style="margin-left:120px;">
+			<span class=" ">
+			<form action="{url /ucenter/rz_upload}" method="post" enctype="multipart/form-data" class="uploadform">
+			<input name="attach_file" type="file">
+			<input type="hidden" name="name" value="chengruoshu" />
+			<input type="hidden" name="hash" value="{hash}" />
+			</form>
+			</span>
+			</div>
+        </div>
+     </div>
+     {/if}
+     {if in_array($utype,array(3))}
+     <div class="item-rz rz-xukezheng-box">
+        <div class="item-top">
+        <h1>职业介绍许可证</h1>
+        <div class="topdesc">
+           <span class="fl">我是法定的职业介绍从业者。</span>
+           {if isset($rz['xukezheng'])}
+           		{if $rz['xukezheng']['status'] == 0}
+           		<span class="fr rz_txtstatus font-red">上传待认证</span>
+           		{elseif $rz['xukezheng']['status'] == 1}
+           		<span class="fr rz_txtstatus font-red">变更待认证</span>
+           		{elseif $rz['xukezheng']['status'] == 2}
+           		<span class="fr rz_txtstatus font-red">认证失败</span>
+           		{elseif $rz['xukezheng']['status'] == 3}
+           		<span class="fr rz_txtstatus font-green">已认证</span>
+           		{/if}
+           {else}
+           <span class="fr rz_txtstatus font-red">未上传</span>
+           {/if}
+        </div>
+        </div>
+        <div class="item-bod">
+        <img src="{if isset($rz['xukezheng'])}{url static@/}{$rz['xukezheng']['path']}{else}{url static@/images/ucenter/xukezheng.jpg}{/if}" out="{if isset($rz['xukezheng'])}{url static@/}{$rz['xukezheng']['path']}{else}{url static@/images/ucenter/xukezheng.jpg}{/if}" over="{url static@/images/ucenter/xukezheng_hover.jpg}" />
+        </div>
+        <div class="item-foot">
+        <span class="font-gray2">请上传职业介绍许可证照片或扫描件，大小不超过2M。</span>
+        <a href="javascript:;" class="font-blue overbtn">查看示例»</a>
+        </div>
+        <div class="item-btn">
+           <div class="file_select" style="margin-left:120px;">
+			<span class="">
+			<form action="{url /ucenter/rz_upload}" method="post" enctype="multipart/form-data" class="uploadform">
+			<input name="attach_file" type="file">
+			<input type="hidden" name="name" value="xukezheng" />
+			<input type="hidden" name="hash" value="{hash}" />
+			</form>
+			</span>
+			</div>
+        </div>
+     </div>
+     {/if}
+     <div class="cl"></div>
+     <!-- end d -->
+    </div>
+ </div>
+ 
+</div>
+{/block}
+{block javascript}
+<script type="text/template" id="tpl_email_rz">
+<#macro form data>
+<div class="rzpop">
+   <div class="head yh">邮箱认证</div>
+   <div class="bod">
+     <form action="{url /ucenter/rz_email}" method="post" class="theform form" role="form">
+     {if empty($this->userinfo['email'])}
+     <div class="form-item">        
+        <label>邮箱：</label><div class="item-v"><input name="email" value="{$this->userinfo['email']}" type="text" class="nhigh" /></div>
+        <div class="cl"></div>
+     </div>
+     {else}
+     <div class="form-item">
+        <label></label><div class="item-v"><div class="tvalue font-red">慎重修改,已认证邮箱修改后将重新认证</div></div>
+        <div class="cl"></div>
+     </div>
+     <div class="form-item">
+        <label>当前邮箱：</label><div class="item-v"><div class="tvalue f14">{$this->userinfo['email']} {if $this->userinfo['emailrz']}<font class="font-green">(已认证)</font>{/if}</div></div>
+        <div class="cl"></div>
+     </div>
+     <div class="cl"></div>
+     <div class="form-item">
+     <label>修改邮箱：</label><div class="item-v"><input name="email" value="{$this->userinfo['email']}" type="text" class="nhigh" /></div>
+     </div>
+     <div class="dis20"></div>
+     {/if}
+     <div class="cl"></div>
+     <div class="form-item" style="display:none">
+        <label>验证码：</label>
+        <div class="item-v"><input name="code" type="text" class="low" /></div>
+        <div class="cl"></div>
+     </div>
+     <div class="cl"></div>
+     <div class="form-item">
+        <label></label>
+        <div class="item-v">
+        <input type="hidden" name="hash" value="{hash}" />
+        <button class="btn btn-org email_rz_btn" type="submit">提交验证</button> 
+        </div>
+        <div class="cl"></div>
+     </div>
+     <div class="cl"></div>
+     </form>
+     <div class="dis30"></div>
+   </div>
+</div>
+</#macro>
+</script>
+
+<script type="text/template" id="tpl_mobile_rz">
+<#macro form data>
+<div class="rzpop">
+   <div class="head yh">手机认证</div>
+   <div class="bod">
+     <form action="${data.action}" method="post" class="theform form" role="form">
+     <#if (data.type == "rz")>
+     	<div class="form-item">        
+        <label>手机：</label><div class="item-v"><input id="Mmobile" name="mobile" value="" type="text" class="nhigh" /></div>
+        <div class="cl"></div>
+    	 </div>
+     <#else if(data.type == "modi")>
+        <div class="form-item">
+        <label>当前手机号：</label><div class="item-v"><div class="tvalue f14">{$this->userinfo['mobile']} {if $this->userinfo['mobilerz']}<font class="font-green">(已认证)</font>{/if}
+        <input id="Mmobile" name="mobile" value="{$this->userinfo['mobile']}" type="hidden" class="nhigh" />
+        </div></div>
+        <div class="cl"></div>
+     	</div>
+     </#if>
+     <div class="cl"></div>
+     <div class="form-item">
+	      <label for="Mrzcode" class="required"><span class="font-red">*</span>认证码：</label>
+	      <input id="Mrzcode" datatype="s6-6" ajaxurl="{url /misc/check?ctype=rzcode}" name="rzcode" class="low" /> 
+	      <button type ="button" id="btnSendCode" class="btn receive_code2" style="position:relative;top:2px;" onclick="sendMessage('${data.type}')">获取验证码</button>
+	      <div class="cl"></div>
+	 </div>
+     <div class="cl"></div>
+     <div class="form-item">
+        <label></label>
+        <div class="item-v">
+        <input type="hidden" name="hash" value="{hash}" />
+        <input type="hidden" name="type" value="${data.type}" />
+        <button class="btn btn-org email_rz_btn" type="submit">提交验证</button> 
+        </div>
+        <div class="cl"></div>
+     </div>
+     <div class="cl"></div>
+     </form>
+     <div class="dis30"></div>
+   </div>
+</div>
+</#macro>
+</script>
+
+
+<script>
+var InterValObj; //timer变量，控制时间  
+var count = 120; //间隔函数，1秒执行  
+var curCount;    //当前剩余秒数  
+var rz_sms = "{url /misc/send_sms}{echo tHash::uri(array('dateline'=>$timestamp,'tpl'=>'reg'));}";
+var modify_sms = "{url /misc/send_sms}{echo tHash::uri(array('dateline'=>$timestamp,'tpl'=>'modify'));}";
+function sendMessage(tpl) {
+	var mobile = $("#Mmobile").val();
+	if($.is_empty(mobile) || !mobile.is_mobile()){
+		$.ui.error("请先填写手机号");
+		return false;
+	}
+    //设置button效果，开始计时  
+    $("#btnSendCode").attr("disabled", "true").addClass("font-gray");
+    //向后台发送处理数据  
+    $.ajaxPassport({
+    	url:(tpl == "rz"?rz_sms:modify_sms),
+    	data:{"mobile":mobile},
+    	success:function(res){
+    		if(res.error == 0){
+    			curCount = count;  
+    			$("#btnSendCode").html("重获验证码(" + curCount + ")").addClass("font-gray");//;  
+    		    InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次  
+    		}else{
+    			$.ui.error(res.message);
+    			$("#btnSendCode").removeAttr("disabled").removeClass("font-gray");
+    		}
+    	}
+    });
+}  
+//timer处理函数  
+function SetRemainTime() {  
+    if (curCount == 0) {                  
+        window.clearInterval(InterValObj);//停止计时器  
+        $("#btnSendCode").removeAttr("disabled").removeClass("font-gray");//启用按钮  
+        $("#btnSendCode").html("获取验证码");  
+        code = ""; //清除验证码。如果不清除，过时间后，输入收到的验证码依然有效      
+    } else {  
+        curCount--;  
+        $("#btnSendCode").html("重获验证码(" + curCount + ")"); 
+    }  
+}
+
+var myrz = {
+	mobile_rz:function(type,action){
+		var type = $.is_empty(type)?"rz":type;
+		var action = $.is_empty(action)?"{url /ucenter/rz_mobile}":action;
+		var data = {type:type,action:action};
+		var index = $.ui.open((""+easyTemplate($("#tpl_mobile_rz").html(),data)),false,"600px");
+		$(".theform").data("data-success",function(res){
+			if(res.error == 1){
+				$.ui.error(res.message);
+			}else{
+				if(type == "rz"){
+					$.ui.close(index);
+					$.ui.alert(res.message,1);
+					setTimeout("window.location.reload()",500);
+				}else{
+					window.clearInterval(InterValObj);
+					$.ui.close(index);
+					$.ui.alert("验证成功,确定后请填写新手机号并认证",1,function(){
+						index = myrz.mobile_rz('rz',""+res.action+"");
+					});					
+				}
+			}
+		}).submit(function(){
+			return $.ajaxForm(this);
+		})
+	},
+	email_rz:function(){
+		var data = {};
+		var index = $.ui.open((""+easyTemplate($("#tpl_email_rz").html(),data)),false,"600px");
+		$(".theform").data("data-success",function(res){
+			if(res.error == 1){
+				$.ui.error(res.message);
+			}else{
+				$.ui.close(index);
+				$.ui.alert(res.message,1);
+				setTimeout("window.location.reload()",500);
+			}
+		}).submit(function(){
+			return $.ajaxForm(this);
+		})
+	}
+}
+$(function(){
+	$(".rz_email_btn").unbind("click").bind("click",function(){
+		myrz.email_rz();
+	});
+	$(".rz_mobile_btn").unbind("click").bind("click",function(){
+		var type = $(this).attr("data-type");
+		myrz.mobile_rz(type);
+	})
+    $(".overbtn").hover(function(){
+    	var obj = this;
+    	var img_obj = $(obj).parent().parent().find("img");
+    	img_obj.attr("src",img_obj.attr("over"));
+    },function(){
+    	var obj = this;
+    	var img_obj = $(obj).parent().parent().find("img");
+    	img_obj.attr("src",img_obj.attr("out"));
+    });	
+	//上传认证附件
+	$("form.uploadform").data("data-success",function(res,formobj){
+		if(res.error == 1){
+			$.ui.error(res.message);
+		}else{
+			var name = $(formobj).find("input[name='name']").val();
+			var imgobj = $(".rz-"+name+"-box").find(".item-bod img");
+			imgobj.attr("src",res.path);
+			imgobj.attr("out",res.path);
+			$.ui.success("上传成功");
+			if(res.status == 0){
+				$(".rz-"+name+"-box").find(".rz_txtstatus").html("上传待认证").removeClass("font-red").removeClass("font-green").addClass("font-red");
+			}else if(res.status == 1){
+				$(".rz-"+name+"-box").find(".rz_txtstatus").html("变更待认证").removeClass("font-red").removeClass("font-green").addClass("font-red");
+			}else if(res.status == 2){
+				$(".rz-"+name+"-box").find(".rz_txtstatus").html("认证失败").removeClass("font-red").removeClass("font-green").addClass("font-red");
+			}else if(res.status == 2){
+				$(".rz-"+name+"-box").find(".rz_txtstatus").html("认证成功").removeClass("font-red").removeClass("font-green").addClass("font-green");
+			}
+		}
+		$.ui.close_loading();
+	}).submit(function(){
+		$.ui.loading();
+		return $.ajaxForm(this,100);
+	}).find("input[type='file']").unbind("change").bind("change",function(){
+		var obj = this;
+		$(obj).parent().submit();
+	});
+})
+</script>
+{/block}

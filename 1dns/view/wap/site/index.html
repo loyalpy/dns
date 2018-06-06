@@ -1,0 +1,163 @@
+{block main}
+
+<div class="get">
+  <div class="am-g">
+    <div class="am-u-lg-12">
+      <h1 class="get-title">悬赏式招工平台</h1>
+
+      <p>
+        期待你的参与，实现招工单位,职介所,求职工友共赢
+      </p>
+
+      <p>
+        <a href="{url /register}" class="am-btn am-btn-sm am-btn-secondary">立即注册</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="am-container">
+<div class="dis30"></div>
+<!--搜索-->
+  <div class="am-g search" id="search">
+    <div class="am-u-sm-11 am-u-sm-centered">
+      <form action="{url /job}" class="am-form am-input-sm">
+        <div class="am-u-sm-10"><input type="text" class="am-form-field" name="keyword" value="{if isset($condi['keyword']) && $condi['keyword']}{$condi['keyword']}{else}{/if}" placeholder="请输入您的关键字"></div>
+        <div class="am-u-sm-2"><input type="submit" class="am-form-field"  value="" /></div>
+        <div class="am-cf"></div>
+      </form>
+      <p class="keyword">
+      		{set $top_keywords = tCache::read("cms_friendlink_2")}
+        	{if $top_keywords}
+        	{foreach items=$top_keywords}
+        	<a class="am-link-muted am-text-sm am-text-primary" href="{if $item['link']}{$item['link']}{else}{url /job?keyword=$item[name]}{/if}">{$item['name']}</a>
+        	{/foreach}
+        	{/if}
+      </p>
+    </div>
+  </div>
+  <!--//搜索-->
+  
+</div>
+<div class="dis30"></div>
+<div class="am-container">
+<section data-am-widget="accordion" class="am-accordion am-accordion-default" data-am-accordion='{ "multiple": true }'>
+      {foreach items=$tuilist}
+      <dl class="am-accordion-item {if $key==0}am-active{/if}">
+        <dt class="am-accordion-title">
+        <a class="am-text-lg "  target="_blank" href="javascript:void(0)">{$item['tui_name']}<font class='am-text-sm am-link-muted'>({$item['company_name']})</font></a>
+        </dt>
+        <dd class="am-accordion-bd am-collapse {if $key==0}am-in{/if}">
+          <!-- 规避 Collapase 处理有 padding 的折叠内容计算计算有误问题， 加一个容器 -->
+          <div class="am-accordion-content">
+          
+          			<div class="amount-box am-u-sm-3">
+					 <div class="amount">￥{echo intval($item['amount']*$item['tui_num'])}</div>
+					 <div class="name">悬赏 <b>{$item['tui_num']}</b>人</div>
+					</div>
+					<div class="detail-box am-u-sm-9">
+					{echo tFun::get_conf('job_cate',$item['job_cate'])} - {$item['tui_name']}<em>&nbsp;&nbsp;|&nbsp;&nbsp;</em>
+          {if $item['sex'] == 1}男{elseif $item['sex'] == 2}女{else}男女不限{/if}<em>&nbsp;&nbsp;|&nbsp;&nbsp;</em>
+						{if $item['age_min'] && $item['age_max']}
+						{$item['age_min']} - {$item['age_max']}周岁
+						{else}
+						年龄不限{/if}<em>&nbsp;&nbsp;|&nbsp;&nbsp;</em>
+		{echo App::get_conf("data_config.job_salary.".$item['job_salary'])}<em>&nbsp;&nbsp;|&nbsp;&nbsp;</em>
+		<i class="ico-local"></i>{if $item['job_area']}{echo tFun::get_conf('city',$item['job_area'])}{else}杭州{/if}
+						<br/>
+						<a href="{echo tFun::build_url('/job/view',array('tui_id'=>tUtil::numstr($item['tui_id'])))}" class="am-btn am-btn-xs am-btn-default">查看详情 ></a>
+					</div>
+					<div class="am-cf"></div>
+          </div>          
+        </dd>
+      </dl>
+      {/foreach}
+  </section>
+</div>
+{/block}
+{block css}
+<style>
+    .get {
+      background: #1E5B94;
+      color: #fff;
+      text-align: center;
+      padding: 50px 0;
+    }
+
+    .get-title {
+      font-size: 200%;
+      border: 2px solid #fff;
+      padding: 20px;
+      display: inline-block;
+    }
+
+    .get-btn {
+      background: #fff;
+    }
+
+    .detail {
+      background: #fff;
+    }
+
+    .detail-h2 {
+      text-align: center;
+      font-size: 150%;
+      margin: 40px 0;
+    }
+
+    .detail-h3 {
+      color: #1f8dd6;
+    }
+
+    .detail-p {
+      color: #7f8c8d;
+    }
+
+    .detail-mb {
+      margin-bottom: 30px;
+    }
+
+    .hope {
+      background: #0bb59b;
+      padding: 50px 0;
+    }
+
+    .hope-img {
+      text-align: center;
+    }
+
+    .hope-hr {
+      border-color: #149C88;
+    }
+
+    .hope-title {
+      font-size: 140%;
+    }
+
+    .about {
+      background: #fff;
+      padding: 40px 0;
+      color: #7f8c8d;
+    }
+
+    .about-color {
+      color: #34495e;
+    }
+
+    .about-title {
+      font-size: 180%;
+      padding: 30px 0 50px 0;
+      text-align: center;
+    }
+
+    .footer p {
+      color: #7f8c8d;
+      margin: 0;
+      padding: 15px 0;
+      text-align: center;
+      background: #2d3e50;
+    }
+  </style>
+ {/block}

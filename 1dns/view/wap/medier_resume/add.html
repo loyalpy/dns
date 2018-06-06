@@ -1,0 +1,384 @@
+{block main}
+<div class="am-continaer">
+<form method="post" class="am-form" id="FAdd">
+<dl class="list">
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-4"><span class="">身份证号</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="idcard" id="Midcard" value="{$resume['idcard']}" type="text" class="am-form-field am-noborder js-idcard-validate" minlength="18" minlength="18" data-validation-message="请输入正确18位身份证号" required placeholder="18位身份证号" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">手机号</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="mobile" id="Mmobile" value="{$resume['mobile']}" type="text" class="am-form-field am-noborder js-mobile-validate" data-validation-message="请输入正确11位手机号" minlength="11" minlength="11" required placeholder="11位手机号" />
+</div>
+<div class="am-cf"></div>
+<div class="am-u-sm-4">&nbsp;</div>
+<div class="am-u-sm-5 am-text-right am-form-group">
+<input name="rzcode" id="Mrzcode" type="text" class="am-form-field am-noborder"  placeholder="验证码" />
+</div>
+<div class="am-u-sm-3 am-text-right">
+<button type="button" onclick='sendMessage()' id='btnSendCode' class="am-btn am-btn-default am-btn-block btn-rzcode" >获取验证码</button>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd class="space"></dd>
+
+<dd>
+<div class="am-u-sm-4"><span class="">真实姓名</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="name" id="Mname" value="{$resume['name']}" type="text" class="am-form-field am-noborder" minlength="2" minlength="6" data-validation-message="请输入真实姓名"  required placeholder="身份证上真实姓名" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">出生年月</span></div>
+<div class="am-u-sm-8 am-text-right">
+<input name="birth" id="Mbirth" type="text" value="{$resume['birth']}" disabled class="am-form-field am-noborder" placeholder="" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">性别</span></div>
+<div class="am-u-sm-8 am-text-right">
+<select name="sex" id="Msex" class="am-form-field am-noborder">
+<option value="">请选择</option>
+<option value="1" {if isset($resume['sex']) && $resume['sex'] == 1}selected{/if}>男</option>
+<option value="2" {if isset($resume['sex']) && $resume['sex'] == 2}selected{/if}>女</option>
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">婚否</span></div>
+<div class="am-u-sm-8 am-text-right">
+<select name="marry" id="Mmarry" class="am-form-field am-noborder">
+<option value="">请选择</option>
+{foreach items=$data_config['marry']}
+<option value="{$key}" {if isset($resume['marry']) && $resume['marry'] == $key}selected{/if}>{$item}</option>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">籍贯</span></div>
+<div class="am-u-sm-8 am-text-right">
+<input name="city_from" id="Mcity_from" value="{$resume['city_from']}" type="text" class="am-form-field am-noborder" placeholder="" />
+</div>
+<div class="am-cf"></div>
+</dd>
+
+<dd>
+<div class="am-u-sm-4"><span class="">所在地</span></div>
+<div class="am-u-sm-8 am-text-right">
+<select name="city" id="Mcity" class="am-form-field am-noborder">
+<option value="0">请选择</option>
+{set $quanlist = tFun::get_city_quan($city);}
+{foreach items=$quanlist}
+<optgroup label="{$item['name']}">
+{if $item['childrens']}
+{foreach items=$item['childrens'] item=$child}
+<option value="{$child['id']}" {if isset($resume['city']) && $resume['city'] == $child['id']}selected{/if}>{$item['name']} - {$child['name']}</option>
+{/foreach}
+{/if}
+</optgroup>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-4"><span class="">求职工种</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="job_name" id="Mjob_name" value="{$resume['job_name']}" type="text" class="am-form-field am-noborder" minlength="2" minlength="18" data-validation-message="请输入求职工种" required placeholder="" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">工种分类</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<select name="job_cate" id="Mjob_cate" class="am-form-field am-noborder" data-validation-message="请选择工种分类" required >
+<option value="">请选择</option>
+{code
+		C("category","job_cate")->get(-9);
+		C("category","job_cate")->fetch(-9);
+		$job_cate = C("category","job_cate")->get_level(0);	
+		
+}
+{/code}
+{foreach items=$job_cate}
+<optgroup label="{$item['name']}">
+{if $item['childrens']}
+{foreach items=$item['childrens'] item=$child}
+<option value="{$child['id']}" {if isset($resume['job_cate']) && $resume['job_cate'] == $child['id']}selected{/if}>{$item['name']} - {$child['name']}</option>
+{/foreach}
+{/if}
+</optgroup>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">工作意向地</span></div>
+<div class="am-u-sm-8 am-text-right">
+<select name="job_area" id="Mjob_area"  class="am-form-field am-noborder" required ><!--  multiple size="3" -->
+<option value="">请选择</option>
+{set $quanlist = tFun::get_city_quan($city);}
+{foreach items=$quanlist}
+<optgroup label="{$item['name']}">
+{if $item['childrens']}
+{foreach items=$item['childrens'] item=$child}
+<option value="{$child['id']}" {if isset($resume['job_area']) && $resume['job_area'] == $child['id']}selected{/if}>{$item['name']} - {$child['name']}</option>
+{/foreach}
+{/if}
+</optgroup>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+
+<dd>
+<div class="am-u-sm-4"><span class="">工作经验</span></div>
+<div class="am-u-sm-8 am-text-right">
+<select name="job_age" id="Mjob_age" class="am-form-field am-noborder">
+<option value="">请选择</option>
+{foreach items=$data_config['job_age']}
+<option value="{$key}" {if isset($resume['job_age']) && $resume['job_age'] == $key}selected{/if}>{$item}</option>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">最高学历</span></div>
+<div class="am-u-sm-8 am-text-right">
+<select id="Mjob_edu" name="job_edu" class="am-form-field am-noborder">
+<option value="">请选择</option>
+{foreach items=$data_config['job_edu']}
+<option value="{$key}" {if isset($resume['job_edu']) && $resume['job_edu'] == $key}selected{/if}>{$item}</option>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">薪资要求</span></div>
+<div class="am-u-sm-8 am-text-right">
+<select name="job_salary" id="Mjob_salary" class="am-form-field am-noborder">
+<option value="">请选择</option>
+{foreach items=$data_config['job_salary']}
+<option value="{$key}" {if isset($resume['job_salary']) && $resume['job_salary'] == $key}selected{/if}>{$item}</option>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">到岗时间</span></div>
+<div class="am-u-sm-8 am-text-right">
+<select id="Mjob_time" name="job_time" class="am-form-field am-noborder">
+<option value="">请选择</option>
+{foreach items=$data_config['job_time']}
+<option value="{$key}" {if isset($resume['job_time']) && $resume['job_time'] == $key}selected{/if}>{$item}</option>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+
+
+
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-4"><span class="">简历等级</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<select name="resume_level" id="Mresume_level" class="am-form-field am-noborder">
+<option value="">请选择</option>
+{foreach items=$data_config['resume_level']}
+<option value="{$key}" {if isset($resume['resume_level']) && $resume['resume_level'] == $key}selected{/if}>{$item}</option>
+{/foreach}
+</select>
+</div>
+<div class="am-cf"></div>
+</dd>
+
+<dd>
+<div class="am-u-sm-4"><span class="">备注</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="bz" id="Mbz" type="text" value="{$resume['bz']}" class="am-form-field am-noborder" placeholder="" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd class="space"></dd>
+<dd>
+<div class="am-cf">
+  <input value="{hash}" name="hash" type="hidden" />
+  <input value="{$resume['resume_id']}" name="resume_id" id="Mresume_id" type="hidden" />
+  <input type="submit" id="Msubmit" value="保存工友信息" class="am-btn am-btn-warning am-btn-block">
+</div>
+</dd>
+</dl>
+</form>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+var InterValObj; //timer变量，控制时间  
+var count = 120; //间隔函数，1秒执行  
+var curCount;    //当前剩余秒数  
+var rz_sms = "{url /misc/send_sms}{echo tHash::uri(array('dateline'=>$timestamp,'tpl'=>'rz'));}";
+var chk_card = false;
+function sendMessage() {
+	var mobile = $("#Mmobile").val();
+	if($.is_empty(mobile) || !mobile.is_mobile()){
+		$.ui.error("请先填写正确的手机号");
+		return false;
+	}
+    //设置button效果，开始计时  
+    $("#btnSendCode").attr("disabled", "true").addClass("font-gray");
+    //向后台发送处理数据  
+    $.ajaxPassport({
+    	url:rz_sms,
+    	data:{"mobile":mobile},
+    	success:function(res){
+    		if(res.error == 0){
+    			curCount = count;  
+    			$("#btnSendCode").html("重获验证码(" + curCount + ")").addClass("font-gray");//;  
+    		    InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次  
+    		}else{
+    			$.ui.error(res.message);
+    			$("#btnSendCode").removeAttr("disabled").removeClass("font-gray");
+    		}
+    	}
+    });
+} 
+//timer处理函数  
+function SetRemainTime() {  
+    if (curCount == 0) {                  
+        window.clearInterval(InterValObj);//停止计时器  
+        $("#btnSendCode").removeAttr("disabled").removeClass("font-gray");//启用按钮  
+        $("#btnSendCode").html("获取验证码");  
+        code = ""; //清除验证码。如果不清除，过时间后，输入收到的验证码依然有效      
+    } else {  
+        curCount--;  
+        $("#btnSendCode").html("重获验证码(" + curCount + ")"); 
+    }  
+}
+
+
+var chk_idcard = function(idcard){
+	if(checkIdcard(idcard) && chk_card == false){
+		chk_card = true;
+		$.ui.loading();
+		$.ajaxPassport({
+			url:"{url /medier_resume/add_chkidcard}",
+			success:function(res){
+				if(res.error == 1){
+					$.ui.error(res.message);
+				}else{
+					if(parseInt(res.status) == 1){
+						$("#Mresume_id").val(res.data.resume_id);
+						$("#Mname").val(res.data.name);
+						$("#Mmobile").val(res.data.mobile);
+						$("#Mbirth").val(res.data.birth);
+						$("#Msex").val(res.data.sex);
+						
+						$("#Mmarry").val(res.data.marry);
+						$("#Mcity_from").val(res.data.city_from);
+						$("#Mcity").val(res.data.city);
+						
+						$("#Mjob_name").val(res.data.job_name);
+						$("#Mjob_cate").val(res.data.job_cate);
+						$("#Mjob_area").val(res.data.job_area);
+						
+						$("#Mjob_age").val(res.data.job_age);
+						$("#Mjob_edu").val(res.data.job_edu);
+						$("#Mjob_salary").val(res.data.job_salary);
+						$("#Mjob_time").val(res.data.job_time);
+						$("#Mresume_level").val(res.data.resume_level);
+						$("#Mbz").val(res.data.bz);
+					}else{
+						$.ui.error(res.msg);
+					}			
+				}
+				$.ui.close_loading();
+				chk_card = false;
+			},
+			data:{idcard:idcard}
+		});
+	}
+}
+$(function(){
+	 $("#Midcard").unbind("blur").bind("blur",function(e){
+		var obj = this;
+		var idcard = $(obj).val();
+		chk_idcard(idcard);
+		$("#Mmobile").focus();
+	  });
+	 $('#FAdd').validator({
+		 	validate: function(validity) {
+		      var v = $(validity.field).val();
+		   	  // 本地验证，同步操作，无需返回值
+		      if ($(validity.field).is('.js-idcard-validate')) {//验证身份证号
+		        if(checkIdcard(v)){
+		        	validity.valid = true;
+		        }else{
+		        	validity.valid = false;
+		        }
+		      }else if ($(validity.field).is('.js-mobile-validate')) {
+		        if(v.is_mobile()){
+		        	validity.valid = true;
+		        }else{
+		        	validity.valid = false;
+		        }
+		      }
+		   
+		 	},
+		    onValid: function(validity) {
+		      $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+		    },
+		    onInValid: function(validity) {
+		      var $field = $(validity.field);
+		      var $group = $field.closest('.am-form-group');
+		      var $alert = $group.find('.am-alert');
+		      // 使用自定义的提示信息 或 插件内置的提示信息
+		      var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+		      if (!$alert.length) {
+		        $alert = $('<div class="am-alert am-alert-danger"></div>').hide().
+		          appendTo($group);
+		      }
+		      $alert.html(msg).show();
+		    },
+		    submit:function(){
+		    	var formValidity = this.isFormValid();
+		    	if(formValidity === true){
+		    		$.ajaxPassport({
+		    			url:"{url /medier_resume/add}",
+		    			data:$(this.$element).serialize(),
+		    			type:"post",
+		    			success:function(res){
+		    				if(res.status == 0){
+		    					$.ui.error(res.msg);
+		    				}else{
+		    					$.ui.success(res.msg);
+		    					setTimeout(function(){
+		    						$.redirect("/medier_resume/resumelist")
+		    					},500);
+		    				}
+		    			}
+		    		})
+		    	}
+		        return false;
+		    }
+	});
+})
+</script>
+{/block}

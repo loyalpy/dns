@@ -1,0 +1,24 @@
+{block main}
+<div class="aps1">
+    <div class="price_top">域名新购，续费价格列表</div>
+    <table class="table price_top-table">
+        <tr>
+            <th>域名后缀</th>
+            <th>域名新开价格(元/年)</th>
+            <th>域名续费价格(元/年)</th>
+            <th>转入价格(元/年)</th>
+        </tr>
+        {foreach $items = $price}
+        <tr>
+            <td>{$item['name']}</td>
+            <td>{$item['new_price']}</td>
+            <td>{$item['renew_price']}</td>
+            <td>{$item['renew_price']}</td>
+        </tr>
+        {/foreach}
+    </table>
+</div>
+{/block}
+
+{block javascript}
+{/block}

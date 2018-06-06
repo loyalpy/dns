@@ -1,0 +1,245 @@
+{block main}
+<div class="am-continaer">
+<form method="post" class="am-form" id="FAdd" action="{url /register}">
+<dl class="list">
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-4">&nbsp;</div>
+<div class="am-u-sm-8 am-text-left am-form-group">
+注册<span class="am-text-warning">{if $ut == 1}个人{elseif $ut==2}企业{else}职介{/if}</span> <a href="{url /register}">切换注册类型</a>
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd class="space"></dd>
+{if $ut == 1}
+<dd>
+<div class="am-u-sm-4"><span class="">手机号</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="mobile" id="Mmobile" value="" type="text" class="am-form-field am-noborder js-mobile-validate" data-validation-message="请输入正确11位手机号" minlength="11" maxlength="11" required placeholder="11位手机号" />
+</div>
+<div class="am-cf"></div>
+<div class="am-u-sm-4">&nbsp;</div>
+<div class="am-u-sm-5 am-text-right am-form-group">
+<input name="rzcode" id="Mrzcode" type="text" class="am-form-field am-noborder js-rzcode-validate" data-validation-message="请输入验证码"  minlength="6" maxlength="6" required  placeholder="验证码" />
+</div>
+<div class="am-u-sm-3 am-text-right">
+<button type="button" onclick='sendMessage()' id='btnSendCode' class="am-btn am-btn-default am-btn-block btn-rzcode" >获取验证码</button>
+</div>
+<div class="am-cf"></div>
+</dd>
+{else}
+<dd>
+<div class="am-u-sm-4"><span class="">{if $ut==2}企业{else}职介{/if}名称</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="name" id="Mname" value="" type="text" class="am-form-field am-noborder" minlength="2" maxlength="36" data-validation-message="请输入{if $ut==2}企业{else}职介{/if}名称"  required placeholder="{if $ut==2}企业{else}职介{/if}名称" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-4"><span class="">账号</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="uname" id="Muname" value="" type="text" class="am-form-field am-noborder js-uname-validate" minlength="6" maxlength="26" data-validation-message="请输入账号"  required placeholder="账号" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">邮箱</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="email" id="Memail" value="" type="email" class="am-form-field am-noborder js-email-validate" data-validation-message="请输入邮箱"  required placeholder="邮箱" />
+</div>
+<div class="am-cf"></div>
+</dd>
+{/if}
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-4"><span class="">设置密码</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="pass" id="Mpass" value="" type="password" class="am-form-field am-noborder" minlength="6" maxlength="18" data-validation-message="请输入密码"  required placeholder="密码" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-4"><span class="">确认密码</span></div>
+<div class="am-u-sm-8 am-text-right am-form-group">
+<input name="pass2" data-equal-to="#Mpass" id="Mpass2" value="" type="password" class="am-form-field am-noborder" minlength="6" maxlength="18" data-validation-message="请与输入密码保持一致"  required placeholder="确认密码" />
+</div>
+<div class="am-cf"></div>
+</dd>
+<dd class="space"></dd>
+<dd>
+<div class="am-cf">
+  <input value="{hash}" name="hash" type="hidden" />
+  <input value="{$ut}" name="ut" id="Mut" type="hidden" />
+  <button type="submit" id="Msubmit" class="am-btn am-btn-warning am-btn-block">立即注册</button>
+</div>
+<div class="dis10"></div>
+      <div class="am-cf">
+        <a href="{url /login}" class="am-btn am-btn-default am-btn-block">
+        已有账号,立即登录
+        </a>
+      </div>
+</dd>
+</dl>
+</form>
+</div>
+{/block}
+{block javascript}
+<script type="text/javascript">
+{if $ut == 1}
+var InterValObj; //timer变量，控制时间  
+var count = 120; //间隔函数，1秒执行  
+var curCount;    //当前剩余秒数  
+function sendMessage() {
+	var mobile = $("#Mmobile").val();
+	if($.is_empty(mobile) || !mobile.is_mobile()){
+		$.ui.error("请先填写注册手机号");
+		return false;
+	}
+    //设置button效果，开始计时  
+    $("#btnSendCode").attr("disabled", "true").addClass("font-gray");
+    //向后台发送处理数据  
+    $.ajaxPassport({
+    	url:"{url /misc/send_sms}{echo tHash::uri(array('dateline'=>$timestamp,'tpl'=>'reg'));}",
+    	data:{"mobile":mobile},
+    	success:function(res){
+    		if(res.error == 0){
+    			curCount = count;  
+    			$("#btnSendCode").html("重获验证码(" + curCount + ")").addClass("font-gray");//;  
+    		    InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次  
+    		}else{
+    			$.ui.error(res.message);
+    			$("#btnSendCode").removeAttr("disabled").removeClass("font-gray");
+    		}
+    	}
+    });
+}  
+//timer处理函数  
+function SetRemainTime() {  
+    if (curCount == 0) {                  
+        window.clearInterval(InterValObj);//停止计时器  
+        $("#btnSendCode").removeAttr("disabled").removeClass("font-gray");//启用按钮  
+        $("#btnSendCode").html("获取验证码");  
+        code = ""; //清除验证码。如果不清除，过时间后，输入收到的验证码依然有效      
+    } else {  
+        curCount--;  
+        $("#btnSendCode").html("重获验证码(" + curCount + ")"); 
+    }  
+}
+{/if}
+
+$(function(){
+	 $('#FAdd').data("success",function(res){
+		 if(res.status == 0){
+			 $.ui.error(res.msg);
+		 }else{
+			 $.ui.success("注册成功,请登陆");
+			 setTimeout(function(){
+				 $.redirect("/ucenter/index");
+			 },500);
+		 }
+	 }).validator({
+		 	validate: function(validity) {
+		      var v = $(validity.field).val();
+		   	  // 本地验证，同步操作，无需返回值
+		   	  //手机
+		   	  if ($(validity.field).is('.js-mobile-validate')) {
+		        if(v.is_mobile()){
+		        	validity.valid = true;
+		        }else{
+		        	validity.valid = false;
+		        }
+		      }
+		   	  /*
+		   	//用户名
+		   	else if ($(validity.field).is('.js-uname-validate')) {
+		        if(v.is_mobile()){
+		        	// 异步操作必须返回 Deferred 对象
+			        return $.ajax({
+			          url: '{url /misc/check?ctype=uname}',
+			          data:{v:v},
+			          // cache: false, 实际使用中请禁用缓存
+			          dataType: 'json'
+			        }).then(function(data) {			         
+			          if(data.error == 1){
+			        	  validity.valid = false;
+			        	  $(validity.field).data("validation-message",data.message);
+			          }else{
+			        	  validity.valid = true;
+			          }
+			          return validity;
+			        }, function() {
+			          return validity;
+			        });
+		        }else{
+				   	$(validity.field).data("validation-message","请输入用户名");
+		        	validity.valid = false;
+		        }
+		      }
+		   	//邮箱
+		   	else if ($(validity.field).is('.js-email-validate')) {
+		        if(v.is_mobile()){
+		        	// 异步操作必须返回 Deferred 对象
+			        return $.ajax({
+			          url: '{url /misc/check?ctype=email}',
+			          data:{v:v},
+			          // cache: false, 实际使用中请禁用缓存
+			          dataType: 'json'
+			        }).then(function(data) {
+			         
+			          if(data.error == 1){
+			        	  validity.valid = false;
+			        	  $(validity.field).data("validation-message",data.message);
+			          }else{
+			        	  validity.valid = true;
+			          }
+			          return validity;
+			        }, function() {
+			          return validity;
+			        });
+		        }else{
+				   	$(validity.field).data("validation-message","请输入正确邮箱");
+		        	validity.valid = false;
+		        }
+		      }
+		   	  */
+		   
+		 	},
+		    onValid: function(validity) {
+		      $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+		    },
+		    onInValid: function(validity) {
+		      var $field = $(validity.field);
+		      var $group = $field.closest('.am-form-group');
+		      var $alert = $group.find('.am-alert');
+		      // 使用自定义的提示信息 或 插件内置的提示信息
+		      var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+		      if (!$alert.length) {
+		        $alert = $('<div class="am-alert am-alert-danger"></div>').hide().
+		          appendTo($group);
+		      }
+		      $alert.html(msg).show();
+		    },
+		    submit:function(){
+		    	var formValidity = this.isFormValid();
+		    	/*
+		    	$.when(formValidity).then(function(e) {
+		    		//初始化表单
+					return $.ajaxForm($('#FAdd').get(0),0);
+		    	}, function(e) {
+		    	    // 验证失败的逻辑
+		    	    alert("adfasdf");
+		    	    return false;
+		    	});
+		    	return false;
+		    	*/
+		    	if(formValidity === true){
+		    		return $.ajaxForm($('#FAdd').get(0),0);
+		    	}else{
+		    		return false;
+		    	}
+		    }
+	});
+})
+</script>
+{/block}

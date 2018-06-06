@@ -1,0 +1,232 @@
+{block main}
+<!-- banner -->
+{set $ad = tCache::read("ad_1");}
+<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+  	{foreach items=$ad}
+    <li data-target="#carousel-example-generic" data-slide-to="{$key}" class="{if $key == 0}active{/if}"></li>
+    {/foreach}
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    {foreach items=$ad}
+    <div class="item {if $key == 0}active{/if}" style="background:{$item['bgcolor']} url({url static@/$item[imgurl]}) center top no-repeat;">
+      {if $item['linkurl']}<a href="{$item['linkurl']}" alt="{$item['name']}" target="_blank">&nbsp;</a>{/if}
+      <div class="carousel-caption"></div>
+    </div>
+    {/foreach}
+  </div>
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+<!-- end banner -->
+
+<!--产品服务-->
+<div class="bg-white">
+<div class="dis60"></div>
+<div class="aps">
+    <h1 class="section_h1">域名解析<i class="h1_line"></i></h1>
+	<div class="dis30"></div>
+    <div class="box-main pros tac">
+		<ul class="aps">
+			<li class="pro s_f">
+				<h3><span>分网络智能解析</span> <small></small></h3>
+				<p>根据用户上网的环境，自动将用户解析到不同机房的服务器，让您的网站更具竞争力。</p>
+				<i class="i-pro i-pro1"></i>
+				<a class="trans" href="{url /product/index}"><span>分网络智能解析</span></a>
+			</li>
+			<li class="pro">
+				<h3><span>服务器宕机检测</span> <small></small></h3>
+				<p>自动检测服务器的状态，一旦您的服务器出现故障宕机，则域名将自动解析到备用服务器上。</p>
+				<i class="i-pro i-pro2"></i>
+				<a class="trans" href="{url /product/index}"><span>服务器宕机检测</span></a>
+			</li>
+			<li class="pro">
+				<h3><span>服务器负载均衡</span> <small></small></h3>
+				<p>通过DNS轮询的方式，将不同用户均衡的解析到不同服务器上，减少单台服务器的负载压力。</p>
+				<i class="i-pro i-pro3"></i>
+				<a class="trans" href="{url /product/index}"><span>创宇盾</span></a>
+			</li>
+			<li class="pro">
+				<h3><span>URL转发</span> <small></small></h3>
+				<p>URL转发功能可通过访问您的域名后直接转向到另外一个网址。</p>
+				<i class="i-pro i-pro4"></i>
+				<a class="trans" href="{url /product/index}"><span>URL转发</span></a>
+			</li>
+
+			<li class="pro s_f">
+				<h3><span>支持更多解析类型</span> <small></small></h3>
+				<p>八戒DNS提供A、MX、CName、TXT、NS类型的解析，并且对解析记录的数目没有限制。</p>
+				<i class="i-pro i-pro5"></i>
+				<a class="trans" href="{url /product/index}"><span>支持更多解析类型</span></a>
+			</li>
+			<li class="pro">
+				<h3><span>分省分国家解析</span> <small></small></h3>
+				<p>针对大型的企业用户，您可以选择分省解析服务，将您的用户解析到不同地区国家的服务器上。</p>
+				<i class="i-pro i-pro6"></i>
+				<a class="trans" href="{url /product/index}"><span>分省分国家解析</span></a>
+			</li>
+			<li class="pro">
+				<h3><span>方便好用DNS功能</span> <small></small></h3>
+				<p>一键保存解析修改记录,快捷的域名查找,批量的添加域名。</p>
+				<i class="i-pro i-pro7"></i>
+				<a class="trans" href="{url /product/index}"><span>方便好用DNS功能</span></a>
+			</li>
+			<li class="pro">
+				<h3><span>良好的操作体验</span> <small></small></h3>
+				<p>八戒DNS不断的提高用户的体验，获得了让用户称赞的操作体验</p>
+				<i class="i-pro i-pro8"></i>
+				<a class="trans" href="{url /product/index}"><span>良好的操作体验</span></a>
+			</li>
+			<div class="cl"></div>
+		</ul>
+	</div>
+	<div class="pro-back" style="display: none;">
+		<a class="register" href="{url /product/index}">全部功能</a>
+	</div>
+</div>
+<div class="dis60"></div>
+</div>
+<!--end 产品服务-->
+<!-- 技术支持 -->
+<div class="bg-gray">
+<div class="dis30"></div>
+<div class="aps">
+	<h1 class="section_h1">技术支持<i class="h1_line"></i></h1>
+	<div class="dis30"></div>
+	<div class="ind-article">
+		<div class="list">
+		<h1><a href="{url home@/cms/news/}"><span class="right">更多>></span></a>最新消息</h1>
+		<ul>
+						{set $num = 0;}
+						{foreach items=$cms}
+							{if $item['ident'] == 'news'}
+								{foreach items=$cms $item=$item1}
+									{if $item1['pid'] == $item['id']}
+										{foreach items=$cms_list['list'] $item=$item2}
+											{if $item2['fid'] == $item1['id'] && $item2['intui'] == 1}
+												{set $num=$num+1;}
+												{if $num <= 6}
+													<li><span class="right"></span><a href="{url /cms/news_topic/tid/$item2[tid]}">{$item2['subject']}</a></li>
+												{/if}
+											{/if}
+										{/foreach}
+									{/if}
+								{/foreach}
+							{/if}
+						{/foreach}
+		</ul>
+		</div>
+		<div class="list">
+		<h1><a href="{url home@/helper/index}"><span class="right">更多>></span></a>常见问题</h1>
+		<ul>
+						{set $num2 = 0;}
+						{foreach items=$cms}
+							{if $item['ident'] == 'helper'}
+								{foreach items=$cms $item=$item1}
+									{if $item1['pid'] == $item['id']}
+										{foreach items=$cms $item=$item2}
+											{if $item2['pid'] == $item1['id']}
+												{foreach items=$cms_list['list'] $item=$item3}
+													{if $item3['fid'] == $item2['id'] && $item3['intui']==1}
+													{set $num2=$num2+1;}
+														{if $num2 <= 6}
+														<li><span class="right"></span><a href="{url /helper/article?tid=}{$item3['tid']}">{$item3['subject']}</a></li>
+														{/if}
+													{/if}
+												{/foreach}
+											{/if}
+										{/foreach}
+									{/if}
+								{/foreach}
+							{/if}
+						{/foreach}
+					</ul>
+		</div>
+		<div class="list list-nomarg">
+		<h1><a href="{url home@/cms/blog/}"><span class="right">更多>></span></a>系统博客</h1>
+		<ul>
+						{set $num3 = 0;}
+						{foreach items=$cms}
+							{if $item['ident'] == 'blog'}
+								{foreach items=$cms $item=$item1}
+									{if $item1['pid'] == $item['id']}
+										{foreach items=$cms_list['list'] $item=$item2}
+											{if $item2['fid'] == $item1['id'] && $item2['intui'] == 1}
+												{set $num3=$num3+1;}
+												{if $num3 <= 6}
+													<li><span class="right"></span><a href="{url /cms/topic/tid/$item2[tid]}">{$item2['subject']}</a></li>
+												{/if}
+											{/if}
+										{/foreach}
+									{/if}
+								{/foreach}
+							{/if}
+						{/foreach}
+					</ul>
+		</div>
+		<div class="dis30"></div>
+	</div>
+</div>
+<div class="dis30"></div>
+</div>
+<!-- end 技术支持 -->
+
+<!--合作伙伴-->
+<div class="bg-white">
+<div class="dis30"></div>
+<div class="aps900">
+	<h1 class="section_h1">合作伙伴<i class="h1_line"></i></h1>
+	<div class="dis30"></div>
+	<div class="ind-huoban">
+	{set $link2 = tCache::read("cms_friendlink_link2");}
+	{foreach items=$link2}
+	<a {if $key%4 == 0}class="nomrg"{/if} href="{$item['link']}" target="_blank"><img src="{url static@/}{$item['logo']}"/><span></span></a>
+	{/foreach}
+	</div>
+
+</div>
+<div class="dis60"></div>
+</div>
+<!--合作伙伴结束-->
+
+<!-- sla 100% -->
+<div class="bg-blue">
+<div class="dis30"></div>
+<div class="aps">
+ <div class="ind-slabox">
+ 	<div class="item nomrg">
+ 		<div class="icon icon1"></div>
+ 		<div class="txt">300G超高防护</div>
+ 	</div>
+ 	<div class="item">
+ 		<div class="icon icon2"></div>
+ 		<div class="txt">7 X 24小时服务</div>
+ 	</div>
+ 	<div class="item">
+ 		<div class="icon icon3"></div>
+ 		<div class="txt">100% SLA稳定运行</div>
+ 	</div>
+ 	<div class="item">
+ 		<div class="icon icon4"></div>
+ 		<div class="txt">无限域名无限记录</div>
+ 	</div>
+ </div>
+</div>
+<div class="dis30"></div>
+</div>
+<!-- end sla 100% -->
+{/block}
+
+{block javascript}
+<script language="javascript" src="{url static@/javascript/bootstrap/js/bootstrap.min.js}"></script>
+{/block}

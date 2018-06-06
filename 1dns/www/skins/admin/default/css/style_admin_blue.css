@@ -1,0 +1,15 @@
+body.ucenter,body.ucenter .main {background:url(../images/leftnav-bg-blue.gif) left top repeat-y}
+body.login {background:#0c67b8}
+.header {background:#0c67b8;border-bottom:solid 2px #0c67b8}
+.header .logo i {color:#fff;}
+.header .logo a {color:#fff;}
+
+.leftnav dl dt {border-bottom:solid 1px #4695db;}
+.leftnav dl dt a {color:#fff;}
+.leftnav dl dd a {color:#90c7f9;border-left:solid 2px #0c67b8;}
+.leftnav dl dd a:hover {border-left:solid 2px #fbc600;color:#fbc600;}
+.leftnav dl dd.cur a {border-left:solid 2px #fbc600;color:#fbc600;}
+
+.menu ul li a {color:#fff;}
+.menu ul li a.cur {border-bottom:solid 3px #fbc600;color:#fbc600}
+.menu ul li a:hover {color:#fbc600;}

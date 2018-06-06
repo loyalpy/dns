@@ -1,0 +1,47 @@
+{block main}
+<div class="am-continaer">
+<dl class="list">
+<dt>
+<div class="uinfo">
+	<div class="am-u-sm-3">
+	<img class="am-circle" src="{echo tFun::resume_avatar($this->userinfo['resume']['idcard'],$uid)}" width="50" height="50" />
+	</div>
+	<div class="am-u-sm-9">
+	上午好{if $this->userinfo['name']},{$this->userinfo['name']}{/if}！<font class="font-gray">({if $this->userinfo['ulevel'] >0}<font class="font-green">已认证</font>{else}<font class="font-red">等待认证</font>{/if})</font>
+<br/>
+<span class="am-text-xs am-text-gray">
+您的简历完善度:<font class="am-text-warning">{$this->userinfo['resume']['resume_completed']}</font>%
+</span>
+	</div>
+	<div class="am-cf"></div>
+</div>
+</dt>
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-6"><a href="{url /uc_resume/index}" class="">编辑简历</a></div>
+<div class="am-u-sm-6 am-text-right"></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6"><span class="">面试已赚取</span></div>
+<div class="am-u-sm-6 am-text-right"><span class="am-text-warning">{$this->userinfo['account']['balance']}</span><font class="am-text-gray am-text-xs">&nbsp;元</font></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6">报名订单</div>
+<div class="am-u-sm-6 am-text-right"><span class="am-text-warning">{if $this->userinfo['resume_id']}{$this->userinfo['resume_credit']['invites']}{else}0{/if}</span><font class="am-text-gray am-text-xs">&nbsp;人</font></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6"><span class="">面试数</span></div>
+<div class="am-u-sm-6 am-text-right"><span class="am-text-warning">{if $this->userinfo['resume_id']}{$this->userinfo['resume_credit']['ms_nums']}{else}0{/if}</span><font class="am-text-gray am-text-xs">&nbsp;个</font></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6"><span class="">被查看</span></div>
+<div class="am-u-sm-6 am-text-right"><span class="am-text-warning">{if $this->userinfo['resume_id']}{$this->userinfo['resume_credit']['views']}{else}0{/if}</span><font class="am-text-gray am-text-xs">&nbsp;次</font></div>
+<div class="am-cf"></div>
+</dd>
+</dl>
+</div>
+{/block}

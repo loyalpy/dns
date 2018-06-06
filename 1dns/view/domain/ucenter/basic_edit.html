@@ -1,0 +1,232 @@
+{block main}
+<div class="am-uc-top">
+    <i class="am-icon-wordpress"></i>&nbsp;
+    {$domain}
+</div>
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav" style="padding-top: 20px">
+        <ul>
+            <li><a href="{url /ucenter/basic?domain=}{$domain}"   class="showtype ">基本信息&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_edit?domain=}{$domain}"   class="showtype cur">域名信息修改&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_rz?domain=}{$domain}"  class="showtype">域名实名认证&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_transfer?domain=}{$domain}"  class="showtype">域名过户&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_dns?domain=}{$domain}"   class="showtype ">DNS修改创建&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_zs?domain=}{$domain}"   class="showtype">域名证书&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_status?domain=}{$domain}"   class="showtype">安全设置&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="am-uc-right" style="padding-top: 25px">
+    <div class="am-alert am-alert-secondary basic-t-t" data-am-alert>
+        <button type="button" class="am-close">&times;</button>
+        <p>域名所有者与管理联系人地址，邮编，邮箱相同。</p>
+    </div>
+    <!--<div class="basic-top">&nbsp;&nbsp;&nbsp;域名信息修改</div>-->
+    <!--<div class="dis10"></div>-->
+    <div class="records-nav profile_information" >
+        <ul>
+            <li class="{if $type == 1}cur{/if}"><a href="{url /ucenter/basic_edit?domain=}{$domain}&type=1">域名所有者信息修改</a></li>
+            <li class="{if $type == 2}cur{/if}"><a href="{url /ucenter/basic_edit?domain=}{$domain}&type=2">管理联系人信息修改</a></li>
+        </ul>
+    </div>
+    <div class="dis10"></div>
+
+    <table class="am-table basic-edit-table">
+        <col width="200px"/>
+        <col />
+        <thead>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="l">{if $type == 1}域名所有者{else}管理联系人{/if}:<span>*</span></td>
+            <td>
+                {if $type == 1}
+                {$list_info['aller_name_cn']}
+                {else}
+                <input type="text" name="aller_name_cn" value="{$list_info['m_name_cn']}" class="am-form-field am-radius i"  placeholder="中文名"/>
+                <i class="t">请填入32个汉字以内正确的中文名</i>
+                {/if}
+            </td>
+        </tr>
+        <tr>
+            <td class="l">{if $type == 1}域名所有者(英文){else}管理联系人(英文){/if}:<span>*</span></td>
+            <td>
+                {if $type == 1}
+                {$list_info['aller_name']}
+                {else}
+                <input type="text" name="aller_name" value="{$list_info['m_name']}" class="am-form-field am-radius i"  placeholder="英文名">
+                <i class="t">请填写不少于两个字符的英文名称</i>
+                {/if}
+            </td>
+        </tr>
+        <tr>
+            <td class="l">邮箱:<span>*</span></td>
+            <td>
+                <input type="text" name="email" value="{if $type == 1}{$list_info['email']}{else}{$list_info['m_email']}{/if}" class="am-form-field am-radius i"  placeholder="Email">
+                <i class="t">请输入正确的电子邮件</i>
+            </td>
+        </tr>
+        <tr>
+            <td class="l">地区:<span>*</span></td>
+            <td>
+                <div id="city" class="">
+                    <select class="i1 am-form-field am-radius "><option>中国</option></select>
+                    <select class="i1 am-form-field am-radius prov" name="s_province"></select>
+                    <select class="i1 am-form-field am-radius city" name="s_city"></select>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="l">通讯地址:<span>*</span></td>
+            <td>
+                <input type="text" name="addr_cn" value="{if $type == 1}{$list_info['addr_cn']}{else}{$list_info['m_addr_cn']}{/if}" class="am-form-field am-radius i"  placeholder="中文地址">
+                <i class="t">请输入中文联系地址,必填字段</i>
+            </td>
+        </tr>
+        <tr>
+            <td class="l">通讯地址(英文):<span>*</span></td>
+            <td>
+                <input type="text" name="addr" value="{if $type == 1}{$list_info['addr']}{else}{$list_info['m_addr']}{/if}" class="am-form-field am-radius i"  placeholder="英文地址">
+                <i class="t">请输入英文联系地址,必填字段</i>
+            </td>
+        </tr>
+        <tr>
+            <td class="l">邮编:<span>*</span></td>
+            <td>
+                <input type="text" name="ub" value="{if $type == 1}{$list_info['ub']}{else}{$list_info['m_ub']}{/if}" class="am-form-field am-radius i" >
+                <i class="t">请输入6位数字邮编</i>
+            </td>
+        </tr>
+        <tr>
+            <td class="l">手机:<span>*</span></td>
+            <td>
+                <input type="text" name="mobile" value="{if $type == 1}{$list_info['mobile']}{else}{$list_info['m_mobile']}{/if}" class="am-form-field am-radius i" >
+                <i class="t">请正确填写您的手机号码</i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="add-c-sub">
+        <button type="button" class="am-btn am-btn-warning {if $type == 1}edit-aller{else}edit-m{/if}">提交</button>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript" src="{url /static/javascript/area/jquery.cityselect.js}"></script>
+<script type="text/javascript">
+    $(function () {
+        //域名所有者联系人
+        $(".edit-aller").click(function () {
+            sub_add_info(1);
+        });
+        //管理所有者联系人
+        $(".edit-m").click(function () {
+            sub_add_info(2);
+        });
+        //域名所有者中文判断
+        $("input[name='aller_name_cn'],input[name='name_cn']").keyup(function () {
+            var pattern = /^[\u4E00-\u9FA5]{2,32}$/;
+            pan_is_show(this,pattern);
+        });
+        //域名所有者英文判断
+        $("input[name='aller_name'],input[name='name']").keyup(function () {
+            var pattern=/^[a-zA-Z\s]{2,32}$/g;
+            pan_is_show(this,pattern);
+        });
+        //邮箱判断
+        $("input[name='email']").keyup(function () {
+            var pattern =  /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+            pan_is_show(this,pattern);
+        });
+        //匹配中文通讯地址
+        $("input[name='addr_cn']").keyup(function () {
+            var pattern = /^[\u4E00-\u9FA5(0-9)\s]{2,64}$/;
+            pan_is_show(this,pattern);
+        });
+        //匹配英文通讯地址
+        $("input[name='addr']").keyup(function () {
+            var pattern=/^[0-9a-zA-Z\s]{2,64}$/g;
+            pan_is_show(this,pattern);
+        });
+        //手机判断
+        $("input[name='mobile']").keyup(function () {
+            var pattern = /^1[34578]\d{9}$/;
+            pan_is_show(this,pattern);
+        });
+        //邮编判断
+        $("input[name='ub']").keyup(function () {
+            var pattern = /^[0-9][0-9]{5}$/;
+            pan_is_show(this,pattern);
+        });
+    });
+    //判断是否显示错误
+    var pan_is_show = function (obj,pattern) {
+        var v = $(obj).val();
+        if (!pattern.test(v)) {
+            $(obj).parent().find("i.t").show();
+        }else{
+            $(obj).parent().find("i.t").hide();
+        }
+    }
+    //提交修改
+    var sub_add_info = function (type) {
+        var num = 0;
+        $(".basic-edit-table td input").each(function () {
+            if (!$(this).parent().find("i.t").is(":hidden") || $.is_empty($(this).val())) {
+                num++;
+                $(this).parent().find("i.t").show();
+            }
+        });
+        if (num > 0) {
+            return false;
+        }
+        var aller_name_cn = $("input[name='aller_name_cn']").val();
+        var aller_name = $("input[name='aller_name']").val();
+        var email = $("input[name='email']").val();
+
+        var s_province = $("select[name='s_province']").val();
+        var s_city = $("select[name='s_city']").val();
+
+        var addr_cn = $("input[name='addr_cn']").val();
+        var addr = $("input[name='addr']").val();
+        var ub = $("input[name='ub']").val();
+        var mobile = $("input[name='mobile']").val();
+        $.ui.loading();
+        $.ajaxPassport({
+            url:"{url /ucenter/basic_edit_sub}",
+            success:function (res) {
+                $.ui.close_loading();
+                if (res.error == 1) {
+                    $.ui.error(res.message);
+                }else{
+                    $.ui.success(res.message);
+                    setTimeout(function () {
+                        //window.location.replace("{url /cart/cart_pay}");
+                    },500);
+                }
+            },
+            data:{type:type,aller_name_cn:aller_name_cn,aller_name:aller_name,email:email,s_province:s_province,s_city:s_city,addr_cn:addr_cn,addr:addr,ub:ub,mobile:mobile,domain:"{$domain}"}
+        });
+    }
+</script>
+<!--三级地区联动-->
+<script type="text/javascript">
+
+    {if $type == 1}
+    var prov = $.is_empty('{$list_info['r_province_cn']}')?"浙江省":"{$list_info['r_province_cn']}";
+    var city = $.is_empty('{$list_info['r_city_cn']}')?"杭州":"{$list_info['r_city_cn']}";
+    {else}
+    var prov = $.is_empty('{$list_info['a_province_cn']}')?"浙江省":"{$list_info['a_province_cn']}";
+    var city = $.is_empty('{$list_info['a_city_cn']}')?"杭州":"{$list_info['a_city_cn']}";
+    {/if}
+
+    $("#city").citySelect({
+        url:"{url /static/javascript/area/city.min.js}",
+        prov:prov, //省份
+        city:city, //城市
+        nodata:"none" //当子集无数据时，隐藏select
+    });
+</script>
+{/block}

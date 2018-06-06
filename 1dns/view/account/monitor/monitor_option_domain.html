@@ -1,0 +1,192 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /monitor/monitor}">实时监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/warning}" >报警信息&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_set}">监控设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_option_domain}"  class="cur">添加监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right" >
+    <div class="fabu-stepbox" style="margin-left:80px;">
+        <ul class="clear">
+            <li class="current"><i class="i1">1</i><span>选择域名</span><b></b></li>
+            <li><i class="i2">2</i><span>查看记录</span><b></b></li>
+            <li ><i class="i3">3</i><span>监控设置</span></li>
+        </ul>
+    </div>
+    <div class="check-domain"></div>
+</div>
+</div>
+<div class="am-cf"></div>
+{/block}
+
+{block javascript}
+<script language="javascript" src="{url static@/javascript/mockjax/jquery.mockjax.js}"></script>
+<script language="javascript" src="{url static@/javascript/mockjax/jquery.autocomplete.js}"></script>
+<!--八戒监控 -- 选择域名-->
+<script type="text/template" id="tpl_monitor_check_tpl">
+    <#macro rowedit data>
+        <div class="am-input-group">
+            <span class="am-input-group-label"><i class="am-icon-globe"></i></span>
+            <input type="text" name="domain" id="domain-monitor" class="am-form-field" <#if (data.domain)>value="${data.domain}"</#if> placeholder="请您填写需要监控的域名" style="font-size: 14px;width: 276px;">
+        </div>
+        <div class="dis20"></div>
+        <div class="am-input-group">
+            <span class="am-input-group-label"><i class="am-icon-at"></i></span>
+            <input type="text" name="record" id="record-monitor" class="am-form-field" <#if (data.RRname && data.domain)>value="${data.RRname}.${data.domain}"</#if> placeholder="请您填写需要监控的主机记录" style="font-size: 14px;width:276px;">
+        </div>
+        <div class="dis20"></div>
+        <button type="button" class="am-btn am-btn-default am-radius  monitor_option" style="font-size: 15px;width: 324px;">下一步</button>
+        <button type="button" class="am-btn am-btn-warning am-radius  check-domain-next monitor_option_domain" style="display:none;font-size: 15px;width: 324px;">下一步</button>
+    </#macro>
+</script>
+<script language="javaScript">
+    var supper_domain = '{echo "(".implode(")|(",tValidate::support_domain()).")"}';
+    var domain = "{$domain}";
+    var RRname = "{$RRname}";
+    $(function(){
+        domain_list();
+    });
+    //获取域名列表
+    var domain_get_records = function(domain){
+        $.ajaxPassport({
+            url:"{url /api/DomainRecord.GetAllNoMonitor}",
+            success:function(res1){
+                if (res1.data.list.length) {
+                    var htmlstr = "<div class='am-text-xs' style='padding:8px 12px;'>记录值不存在或已添加监控，请选择其他记录</div>";
+                }else{
+                    htmlstr = "<div class='am-text-xs' style='padding:8px 12px;'>您还没有添加此域名记录<a href='{url /domains/dns/}"+domain+"'>点击添加</a></div>";
+                }
+                $('#record-monitor').autocomplete({
+                    lookup: res1.data.list,
+                    minChars:0,
+                    showNoSuggestionNotice:true,
+                    noSuggestionNotice:htmlstr,
+                    onSelect:function(){
+                        $(".monitor_option").hide();
+                        $(".monitor_option_domain").show();
+                    },
+                });
+            },
+            data:{domain:domain}
+        });
+    }
+    var domain_list = function(){
+        //$.ui.loading();
+        $.ajaxPassport({
+            url:"{url /api/Domain.GetAllByUid}",
+            success:function(res){
+
+                $.ui.close_loading();
+                res.data.domain = domain;
+                res.data.RRname = RRname;
+                var listhtml = ""+ easyTemplate($("#tpl_monitor_check_tpl").html(),res.data);
+                $(".check-domain").html(listhtml);
+
+                //去除点击焦点
+                $("a,button").bind("focus",function(){
+                    $(this).blur();
+                });
+
+                if (!$.is_empty(domain) && !$.is_empty(RRname)) {
+                    $(".monitor_option").hide();
+                    $(".monitor_option_domain").show();
+                }
+
+                //jquery自动完成加载类
+                $('#domain-monitor').autocomplete({
+                    lookup: res.data.list,
+                    minChars:0,
+                    showNoSuggestionNotice:true,
+                    noSuggestionNotice:"<div class='am-text-xs' style='padding:8px 12px;'>未添加该域名<a href='{url /domains/add}'>点击添加</a></div>",
+                    onNoSuggestionNotice:function(){
+                        $('#record-monitor').autocomplete({
+                            lookup: [],
+                        });
+                    },
+                    lookupFilter:function(suggestion, originalQuery, queryLowerCase) {
+                        var re = new RegExp($.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
+                        return re.test(suggestion.value);
+                    },
+                    onSelect:function(res){
+                        $("#record-monitor").val("");
+                        domain_get_records(res.value);
+                    },
+                });
+
+                //下一步,查看记录
+                $(".check-domain-next").unbind("click").bind("click",function(){
+                    var   domains = $(".check-domain input[name='domain']").val();
+                    var   record = $(".check-domain input[name='record']").val();
+                    if ($.is_empty(domains)) {
+                        $.ui.error("请选择域名！");
+                        return false;
+                    }
+                    if(!$.dns.is_domain2(domains)){
+                        $.ui.error("非法域名！");
+                        return false;
+                    }
+                    //判断域名是否存在
+                    if (!$.in_array(domains,res.data.list)) {
+                        $.ui.error("请先添加域名！");
+                        return false;
+                    }
+                    if ($.is_empty(record)) {
+                        $.ui.error("请选择主机记录！");
+                        return false;
+                    }
+                    var recordArr = record.split(".");
+                    if (recordArr.length <=1) {
+                        $.ui.error("记录值非法");
+                        return false;
+                    }
+                    if (recordArr.length >=4) {
+                        $.ui.error("很抱歉，暂不支持三级以上域名的监控");
+                        return false;
+                    }
+                    if(recordArr[0] === '@'){
+                        recordArr[0] = '';
+                    }
+                    if(!$.in_array(recordArr[0],['','@','*']) && !$.dns.is_hostname(recordArr[0])){
+                        $.ui.error("记录值非法");
+                        return false;
+                    }
+
+                    var domainArr = domains.split(".");
+                    for(i=0;i<domainArr.length;i++){
+                        if(!$.in_array(domainArr[i],recordArr)){
+                            $.ui.error("此域名下的主机记录值不正确");
+                            return false;
+                        }
+                    }
+
+                    //判断主机记录
+                    //$.ui.loading();
+                    $.ajaxPassport({
+                        url:"{url /api/DomainMonitor.CheckDomainRecord}",
+                        success:function(res){
+                            $.ui.close_loading();
+                            if (res.status == 0) {
+                                $.ui.error(res.msg);
+                                return false;
+                            }
+                            domain = domains;
+                            //添加监控第二步，查看记录
+                            $.redirect("{url /monitor/monitor_option_record?domain=}"+domains+"&RRname="+recordArr[0]);
+                        },
+                        data:{record:recordArr[0],domain:domains}
+                    });
+                });
+
+                //初始化动作
+                if(!$.is_empty(domain)){
+                    domain_get_records(domain);
+                }
+            },
+        });
+    };
+</script>
+{/block}

@@ -1,0 +1,284 @@
+{block title}{if !isset($condi['job_area']) || empty($condi['job_area'])}杭州{else}{echo tFun::get_conf('city',$condi['job_area'],1)}{/if}找工作-{if !isset($condi['job_area']) || empty($condi['job_area'])}杭州{else}{echo tFun::get_conf('city',$condi['job_area'],1)}{/if}招{if !isset($condi['job_cate']) || empty($condi['job_cate'])}普工{else}{echo tFun::get_conf('job_cate',$condi['job_cate'],1)}{/if}-{$site['seo_title']}{/block}
+{block main}
+<!-- top search -->
+<div class="job-search" style="position:relative;z-index:1;">
+ <div class="wrap"> 
+ 			<form class="the_searchform job_searchform form" method="GET" action="{url /job}">
+ 			<div class="search">
+        	<div class="box "> 
+        	    <div class="qukuai"><span class="qukuai_name e">{if !isset($condi['job_area']) || empty($condi['job_area'])}区域{else}{echo tFun::get_conf('city',$condi['job_area'],1)}{/if}</span>
+        	    <input type="hidden" name="job_area" id="Mscity" value="0" />
+        	    {set $quanlist = tFun::get_city_quan($city);}
+        	      {if $quanlist}
+        	      <div class="city_area" style="display:none;">
+        	      <div class="city_item">
+        	      <div class="p0 f14 fb font-blue"><a href="javascript:void(0)" class="quan e " data-name="区域" data-id="0">不选</a></div>
+        	      <div class="cl"></div>
+        	      </div>
+        	      {foreach items=$quanlist}
+        	      <div class="city_item">
+        	         <div class="p0 e f14 fb font-blue"><a href="javascript:void(0)" class="quan e " data-name="{$item['name']}" data-id="{$item['id']}">{$item['name']}</a></div>
+        	         <div class="p1">
+        	         {if $item['childrens']}
+        	         {foreach items=$item['childrens'] item=$child}
+        	         <a href="javascript:void(0);" class="quan" data-name="{$child['name']}" data-id="{$child['id']}">{$child['name']}</a>
+        	         {/foreach}
+        	         {/if}
+        	         </div>
+        	         <div class="cl"></div>
+        	      </div>
+        	      {/foreach}
+        	      </div>
+        	    {/if}
+        	    </div>
+            	<input name="keyword" value="{if $condi['keyword']}{$condi['keyword']}{else}{/if}" type="text" class="input" />
+            	<input type="submit" class="btn" id="op_search" value="搜索">
+            </div>
+            <p class="topkeyword">
+        	{set $top_keywords = tCache::read("cms_friendlink_2")}
+        	{if $top_keywords}
+        	{foreach items=$top_keywords}
+        	<a href="{if $item['link']}{$item['link']}{else}{echo tFun::build_url('/job/index',$condi,array('keyword'=>$item['name']))}{/if}">{$item['name']}</a>
+        	{/foreach}
+        	{/if}
+        	</p>
+            </div>
+            </form>
+ </div>
+</div>
+<!-- end top search -->
+<!-- condition -->
+<div class="wrap">
+   <div class="condibox">
+        <div class="condi-item" style="display:none;">
+          <div class="label">工作类型:</div>
+          <div class="v">
+          <a href="{echo tFun::build_url('/job/index',$condi,array('job_type'=>0,'keyword'=>''))}">不选</a>
+          {foreach items=App::get_conf("data_config.job_type")}
+       	  <a {if $key == $condi['job_type']}class="cur"{/if} href="{echo tFun::build_url('/job/index',$condi,array('job_type'=>$key,'keyword'=>''))}">{$item}</a>
+       	  {/foreach}
+       	  <div class="cl"></div>
+          </div>
+          <div class="cl"></div>
+        </div>
+        
+        <div class="condi-item">
+          <div class="label">岗位分类:</div>
+          <div class="v">
+          <div class="line1">
+          <a href="{echo tFun::build_url('/job/index',$condi,array('job_cate'=>0,'keyword'=>''))}">不选</a>
+          {set $autokey = 0;}
+          {foreach items=$cates}
+          {if $item['pid'] == 0}
+       	  <a {if in_array($key,array($condi['job_cate'],$top_cate))}class="cur"{/if} href="{echo tFun::build_url('/job/index',$condi,array('job_cate'=>$key,'keyword'=>''))}">{$item['name']}</a>
+       	  {/if}
+       	  {/foreach}
+       	  </div>
+       	  
+       	  {if ($top_cate == 0 && $condi['job_cate'] && $top_child>0) || ($top_cate && $top_child>0)}
+       	  <div class="line2">
+       	  {foreach items=$cates}
+          {if $item['pid']>0 && in_array($item['pid'],array($condi['job_cate'],$top_cate))}
+       	  <a {if $key == $condi['job_cate']}class="cur"{/if} href="{echo tFun::build_url('/job/index',$condi,array('job_cate'=>$key,'keyword'=>''))}">{$item['name']}</a>
+       	  {/if}
+       	  {/foreach}
+       	  </div>
+       	  {/if}
+       	  <div class="linemore" style="display:none;">
+       	  </div>
+       	  <div class="cl"></div>
+          </div>
+          {if count($cates)}
+          <div class="imore" style="display:none;">
+            <span>+</span>
+          </div>
+          {/if}
+          <div class="cl"></div>
+        </div>
+        
+        <div class="condi-item">
+          <div class="label">薪资:</div>
+          <div class="v">
+          <a href="{echo tFun::build_url('/job/index',$condi,array('job_salary'=>0,'keyword'=>''))}">不选</a>
+          {foreach items=App::get_conf("data_config.job_salary")}
+       	  <a {if $key == $condi['job_salary']}class="cur"{/if} href="{echo tFun::build_url('/job/index',$condi,array('job_salary'=>$key,'keyword'=>''))}">{$item}</a>
+       	  {/foreach}
+       	  <div class="cl"></div>
+          </div>
+          <div class="cl"></div>
+        </div>
+        <div class="condi-item">
+          <div class="label">工作年限:</div>
+          <div class="v">
+          <a href="{echo tFun::build_url('/job/index',$condi,array('job_age'=>0,'keyword'=>''))}">不选</a>
+          {foreach items=App::get_conf("data_config.job_age")}
+       	  <a {if $key == $condi['job_age']}class="cur"{/if} href="{echo tFun::build_url('/job/index',$condi,array('job_age'=>$key,'keyword'=>''))}">{$item}</a>
+       	  {/foreach}
+       	  <div class="cl"></div>
+          </div>
+          <div class="cl"></div>
+        </div>
+        
+        <div class="condi-item">
+          <div class="label">排序方式:</div>
+          <div class="v">
+          <a class="sort_desc {if $condi['sort'] == 'update1'}sort_desc_cur{/if}" href="{echo tFun::build_url('/job/index',$condi,array('sort'=>'update1','keyword'=>''))}">更新时间</a>
+          <a class="sort_desc {if $condi['sort'] == 'date1'}sort_desc_cur{/if}" href="{echo tFun::build_url('/job/index',$condi,array('sort'=>'date1','keyword'=>''))}">发布时间</a>
+          <a class="sort_desc {if $condi['sort'] == 'salary1'}sort_desc_cur{/if}" href="{echo tFun::build_url('/job/index',$condi,array('sort'=>'salary1','keyword'=>''))}">薪资</a>
+          <a class="sort_desc {if $condi['sort'] == 'balance1'}sort_desc_cur{/if}" href="{echo tFun::build_url('/job/index',$condi,array('sort'=>'balance1','keyword'=>''))}">悬赏金额</a>
+       	  <div class="cl"></div>
+          </div>
+          <div class="cl"></div>
+        </div>
+   </div>
+</div>
+<!-- end condition -->
+<div class="dis20"></div>
+<!-- job search box -->
+<div class="wrap" style="position:relative;z-index:0;">
+  <!-- right c -->
+  <div class="searchresult-list">
+    <div class="inhead">
+    <span class="name">最新悬赏招聘</span>
+    <span class="tips">找到 <font class="font-org">+{$tuilist['total']}</font> 结果</span>
+    <div class="cl"></div>
+    </div>
+    <div class="inlist">
+    {if $tuilist['list']}
+    {foreach items=$tuilist['list']}
+    <!-- start-item -->
+    <div class="list-item">
+       <div class="xuanshang">
+        <div class="amount-box">
+		<div class="amount">￥{echo intval($item['amount']*$item['tui_num'])}</div>
+		<div class="name">悬赏 <b>{$item['tui_num']}</b>人</div>
+		</div>
+       </div>
+       
+       <div class="jobinfo">
+       	 <div class="title">
+       	 <a target="_blank" href="{echo tFun::build_url('/job/view',array('tui_id'=>tUtil::numstr($item['tui_id'])))}" class="font-blue f18 tuiname">{$item['tui_name']}		        
+		        <div class="p-d-show" style="display:none;">
+		            <span class="p-d-arrow"></span>
+			        <h2 class="f14 font-black">{$item['company_name']}</h2>
+			        {if $item['tag_post']}
+			       	<div class="tagbox">
+			       	<span>{echo tFun::get_tag_more('tag_post',$item['tag_post'],'</span><span>');}</span>
+			       	</div>
+			       	{/if}
+			        <div class="over-item">
+			        <ul>
+			        <li><label>悬赏人数：</label><font class="f18 font-org">{$item['tui_num']}</font><font class="font-gray">人</font></li>
+			        <li><label>悬赏金额：</label><font class="f18 font-org">{$item['amount']}</font> <font class="font-gray"> 元/人</font></li>
+			        </ul>
+			        <i class="cl"></i>
+			        <p class='about'>
+			        {echo nl2br($item['about'])}
+			        </p>
+			        </div>
+			        <div class="jobinfo"></div>
+		        </div>       	 
+       	 </a>
+       	 </div>
+       	 {if $item['tag_post']}
+       	 <div class="tagbox">
+       	 <a href="javascript:void(0)">{echo tFun::get_tag_more('tag_post',$item['tag_post'],'</a><a href="javascript:void(0)">');}</a>
+       	 </div>
+       	 {/if}
+         <div class="detail-box">
+         <div class="detail">
+         	<ul>
+         	<li class="e"><label>企业:</label><a target="_blank" title="{$item['company_name']}" href="{echo tFun::build_url('/job/view',array('tui_id'=>tUtil::numstr($item['tui_id'])))}" class="font-black f14">{$item['company_name']}</a></li>
+         	<li><label>工种:</label>{echo tFun::get_conf('job_cate',$item['job_cate'])}</li>
+         	<li><label>薪资:</label>{echo App::get_conf("data_config.job_salary.".$item['job_salary'])}</li>
+         	<li><label>年龄:</label>{if $item['age_min'] && $item['age_max']}
+						{$item['age_min']} - {$item['age_max']}周岁
+						{else}年龄不限{/if}</li>
+         	
+         	<li><label>性别:</label>{if $item['sex'] == 1}男{elseif $item['sex'] == 2}女{else}男女不限{/if}</li>
+         	<li><label>位置:</label><i class="ico-local"></i><span class="j-zone">{if $item['job_area']}{echo tFun::get_conf('city',$item['job_area'])}{else}杭州{/if}</span></li>
+         	</ul>
+         
+         </div>
+         <div class="btnbox">
+         <a target="_blank" class="view" href="{echo tFun::build_url('/job/view',array('tui_id'=>tUtil::numstr($item['tui_id'])))}">查看详细</a>
+         </div>
+         <div class="cl"></div>
+         </div>
+       </div>
+       <div class="cl"></div>
+    </div>        
+    <!-- end item -->
+    {/foreach}
+    {else}
+    <div class="f14 font-red" style="padding:0 0 0 30px"><img src="{url static@/images/noresult.png}" />  <span style="position:relative;top:-20px;">未找到结果</span></div>
+    {/if}
+    </div>
+    <div class="pagebar">
+    {$tuilist['pagebar']}
+    </div>
+  </div>
+  <!-- end right c -->
+  <!-- right asd -->
+  <div class="job-rightad">
+  {set $ad = tCache::read("ad_3");}
+  {if $ad}
+  <ul>
+  {foreach items=$ad}
+  <li><a alt="{$item['name']}" href="{$item['linkurl']}" target="_blank">
+  <img src="{url static@/$item[imgurl]}" alt="" />
+  </a></li>
+  {/foreach}
+  </ul>
+  {/if}
+  </div>
+  <!-- end left nav -->
+  
+  <div class="cl"></div>
+</div>
+<!-- end jobsearch box -->
+<div class="dis30"></div>
+{/block}
+{block javascript}
+<script language="javascript">
+$(function(){
+	$(".qukuai").hover(
+	   	function(){
+	   	 	$(this).find(".city_area").show();
+	   	},function(){
+	   	 	$(this).find(".city_area").hide();
+	   	}
+	 );
+	$(".qukuai a.quan").unbind("click").bind("click",function(){
+		var obj = this;
+		var id = $(obj).attr("data-id");
+		var name = $(obj).attr("data-name");
+		$("#Mscity").val(id);
+		$(".qukuai .qukuai_name").html(name);
+	})
+	
+	
+	$(".imore span").unbind("click").bind("click",function(){
+		var obj = this;
+		var iv = $(obj).text();
+		if(iv == "+"){
+			$(obj).text("-");
+			$(obj).parent().parent().find(".linemore").show();
+		}else{
+			$(obj).text("+");
+			$(obj).parent().parent().find(".linemore").hide();
+		}
+	})
+	
+	$("a.tuiname").hover(function(){
+		var obj = this;
+		$(obj).find(".p-d-show").show();
+	},function(){
+		var obj = this;
+		$(obj).find(".p-d-show").hide();
+	});
+})
+</script>
+{/block}
+
+{block friendlink}{/block}

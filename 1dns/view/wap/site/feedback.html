@@ -1,0 +1,27 @@
+{block main}
+<div class="user-edit">
+ 	<form method="post" class="frmFeedback">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="edit-d feed">
+    	<tr>
+        	<td width="50" valign="top"><samp>更多建议反馈，敬请拨打：<a href="tel:400-626-0126"><b>400-626-0126</b></a></samp></td>
+        </tr>
+    	<tr>
+            <td><textarea rows="10" id="detail" name="detail" placeholder="感谢您的每一条建议或意见，这将让我们做得更好(≧∇≦)"></textarea></td>
+        </tr>
+    </table>
+    <div class="button"><input type="submit" class="submit" value="提 &nbsp; 交" /></div>
+    </form>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("form.frmFeedback").submit(function(){
+		if($("#detail").val() == "") {
+			$("#detail").addClass("err");
+			return false;
+		} else {
+			$("#detail").removeClass("err");
+		}
+	});
+});
+</script>
+{/block}

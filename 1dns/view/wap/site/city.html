@@ -1,0 +1,15 @@
+{block main}
+<div class="sites">
+	<ul>
+	{if isset($citylist) && $citylist}
+	{foreach items=$citylist}
+	{foreach items=$item['childrens'] item=$child}
+	{if $child['status'] == 1}
+	<li class="{if $city == $child['id']}{/if}" nob cur><a href="{url /site/index?cy=}{$child['id']}">{$child['name']}站</a></li>
+	{/if}
+	{/foreach}
+	{/foreach}
+	{/if}	   
+    </ul>
+</div>
+{/block}

@@ -1,0 +1,173 @@
+{block head_menu}
+<div class="menu">
+    <ul>
+        {if $this->check_purview("/domain_manager/domain")}
+        <li><a href="{url  /domain_manager/domain}" >域名列表</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_qy")}
+        <li><a href="{url  /domain_manager/domain_qy}">域名牵引</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log")}
+        <li><a href="{url  /domain_manager/domain_log}" >域名操作日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log_switch")}
+        <li><a href="{url  /domain_manager/domain_log_switch}" class="cur">域名切换日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_black")}
+        <li><a href="{url  /domain_manager/domain_black}" >黑白名单</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_deleted")}
+        <li><a href="{url  /domain_manager/domain_deleted}" >已删除域名</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_find")}
+        <li><a href="{url  /domain_manager/domain_find}" >域名找回</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_diyline")}
+        <li><a href="{url  /domain_manager/domain_diyline}">自定义线路</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_bind")}
+        <li><a href="{url  /domain_manager/domain_bind}">别名绑定</a></li>
+        {/if}
+    </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+    <div class="name">域名切换日志</div>
+    <div class="navbtn">
+        <!--button-->
+        <!--end button-->
+    </div>
+    <div class="navbtn0" style="width: 800px">
+        <a class="btn {if $c == 100}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /domain_manager/domain_log_switch}"><cite class="glyphicon glyphicon-th"></cite> 全部</a>
+        <a class="btn {if $c == 10}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /domain_manager/domain_log_switch?c=10}"><cite class="glyphicon glyphicon-th"></cite> 用户套餐升级切换</a>
+        <a class="btn {if $c == 1}btn-info{else}btn-default{/if} btn-sm"  href="{url /domain_manager/domain_log_switch?c=1}"><cite class="glyphicon glyphicon-th"></cite> 管理员套餐切换</a>
+        <a class="btn {if $c == 2}btn-info{else}btn-default{/if} btn-sm"  href="{url /domain_manager/domain_log_switch?c=2}"><cite class="glyphicon glyphicon-th"></cite> 管理员直接切换 </a>
+        <a class="btn {if $c == 9}btn-info{else}btn-default{/if} btn-sm"  href="{url /domain_manager/domain_log_switch?c=9}"><cite class="glyphicon glyphicon-th"></cite> 系统自动切换 </a>
+    </div>
+    <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_manager/domain_log_switch?do=get_url}">
+    <div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+    <div class="list-box">
+        <table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+            <col width="230px"/>
+            <col width="150px"/>
+            <col width="150px"/>
+            <col width="100px"/>
+            <col width="160px"/>
+            <col />
+            <thead>
+            <tr>
+                <th>域名</th>
+                <th>切换时间</th>
+                <th>处理时间</th>
+                <th>状态</th>
+                <th>切换类型</th>
+                <th>旧服务器组/新服务器组</th>
+            </tr>
+            </thead>
+            <tbody class="tpl"></tbody>
+        </table>
+    </div>
+    <div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script type="text/template" id="tpl_list_row">
+    <#macro row data>
+        <tr>
+            <td class="font-blue f18">${data.domain}</td>
+            <td class="font-gray">${data.dateline}</td>
+            <td>
+                <#if ($.is_empty(data.status_dateline))>
+                    <#if (data.status == 0)>
+                    <span class='font-red'>待处理</span>
+                    <#else> -
+                    </#if>
+                <#else>
+                <span class='font-green'>${$.time_to_string(data.status_dateline)}</span>
+                </#if>
+
+            </td>
+            <td><#if (data.status == 0)><span class="font-gray">未处理</span><#else><span class="font-green">已处理</span></#if></td>
+            <td class="font-gray"><#if (data.type==0)>用户套餐升级切换<#elseif (data.type==1)>管理员套餐切换<#elseif (data.type==2)>管理员直接切换<#else>系统自动切换</#if></td>
+            <td><span class="<#if (data.old_ns_group=='free')><#elseif (data.old_ns_group=='vip11')>font-org<#elseif (data.old_ns_group=='vip21')>font-green<#else></#if>">${ns_groups[data.old_ns_group].name}</span> <site class="glyphicon glyphicon-arrow-right font-gray"></site> <span class="<#if (data.new_ns_group=='free')>font-gray<#elseif (data.new_ns_group=='vip11')>font-org<#elseif (data.new_ns_group=='vip21')>font-green<#else></#if>">${ns_groups[data.new_ns_group].name}</span></td>
+        </tr>
+    </#macro>
+</script>
+<!-- edit ddd -->
+<script language="javascript">
+    var ns_groups = {echo JSON::encode($ns_group)};
+    var pageurl = "{$pageurl}";
+    var search_formdata = {
+    startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+    enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+    };
+    var loadlist = function(page){
+        $.ajaxLoadlist(page,pageurl,function(res){
+            var keyword = $(".the_searchform input[name='keyword']").val();
+            if(keyword != ""){
+                $(".thelistform").find(".tpl .keybox").each(function(){
+                    var obj = this;
+                    var html = $(obj).html();
+                    $(obj).html($.replace_keyword(html,keyword))
+                });
+            };
+            $(".clean-ns").click(function () {
+                var url = $(this).attr("data-url");
+                $.ajaxPassport({
+                    url: url,
+                    success: function (res) {
+                        if (res.error == 1) {
+                            $.tips(res.message, "error");
+                        } else {
+                            $.tips(res.message, "success");
+                            loadlist();
+                        }
+                    }
+                })
+            });
+            //全选，全不选
+            $(".list-table").find("input.checkall").unbind("click").bind("click",function(){
+                $.check_all(this);
+            });
+        });
+    }
+    $(function(){
+        //加载搜索
+        $.loadform(search_formdata,"",function(res){
+            pageurl = res.pageurl;
+            loadlist();
+            return true;
+        },null,".the_searchform");
+        //加载列表
+        $(".date-ymd").datetimepicker({
+            language:  'zh-CN',
+            autoclose: 1,
+            startView: 2,
+            minView: 2,
+            maxView: 4,
+            format:"yyyy-mm-dd",
+            pickerPosition: "bottom-right"
+        });
+        loadlist();
+    })
+</script>
+{/block}

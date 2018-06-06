@@ -1,0 +1,131 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /monitor/monitor}" class="cur">实时监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/warning}">报警信息&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_set}">监控设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_option_domain}">添加监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">实时监控<font size="4px" color="#5AB65A"> ({$monitor})</font></span></h1>
+    </div>
+    <div class="am-u-lg-6" style="float: right;width: 300px;margin-right: -15px;margin-top: -50px;">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text"  class="am-form-field infor-keyword" placeholder="请输入关键词">
+            <span class="am-input-group-btn">
+                <button class="am-btn keyword" type="button"><span class="am-icon-search"></span></button>
+            </span>
+        </div>
+    </div>
+    <div class="am-information-content">
+        <div class="listbody"></div>
+    </div>
+</div>
+<div class="am-cf"></div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_monitor_list">
+    <#macro rowedit data>
+        <table class="am-table monitor-list" >
+            <col width="200"/>
+            <col />
+            <col width="100"/>
+            <col width="100"/>
+            <col width="80"/>
+            <thead>
+            <tr>
+                <th>监控项目</th>
+                <th>状态</th>
+                <th>频率</th>
+                <th>端口</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#if (data.list.length > 0)>
+            <#list data.list as monitor>
+                <tr >
+                <td><a href="{url /monitor/monitor_detail?do=detail&RRname=}${monitor.RRname}&domain=${monitor.domain}&record_id=${monitor.monitor_item['0'].record_id}">${monitor.RRname}.${monitor.domain}</a>
+                    <#if (monitor.monitor_type == 2)>
+                    <span class="am-badge am-round am-badge-warning" title="SOCKET监控">S</span>
+                    <#elseif ((monitor.monitor_type == 3))>
+                    <span class="am-badge am-round am-badge-warning" title="PING监控">P</span>
+                    <#else>
+                    </#if>
+                </td>
+                <td>
+                <table class="am-table am-table-bordered am-table-centered am-table-compact" >
+                    <col width="150"/>
+                    <col width="120"/>
+                    <col />
+                    <tbody>
+                    <#list monitor.monitor_item as item>
+                    <tr>
+                    <td class="f12">${item.ip}</td>
+                    <td class="f12"><#if ($.is_empty(acls[item.acl]))>${cust_line[item.acl.replace('cust','')].name}<#else>${acls[item.acl].name}</#if></td>
+                    <td class="f12"><#if (item.status==1)><span style="color:#5AB65A;">正常</span><#else><span style="color: red;">服务器已经宕机</span></#if></td>
+                    </#list>
+                    </tbody>
+                </table>                    
+                </td>
+                <td>${monitor.monitor_rate}分钟/次</td>
+                <td>${monitor.monitor_port}</td>
+                <td><a href="{url /monitor/monitor_detail?do=detail&RRname=}${monitor.RRname}&domain=${monitor.domain}&record_id=${monitor.monitor_item['0'].record_id}" type="button" class="am-btn am-btn-success am-radius am-btn-xs">详情</a></td>
+                </tr >
+            </#list>
+            <#else>
+                <tr class="d-t-intor">
+                <td class="am-text-sm" colspan="5">
+                <a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">未添加任何监控?</a> &nbsp;<a href="{url /monitor/monitor_option_domain}">添加监控</a></td>
+                </tr>
+            </#if>
+            </tbody>
+        </table>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    var acls = {echo JSON::encode(C("category","domain_acl")->json(0,'ident'))};
+    var cust_line = {echo JSON::encode(M("@domain_acl_set")->get_cust_list(1))};
+    $(function(){
+        // 搜索内容事件
+        $("button.keyword").click(function(){
+            var keyword = $(".infor-keyword").val();
+            if (!$.is_empty(keyword)){
+                load_monitor_list(1,keyword);
+            }else{
+                load_monitor_list(1);
+            }
+        });
+        load_monitor_list(1);
+    });
+    //加载通知列表
+    var load_monitor_list = function(page,keyword,condition){
+        var url = "{url /api/DomainMonitor.Monitor}";
+        var keyword  = $.is_empty(keyword)?'':keyword;
+        var condition  = $.is_empty(condition)?'':condition;
+        $.ui.loading($(".monitor-list"));
+        $.ajaxPassport({
+            url:url,
+            success:function(res){
+                $.ui.close_loading($(".monitor-list"));
+                if (!$.is_empty(keyword) && !$.is_array(res.data.list)) {
+                    res.data.list = "没有包含"+" '"+keyword+"' "+"的消息，请重新输入搜索内容";
+                }
+                var listhtml = ""+ easyTemplate($("#tpl_monitor_list").html(),res.data);
+                $(".listbody").html(listhtml);
+
+                $("button,a").bind("focus",function(){
+                    $(this).blur();
+                });
+            },
+            data:{page:page,keyword:keyword,condition:condition},
+        });
+    }
+</script>
+{/block}

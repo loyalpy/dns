@@ -1,0 +1,194 @@
+{block head_menu}
+    <div class="menu">
+    <ul>
+		<li><a href="{url  /domain_service/dns_record}" class="cur">域名解析记录</a></li>
+    </ul>
+    </div>
+{/block}
+
+{block main}
+<div class="main-nav">
+  <div class="name">记录列表</div>
+  <div class="navbtn">
+	  <!--button-->
+	  <a href="javascript:void(0)" class="btn btn-primary btn-sm addbtn">
+		  <cite class="glyphicon glyphicon-plus"></cite>
+		  新增域名解析</a>
+	  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_service/dns_record?do=get_url}">
+	<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+	<col width="100px" />
+	<col />
+	<col width="250px"/>
+	<col width="250px" />
+	<col width="150px"/>
+	<col width="100px" />
+	<col width="100px"/>
+	<col width="200px"/>
+	<thead>
+	<tr>
+	<th>ID</th>
+	<th>主机名</th>
+	<th>域名</th>
+	<th>记录值</th>
+	<th>类型</th>
+	<th>线路</th>
+	<th>状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td>
+		</td>
+		<td class="font-blue ">
+		</td>
+		<td class="font-gray">
+		</td>
+		<td class="font-org">
+		</td>
+		<td class="font-org">
+		</td>
+		<td class="font-green">
+		</td>
+		<td>
+			<cite class="<#if (data.status==1)>glyphicon glyphicon-ok font-green<#else>glyphicon glyphicon-remove font-red</#if>"></cite>
+		</td>
+		<td>
+			<p class="table-item-op">
+				<a href="javascript:void(0);" class="editbtn"  data-url="{url /domain_service/domain_edit?mark=edit&domain_id=}${data.domain_id}" title="更改"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;
+				<a href="javascript:void(0);" class="delbtn" confirm="1" data-url="{url /domain_service/domain_del?domain_id=}${data.domain_id}" title="删除"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+			</p>
+		</td>
+	</tr>
+</#macro>
+</script>
+<!--搜索框 start-->
+<script language="javascript">
+	var pageurl = "{$pageurl}";
+	var search_formdata = {
+		domain_id: {type: "uid", label: "域名", name: "domian_id", value: "", disabled: 0, data_sr:[], css: "", require: "", desc: "", item_css: ""},
+		rrtype: {type: "select", label: "记录类型", name: "rrtype", value: "", disabled: 0, data_sr:{echo JSON::encode($rrtype)}, css: "", require: "", desc: "", item_css: ""},
+		keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+		btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+	};
+	var loadlist = function(page){
+		$.ajaxLoadlist(page,pageurl,function(){
+			var keyword = $(".the_searchform input[name='keyword']").val();
+			if(keyword != ""){
+				$(".thelistform").find(".tpl .keybox").each(function(){
+					var obj = this;
+					var html = $(obj).html();
+					$(obj).html($.replace_keyword(html,keyword))
+				});
+			};
+			$(".addbtn").click(function(){
+				edit_func_add(this);
+			});
+			$(".editbtn").click(function(){
+				edit_func_add(this);
+			});
+			$(".delbtn").click(function(){
+				del_func(this);
+			});
+		});
+	}
+	var del_func = function(obj){
+		if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+			var url = $(obj).attr("data-url");
+			$.ajaxPassport({
+				url:url,
+				success:function(res){
+					if(res.status != 1){
+						$.tips(res.msg,"error");
+					}else{
+						$.tips(res.msg,"success");
+						loadlist();
+					}
+				}
+			})
+		}
+	}
+	$(function(){
+		//加载搜索
+		$.loadform(search_formdata,"",function(res){
+			pageurl = res.pageurl;
+			loadlist();
+			return true;
+		},function(){
+			get_domainlist(1,"",".the_searchform");
+		},".the_searchform");
+		//加载列表
+		loadlist();
+	})
+</script>
+<!--搜索框 end-->
+<!--新增记录 start-->
+<script type="text/template" id="tpl_domain_add">
+	<#macro rowedit data>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title">${data.title}</h4>
+		</div>
+		<div class="form-content">
+			<form action="{url /domain_service/domain_edit}" method="post" class="theform form form-2" role="form">
+				<div class="tpl"></div>
+			</form>
+		</div>
+	</#macro>
+</script>
+<script language="javascript">
+	var add_domain_formdata = {
+		domain_id:{type:"hidden",label:"",name:"domain_id",value:"{$domain_id}",data_sr:[],css:"",require:"",desc:"",item_css:""},
+		btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+	};
+	var edit_func_add = function(obj){
+		var edit_c = $("#tpl_domain_add").html();
+		var url = $(obj).attr("data-url");
+		edit_c = "" + easyTemplate(edit_c,{title:"新增/修改"});
+		$("#myModal").find(".modal-dialog").width(580);
+		$("#myModal").find(".modal-content").html(edit_c);
+		$.loadform(add_domain_formdata,url,function(res){
+			if(res.status == 1){
+				$.tips(res.msg,"success");
+				$('#myModal').modal("hide");
+				setTimeout(function(){
+					loadlist();
+				},500);
+			}else{
+				$.tips(res.msg,"error");
+			}
+			return false;
+		});
+		$('#myModal').modal();
+	}
+</script>
+<!--新增记录 end-->
+{/block}

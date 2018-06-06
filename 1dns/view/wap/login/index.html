@@ -1,0 +1,76 @@
+{block main}
+<div class="am-g">
+  <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+    <br>
+    <form method="post" class="am-form" id="Flogin">
+      <fieldset>
+      <legend class="am-text-center">请先登录……</legend>
+      <div class="am-form-group">
+      <label for="Muname">用户名：</label>
+      <input type="text" id="Muname" name="uname" minlength="6" minlength="60" placeholder="输入用户名/手机/邮箱" required/>
+      </div>
+
+      <div class="am-form-group">
+      <label for="Mupass">密码：</label>
+      <input type="password" id="Mupass" name="upass" minlength="6" minlength="60" data-validation-message="请输入正确的密码" placeholder="输入密码" required/>
+      </div>
+      <div class="am-cf">
+        <input value="{hash}" name="hash" type="hidden" />
+        <input type="submit" id="Msubmit" value="登 录" class="am-btn am-btn-primary am-btn-block">
+        <input style="display:none;" name="" value="忘记密码 ^_^? " class="am-btn am-btn-default am-fr">
+      </div>
+      <div class="dis10"></div>
+      <div class="am-cf">
+        <a href="{url /register}" class="am-btn am-btn-default am-btn-block">
+        还没账号,立即注册
+        </a>
+      </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+{/block}
+{block javascript}
+<script type="text/javascript">
+$(function(){
+	 $('#Flogin').validator({
+		    onValid: function(validity) {
+		      $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+		    },
+		    onInValid: function(validity) {
+		      var $field = $(validity.field);
+		      var $group = $field.closest('.am-form-group');
+		      var $alert = $group.find('.am-alert');
+		      // 使用自定义的提示信息 或 插件内置的提示信息
+		      var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+		      if (!$alert.length) {
+		        $alert = $('<div class="am-alert am-alert-danger"></div>').hide().
+		          appendTo($group);
+		      }
+		      $alert.html(msg).show();
+		    },
+		    submit:function(){
+		    	var formValidity = this.isFormValid();
+		    	if(formValidity === true){
+		    		$.ajaxPassport({
+		    			url:"{url /login}",
+		    			data:$(this.$element).serialize(),
+		    			type:"post",
+		    			success:function(res){
+		    				if(res.error == 1){
+		    					$.ui.error(res.message);
+		    				}else{
+		    					$.ui.success(res.message);
+		    					setTimeout(function(){
+		    						$.redirect("/ucenter/index")
+		    					},500);
+		    				}
+		    			}
+		    		})
+		    	}
+		        return false;
+		    }
+	});
+})
+</script>
+{/block}

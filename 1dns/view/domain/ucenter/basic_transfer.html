@@ -1,0 +1,109 @@
+{block main}
+<div class="am-uc-top">
+    <i class="am-icon-wordpress"></i>&nbsp;
+    {$domain_row['domain']}
+</div>
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav" style="padding-top: 20px">
+        <ul>
+            <li><a href="{url /ucenter/basic?domain=}{$domain_row['domain']}"   class="showtype ">基本信息&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_edit?domain=}{$domain_row['domain']}"   class="showtype">域名信息修改&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_rz?domain=}{$domain_row['domain']}"  class="showtype">域名实名认证&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_transfer?domain=}{$domain_row['domain']}"  class="showtype cur">域名过户&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_dns?domain=}{$domain_row['domain']}"   class="showtype">DNS修改创建&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_zs?domain=}{$domain_row['domain']}"   class="showtype">域名证书&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_status?domain=}{$domain_row['domain']}"   class="showtype">安全设置&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right" style="padding-top: 25px">
+    <div class="basic-top">&nbsp;&nbsp;&nbsp;域名过户</div>
+    <table class="am-table basic-table">
+        <col width="200px"/>
+        <col />
+        <thead>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="l">过户域名：</td>
+            <td> {$domain_row['domain']}</td>
+        </tr>
+        <tr>
+            <td class="l">域名模板：</td>
+            <td>
+
+                <div class="am-form-group">
+                    {set $tpls = M("domain_register_info")->query("uid = '$uid'")}
+                    <select id="doc-select-4" class="transfer-name" style="width: 300px;height: 35px;line-height: 35px;">
+                        <option value="">请选择</option>
+                        {if count($tpls) > 0}
+                            {foreach $items = $tpls}
+                            <option value="{$item['tpl_name']}">{$item['tpl_name']}</option>
+                            {/foreach}
+                        {/if}
+                    </select>
+                    <span class="am-form-caret"></span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="l"></td>
+            <td><button type="button" class="am-btn am-btn-warning am-btn-sm domain-transfer-sub">提交</button></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="dis30"></div>
+    <div class="now-dns-bot">
+        <div class="dis10"></div>
+        <dl>
+            {set $register_type = tCache::read("data_config")}
+            {set $register_type =  isset($register_type['domain_register_type'])?implode("/",$register_type['domain_register_type']):'';}
+            <dd>• {$register_type}域名需选择实名认证的信息模板。</dd>
+            <dd>• 您需要选择信息模板完成过户，域名全部联系人信息会与模板的注册人信息相同。</dd>
+            <dd>• 信息模版必须填写完整，才可在域名注册、域名过户等功能中使用。</dd>
+            <dd>• 没有信息模板，<a href="{url /ucenter/template}">添加模板</a>。</dd>
+        </dl>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+    $(function () {
+        //域名过户
+        $(".domain-transfer-sub").click(function () {
+            var domain = "{$domain_row['domain']}";
+            var name = $(".transfer-name").val();
+
+            if ($.is_empty(domain)) {
+                $.ui.error("域名不存在！");
+                return false;
+            }
+            if ($.is_empty(name)) {
+                $.ui.error("请选择模板！");
+                return false;
+            }
+
+            $.ui.confirm(function () {
+
+                $.ui.loading();
+                $.ajaxPassport({
+                    url:"{url /ucenter/registrant_change}",
+                    success:function(res){
+                        $.ui.close_loading();
+                        if (res.error == 1) {
+                            $.ui.error(res.message);
+                        }else{
+                            $.ui.success(res.message);
+                            setTimeout(function () {
+                                window.location.replace("{url /ucenter/template}");
+                            },1000);
+                        }
+                    },
+                    data:{domain:domain,name:name},
+                });
+            },"你确定要进行域名过户吗？");
+        });
+    });
+</script>
+{/block}

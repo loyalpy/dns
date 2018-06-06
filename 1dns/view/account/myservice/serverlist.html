@@ -1,0 +1,137 @@
+{block main}
+<div class="main-nav">
+  <div class="name">我的服务器</div>
+  <div class="navbtn">
+  <a target="_blank" href="{url /goods}" class="btn btn-info btn-sm" title="购买产品">>&nbsp;购买产品</a>
+  </div>
+  <div class="cl"></div>
+</div>
+<div class="dis30"></div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /myservice/serverlist}">
+<div class="tpl">
+<!--form start-->
+<div class="form-item form-item-date ">
+	<label>过期：</label> 
+	<div class="item-v">
+	<input class="nhigh date-ymd shigh" value="{$startdate}" readOnly type="text" name="startdate" /> <cite class="glyphicon glyphicon-calendar"></cite>
+	</div><div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-date ">
+	<label class="one-label">-</label> 
+	<div class="item-v">
+	<input class="nhigh date-ymd shigh" value="{$enddate}" readOnly type="text" name="enddate" /> <cite class="glyphicon glyphicon-calendar"></cite>
+	</div><div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-text "><label>关键词：</label>
+	<div class="item-v"><input class="nhigh" value="{$keyword}" type="text" name="keyword" /></div>
+	<div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-button undefined"><label></label>
+	<div class="item-v"><input value="{hash}" type="hidden" name="hash"><button class="btn btn-success btn-sm" type="submit">搜索</button></div>
+	<div class="cl"></div>
+</div>
+<!--form end-->
+<div class=cl></div>
+</div>
+</form>
+<!--end search box -->
+
+<!-- list start-->
+<div class="list-box">
+<table class='table table-bordered' cellpadding="0" cellspacing="0">				
+	<col width="30px" />
+				<col width="130px" />
+				<col  />				
+				<col width="120px" />				
+				<col width="160px" />				
+				<col width="90px" />			
+				<thead>
+					<tr class="active">					
+					<th><input type="checkbox" id="McheckAll" data-name="server_no" name="" /></th>
+					<th>服务器编号</th>				
+					<th>公网/内网IP</th>
+					<th>产品配置</th>			
+					<th>到期时间</th>					
+					<th>操作 </th>				
+					</tr>
+				</thead>
+	<tbody class="list-item">
+	{foreach items = $datalist['list']}
+	    <tr>
+					<td>                             
+                     <input type="checkbox" name="server_no[]" value="{$item['server_no']}" />      
+					</td>
+					<td><a data-server_no="{$item['server_no']}" href="javascript:void(0)" class="view-server font-blue" title="">{$item['server_no'] }</a></td>				
+					<td>{echo preg_replace('/,/',' /',$item['server_ips'])}</td>
+					<td>{echo $item['server_cfg']}</td>
+					<td>{echo date("Y-m-d H:i:s",$item['expiry'])}</td>
+					<td><a href="javascript:void(0);" title="">续费</a> <a data-server_no="{$item['server_no']}" href="javascript:void(0)" class="view-server" title="">查看</a></td>		
+		</tr>
+	
+	{/foreach}
+	</tbody>
+</table>
+<div class="list-btnbox">
+<form action="{url /myservice/rebuy}" method="GET" class="thelistform">
+<input type="hidden" value="batch_opt" value="rebuy" />
+<input type="hidden" value="{hash}" name="hash" />
+<input type="hidden" value="" name="server_nos" />
+<button type="submit" class="btn btn-primary btn-sm">批量续费</button>
+</form>
+</div>
+</div>
+<div class="dis30"></div>
+<div class="pagebar">
+ {$datalist['pagebar']}
+</div>
+
+{/block}
+
+{block css}
+<link href="{webroot common/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{javascript bootstrap-datetimepicker/bootstrap-datetimepicker.min.js,bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}
+<script language="javascript" src="{webroot common/kindeditor-4.1.7/kindeditor-all-min.js}" type="text/javascript" ></script>
+<script language="javascript" >
+$(".date-ymd").datetimepicker({
+	language:  'zh-CN',
+	autoclose: 1,
+	startView: 2,
+	minView: 2,
+	maxView: 4,
+	format:"yyyy-mm-dd",
+	pickerPosition: "bottom-right"   
+});
+$(function(){
+	$(".view-server").bind("click",function(){
+		var obj = this;
+		var server_no = $(obj).attr("data-server_no");
+		view_server(server_no);
+	})
+	$("#McheckAll").bind("click",function(){
+		$.form_ui.check_all(this);
+	})
+	$(".thelistform").submit(function(){
+		var server_nos = [];
+		$("input[name='server_no[]']").each(function(){
+			var obj = this;
+			var is = $(obj).is(':checked');
+			if(is){
+				server_nos.push($(obj).val());
+			}
+		});
+		return false;
+	});
+}) 
+</script>
+{/block}
+

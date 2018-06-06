@@ -1,0 +1,245 @@
+{block head_menu}
+<div class="menu">
+ <ul>
+	 {if $this->check_purview("/domain_manager/line")}
+ 		<li><a href="{url /domain_manager/line}" class="cur">线路管理</a></li>
+	 {/if}
+ </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+  <div class="name">线路分类</div>
+  <div class="navbtn0">
+  </div>
+  <div class="navbtn">
+	  {if $this->check_purview("/domain_manager/line")}
+	  <!--button-->
+	  <button type="button" data-url="{url /domain_manager/line?do=refresh}" class="btn btn-default btn-sm t-ajax-button" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button>
+	  <!--end button-->
+	  <!--button-->
+	  <a href="javascript:void(0)" data-url="{url /domain_manager/line_edit?do=edit}" class="btn btn-primary btn-sm addbtn">
+	  <cite class="glyphicon glyphicon-plus"></cite>
+	  新增分类</a>
+  	<!--end button-->
+	  {/if}
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form action=""></form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+    <col width="50px" />
+	<col />
+	<col width="200px" />
+	<col width="100px" />
+	<col width="200px" />
+	<thead>
+	<tr>
+	<th>ID</th>
+	<th>分类名称</th>
+	<th>标识</th>
+	<th>状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+</form>
+{/block}
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+		<tr class="pid-${data.pid} pids <#if (data.has_children>0)>info</#if>" data-id="${data.id}"  style="<#if (data.pid == 0)><#else>display:none;</#if>">
+			<td class="font-gray">${data.id}</td>
+			<td><a href="javascript:void(0)" class="font-blue f14">${data.space}${data.name}<span class="font-gray2">(${data.sort})</span></a>
+			&nbsp;&nbsp;<#if (data.has_children>0)><cite class="glyphicon glyphicon-chevron-down font-gray2"></cite></#if>
+			</td>
+			<td>${data.ident}</td>
+			<td><cite class="<#if (data.status==1)>glyphicon glyphicon-ok font-green<#else>glyphicon glyphicon-remove font-red</#if>"></cite></td>
+			<td>
+				<#if (data.ident == "any")> -
+					<#else>
+						<p class="table-item-op">
+							{if $this->check_purview("/domain_manager/line_edit")}
+							<a href="javascript:void(0);" class="editbtn" data-url="{url /domain_manager/line_edit?do=edit&id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;
+							{/if}
+							{if $this->check_purview("/domain_manager/line_del")}
+							<!--<a href="javascript:void(0);" class="copybtn" data-url="{url /domain_manager/line?do=copy&id=}${data.id}"><span class="glyphicon glyphicon-repeat"></span></a>&nbsp;-->
+							<a href="javascript:void(0);" class="delbtn" data-url="{url /domain_manager/line?do=del&id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+							{/if}
+							<div class="btn-group">
+						{if $this->check_purview("/domain_manager/line_aclip")}
+								<button type="button" class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									IP库<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a href="javascript:void(0);"  class="btn-setting-ip" data-url="${data.id}">查看IP</a></li>
+									<li role="separator" class="divider"></li>
+									<li><a href="javascript:void(0);" class="ip-add-btn" data-url="{url /domain_manager/line_aclip?line_id=}${data.id}" data-acl="${data.name}" data-aclid="${data.id}">添加IP</a></li>
+									<li role="separator" class="divider"></li>
+									<li><a href="javascript:void(0);" class="ip-import-btn" data-url="{url /domain_manager/line_aclip?line_id=}${data.id}" data-acl_name="${data.name}" data-acl="${data.ident}" data-aclid="${data.id}">导入IP</a></li>
+									<li role="separator" class="divider"></li>
+									<li><a href="{url /domain_manager/line_aclip?do=export&aclid=}${data.id}&ident=${data.ident}" target="_blank" class="ip-export-btn" data-url="">导出IP</a></li>
+									<li role="separator" class="divider"></li>
+									<li><a href="javascript:void(0);"  class="ip-clear-btn" data-url="{url /domain_manager/line_aclip?do=clear&id=}${data.id}">清空IP</a></li>
+								</ul>
+						{/if}
+							</div>&nbsp;
+						{if $this->check_purview("/domain_manager/line_refresh")}
+							<button type="button" class="btn btn-xs btn-success ip-refresh-btn" data-url="${data.id}">刷新</button>
+						{/if}
+						</p>
+				</#if>
+			</td>
+		</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /domain_manager/line_edit?do=edit}" method="post" class="theform form form-2" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var formdata = {
+	pid:{type:"select",label:"上级模块",name:"pid",value:"",data_sr:{echo JSON::encode($catlist)},css:"",require:"",desc:"",item_css:"col-md-6"},
+	sort:{type:"text",label:"显示序号",name:"sort",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+	name:{type:"text",label:"分类名",name:"name",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"分类名必须",item_css:"col-md-6"},
+	ident:{type:"text",label:"标识",name:"ident",value:"",data_sr:[],css:"font-gray",require:"",desc:"",item_css:"col-md-6"},
+    html_space0:{type:"html",value:"<h5>&nbsp;</h5>"},
+	status:{type:"checkbox",label:"状态",name:"status",value:"",disabled:0,data_sr:[{v:"锁定",key:1}],css:"",require:"",desc:"",item_css:""},
+    id:{type:"hidden",label:"-",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+var load_list = function(){
+	$.loadlist([],function(res){
+		$(".editbtn").click(function(){
+			edit_func(this);
+		});
+		$(".copybtn").click(function(){
+			copy_func(this);
+		});
+		$(".delbtn").click(function(){
+			del_func(this);
+		});
+		$(".btn-setting-ip").click(function(){
+			var line_id = $(this).attr("data-url");
+			edit_ip_func(1,line_id,"");
+		});
+		$(".ip-add-btn").click(function(){
+			ip_add_fun(this);
+		});
+		$(".ip-clear-btn").click(function(){
+			ip_clear_func(this);
+		});
+		$(".ip-import-btn").click(function(){
+			ip_import_fun(this);
+		});
+		$(".ip-refresh-btn").click(function(){
+			var id = $(this).attr("data-url");
+			ip_refresh_fun(id);
+		});
+		$("tr.pids").unbind("click").bind("click",function(){
+				var obj = this;
+				var id = $(obj).data("id");
+				$("tr.pid-"+id).each(function(){
+					var ppid = $(this).data("id");
+					if($(this).css("display") == 'none' ){
+						$(this).css("display","");
+					}else{
+						$("tr.pid-"+ppid).css("display","none");
+						$(this).css("display","none");
+					}
+				})
+		});
+	},"{url /domain_manager/line?do=get}");
+}
+var copy_func = function(obj){
+	var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		});
+}
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改线路分类"});
+	$("#myModal").find(".modal-dialog").width(920);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 load_list();
+		 return true;
+	},function(res){
+	},".theform",function(res){
+		if(res.id > 0){
+			formdata.ident.type = "ivalue";
+		}else{
+			formdata.ident.type = "text";
+		}
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		});
+	}
+}
+var ip_clear_func = function(obj){
+	if(confirm("你确定要清空该IP段吗?清空后IP不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+				}
+			}
+		});
+	}
+}
+$(function(){
+	 load_list();
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+	 
+})
+</script>
+{include domain_manager/ip_op}
+{/block}

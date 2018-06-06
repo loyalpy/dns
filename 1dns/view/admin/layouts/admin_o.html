@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="favicon.ico">
+	<title>{block title}{$site_config['seo_title']}{/block}</title>
+	{block seo}
+	<meta name="keywords" content="{$site_config['seo_keyword']}" />
+	<meta name="description" content="{$site_config['seo_description']}" />
+	{/block}
+    <link href="{url static/javascript/bootstrap/css/bootstrap.min.css}" type="text/css" rel="stylesheet" />
+    <link href="{url static@/css/style_admin_new.css}"  rel="stylesheet" type="text/css" />
+    {block css}{/block}
+    <!--[if lt IE 9]><script src="{url static@/javascript/html5/ie8-responsive-file-warning.js}"></script><![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="{url static@/javascript/html5/html5shiv.js}"></script>
+      <script src="{url static@/javascript/html5/respond.min.js}"></script>
+    <![endif]-->
+    <script language="javascript" src="{url static@/javascript/jquery/jquery-1.10.2.min.js}"></script>
+    <script language="javascript">var $ = jQuery.noConflict(),APP_URL = "{url }",tUser={};
+    {if $uid}
+    tUser['uid'] = {$uid};
+	{/if}
+    </script>
+</head>
+<body class="{block body_css}ucenter{/block}">
+{block topbar}
+<div class="topbar">
+<div class="aps">
+	<div class="in-left">
+	  <ul class="">
+	  <li><a href="{url /}" target="_blank" class=" font-gray"><cite class="glyphicon glyphicon-home"></cite> 首页</a></li>
+	  <li class="dropdown">	   
+	  </li>
+	  </ul>
+	</div>
+	<div class="in-center">
+	    
+	</div>
+	<div class="in-right">
+	<ul>
+	<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+    <img class="myavatar_30" width="15" height="15" style="position:relative;top:4px;" src="{url account@/misc/avatar/uid/$uid/size/30}" /> 
+    {$this->userinfo['name']} <b class="caret"></b></a>
+    <ul class="dropdown-menu">
+       <li><a href="{url account@/ucenter/profile_basic}">个人资料修改</a></li>
+       <li><a href="{url account@/ucenter/profile_avatar}">个人头像修改</a></li>
+       <li><a href="{url account@/ucenter/profile_passwd}">修改密码</a></li>
+       <li class="divider"></li>
+       <li><a href="{url account@/login/logout}">退出</a></li>
+     </ul>
+     </li>
+     
+	 </ul>
+	</div>
+	<div class="cl"></div>
+</div>
+</div>
+{/block}
+<div class="header">
+	<div class="{block head_css}aps{/block}">
+	    <div class="logo"><a href="/sys_manager" title="">{$site['site_name']}</a></div>
+	    {block head_menu}
+	    {if isset($this->nav['nav'][$this->nav['top']])}
+	    <div class="menu">
+	    <ul>
+	    {foreach items=$this->nav['nav'][$this->nav['top']]['childrens']}
+	    {if $this->check_purview($item['url']) && $item['status'] == 1}
+		<li><a href="{$item['url']}" class="{if $this->nav['sub'] == $key}cur{/if}">{$item['name']}</a></li>
+		{/if}
+	    {/foreach}
+	    </ul>
+	    </div>
+	    {/if}
+	    {/block}
+	    <div class="cl"></div>
+    </div>
+</div>
+<div class="main">
+{block leftnav}
+<div class="leftnav" id="Lnav">
+        <div class="quick_btn" style="display:none;"></div>
+        <div class="dis10"></div>
+        {foreach items=$this->nav['nav']}
+	    <dl>
+	    {if $item['status'] == 1 && $this->check_purview($item['url'])}
+		    <dt><a href="javascript:void(0)" _key="{$key}" _href="{$item['url']}"><cite class="glyphicon glyphicon-{$item['enname']}"></cite> &nbsp;{$item['name']} <cite class="updown glyphicon glyphicon-chevron-{if $item['isopen'] == 1 || $this->nav['top'] == $key}down{else}up{/if}"></cite></a></dt>
+		    {foreach items=$item['childrens'] item=$sub key=$key2}
+		    {if $sub['status'] == 1 && $this->check_purview($sub['url'])}
+		    <dd class="{if $this->nav['sub'] == $key2}cur{/if}" {if $item['isopen'] == 1 || $this->nav['top'] == $key}{else}style="display:none;"{/if}><a href="{$sub['url']}"><cite class="glyphicon glyphicon-{$sub['enname']}"></cite> &nbsp;{$sub['name']} </a></dd>
+		    {/if}
+		    {/foreach}
+	    {/if}
+	    </dl>
+	    {/foreach}
+		<script language="javascript">
+		   $(function(){
+		   	   $("#Lnav dl dt").click(function(){
+		   	   	  var obj = this;
+		   	   	  if($(obj).find("cite.updown").hasClass("glyphicon-chevron-down")){
+		   	   	  	 $(obj).find("cite.updown").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+		   	   	  	 $(obj).parent().find("dd").hide();
+		   	   	  }else{
+		   	   	  	 $(obj).find("cite.updown").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+		   	   	  	 $(obj).parent().find("dd").show();
+		   	   	  }   	   	
+		   	   });
+		   })
+		 </script>
+		 <div class="extnav">
+		 <dl>
+		 {if $this->check_purview('/sys_manager/module_config')}
+		 <dd class="{if in_array($this->nav['uri'],array('/sys_manager/module_config'))}cur{/if}"><a href="/sys_manager/module_config">模块配置</a></dd>
+		 {/if}
+		 <dd class="{if in_array($this->nav['uri'],array('/ucenter/profile_passwd'))}cur{/if}"><a href="/ucenter/profile_passwd">修改密码</a></dd>
+		 <dd><a href="{url account@/login/logout}">退出 </a></dd>
+		 </dl>
+		 </div>
+</div>
+{/block}
+{block main}{/block}
+<div class="cl"></div>
+{block footer}{/block}
+</div>
+<script language="javascript" src="{url static@/javascript/bootstrap/js/bootstrap.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/layer/layer.js}"></script>
+<script language="javascript" src="{url static@/javascript/validform/validform.js}"></script>
+<script language="javascript" src="{url static@/javascript/utils/easyTemplate.js}"></script>
+<script language="javascript" src="{url static@/javascript/apps/app.init.js}"></script>
+<script language="javascript" src="{url static@javascript/jquery.zclip/jquery.zclip.min.js}"></script>
+<script language="javascript" src="{url static@/cache/dataconfig.js}"></script>
+{block javascript}{/block}
+{block modal}
+<!-- Modal -->
+<div style="z-index:1033;" class="modal fade" id="myModal" tabindex="9999" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{/block}
+</body>
+</html>

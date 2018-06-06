@@ -1,0 +1,32 @@
+{block title}{if $data['seo_title']}{$data['seo_title']}{else}{$data['name']}-{$site['seo_title']}{/if}{/block}
+{block seo}
+<meta name="keywords" content="{if $data['seo_keyword']}{$data['seo_keyword']}{else}{$site_config['seo_keyword']}{/if}"/>
+<meta name="description" content="{if $data['seo_description']}{$data['seo_description']}{else}{$site_config['seo_description']}{/if}"/>
+{/block}
+{block header}{/block}
+{block main}
+<div class="aps">
+    <div class="container">
+        <ul class="other-left l">
+            {foreach items=$catlist}
+            <li class="{if $c == $item['ident']}selected{/if}">
+                <a href="{url /cms/onepage/i/$i/c/$item[ident]}"><span>{$item['name']}</span></a>
+            </li>
+            {/foreach}
+            <li class="{if $act == 'links'}selected{/if}">
+                <a href="{url /cms/links}"><span>友情链接</span></a>
+            </li>
+        </ul>
+        <div class="other-right ">
+            <div class="other-right-wrap">
+                <div id="pjax-container">
+                    <div class="others">
+                        {echo htmlspecialchars_decode($data['content']);}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block friendlink}{/block}

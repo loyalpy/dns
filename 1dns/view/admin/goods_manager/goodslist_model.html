@@ -1,0 +1,45 @@
+{block main}
+<div class="main-nav">
+  <div class="name">图文模型</div>
+  <div class="navbtn0"></div>
+  <div class="navbtn">
+  <!--button-->
+  <a href="{url /goods_manager/goodslist_model_edit}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增模型</a>
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<div class="list-box">
+<table class='table table-bordered' cellpadding="0" cellspacing="0">
+				<col width="200px" />
+				<col />
+				<col width="80px" />
+				<thead>
+				    <tr class="active">
+					<th>模型名称</th>
+					<th>属性/规格</th>
+					<th>操作</th>
+					</tr>
+				</thead>
+		<tbody>
+		    {foreach items=$list}
+			<tr>
+			<td class="f12">{$item['name']}</td>
+			<td class="f12" class="font-gray">
+			<p><a class="btn btn-info btn-xs" href="{url /goods_manager/goodslist_model_attrspec?model_id=$item[id]}">配置规格属性</a></p>
+			{set $tmp = 0;}
+			</td>
+			<td>
+			<p class='table-item-op'>
+			<a href="{url /goods_manager/goodslist_model_edit?id=$item[id]}"><span class="glyphicon glyphicon-edit"></span></a>
+			<a href="javascript:void(0);" data-url="/goods_manager/goodslist_model_del?id={$item['id']}" class="t-ajax-button table-item-op-del" confirm="1"><span class="glyphicon glyphicon-remove "></span></a>    
+			</p>
+			</td>
+			</tr>
+			{/foreach}
+		</tbody>
+</table>
+</div>
+{/block}

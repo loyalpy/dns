@@ -1,0 +1,87 @@
+{block title}{if isset($cate['name']) && $cate['name']}{$cate['name']}{else}八戒DNS{/if}-{$site['seo_title']}{/block}
+{block seo}
+<meta name="keywords" content="{$cate['name']},八戒DNS,{$site_config['seo_keyword']}" />
+<meta name="description" content="{$cate['name']},八戒DNS,{$site_config['seo_description']}" />
+{/block}
+{block header}{/block}
+{block main}
+<div class="news-wrap">
+	<div class="artview">
+		<!--sidebar-->
+		<div class="sidebar">
+			<h1>{$data['threads']['subject']}</h1>
+			<div class="review">
+				{foreach items=$data['list']}
+				{if $item['first'] == 1}
+				<div class="threads_html_box">{echo htmlspecialchars_decode($item['message'])}</div>
+				{/if}
+				{/foreach}
+			</div>
+			<div class="dis20"></div>
+			<div class="artinfo">
+				<!--<span>来源：{$site['site_name']}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>时间：{echo tTime::get_datetime('Y年m月d日 H:i',$data['threads']['dateline'])}</span>-->
+				<span>来源：{$site['site_name']}</span>
+			</div>
+			<div class="dis20"></div>
+			<div class="pnlink">
+				{if $prevnext['prev'] || $prevnext['next']}
+				<div class="prevnext">
+					{if $prevnext['prev']}
+					<p class="f14"><span class="txt-gray">下一篇：</span><a class="font-blue" href="{echo U('/cms/news_topic/tid/'.$prevnext['prev']['tid'])}" title="{$prevnext['prev']['subject']}">{$prevnext['prev']['subject']}</a></p>
+					{/if}
+					{if $prevnext['next']}
+					<p class="f14"><span class="txt-gray">上一篇：</span><a class="font-blue" href="{echo U('/cms/news_topic/tid/'.$prevnext['next']['tid'])}" title="{$prevnext['next']['subject']}">{$prevnext['next']['subject']}</a></p>
+					{/if}
+				</div>
+				{/if}
+			</div>
+		</div>
+		<!--sidebar end-->
+		<!--mainbar-->
+		<div class="mainbar">
+			<div class="search-form">
+				<form action="{url /cms/news/fid/$fid}" method="POST">
+					<input type="hidden" name="hash" value="{hash}" />
+					<img class="img" src="{skin home@/images/helper/search.jpg}">
+					<input type="text" name="keyword" value="{if isset($keyword)}{$keyword}{else}{/if}"  class="key" />
+					<button type="submit" style="display: none">提交</button>
+				</form>
+			</div>
+			<div class="dis30"></div>
+			<h1>新闻目录</h1>
+			<div class="dis10"></div>
+			<div class="cmslist-nav">
+				<ul>
+					{foreach items = $cates}
+					<li><a class="{if isset($cate['id']) && $cate['id'] == $item['id']}curr{/if}" href="{url /cms/news/fid/$item[id]}">{$item['name']}<font class="font-org">({$item['threads']})</font></font></a></li>
+					{/foreach}
+				</ul>
+			</div>
+			<div class="dis30"></div>
+			<h1>推荐</h1>
+			<div class="dis10"></div>
+			<div class="siderand">
+				{if $tuinews}
+				<ul>
+					{foreach items=$tuinews}
+					<li><a href="{url /cms/news_topic/tid/$item[tid]}" title="{$item['subject']}" >{$item['subject']}</a></li>
+					{/foreach}
+				</ul>
+				{/if}
+			</div>
+		</div>
+		<!--mainbar end-->
+	</div>
+</div>
+{/block}
+{block javascript}
+<script language="javascript" src="{url static@/javascript/utils/share.js}"></script>
+<script type="text/javascript">
+	$(function(){
+		$(".img").click(function(){
+			$("button").click();
+		});
+	});
+</script>
+{/block}
+{block friendlink}{/block}

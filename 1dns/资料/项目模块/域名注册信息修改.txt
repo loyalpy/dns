@@ -1,0 +1,31 @@
+
+创建域名注册信息附件表
+
+CREATE TABLE `wo_register_domain_attachinfo` (
+`id`  int(10) NOT NULL AUTO_INCREMENT ,
+`did`  int(10) NOT NULL DEFAULT 0 COMMENT '注册域名ID' ,
+`uid`  int(10) NOT NULL DEFAULT 0 COMMENT '用户ID' ,
+`aller_name_cn`  varchar(20) NOT NULL DEFAULT '' COMMENT '域名所有者中文名称' ,
+`aller_name`  varchar(20) NOT NULL DEFAULT '' COMMENT '域名所有者英文名称' ,
+`name_cn`  varchar(20) NOT NULL DEFAULT '' COMMENT '联系人中文名称' ,
+`name`  varchar(20) NOT NULL DEFAULT '' COMMENT '联系人英文名称' ,
+`email`  varchar(50) NOT NULL DEFAULT '' COMMENT '域名所有者邮箱' ,
+`area`  varchar(30) NOT NULL DEFAULT '' COMMENT '域名所有者地区' ,
+`addr_cn`  varchar(60) NOT NULL DEFAULT '' COMMENT '域名所有者中文地址' ,
+`addr`  varchar(60) NOT NULL DEFAULT '' COMMENT '域名所有者英文地址' ,
+`ub`  int(10) NOT NULL DEFAULT 0 COMMENT '域名所有者邮编' ,
+`mobile`  char(11) NOT NULL DEFAULT '' COMMENT '域名所有者手机' ,
+`cz`  varchar(20) NOT NULL DEFAULT '' COMMENT '域名所有者传真' ,
+`m_name_cn`  varchar(20) NOT NULL DEFAULT '' COMMENT '管理者中文名称' ,
+`name_cn`  varchar(20) NOT NULL DEFAULT '' COMMENT '管理者英文名称' ,
+`m_email`  varchar(50) NOT NULL DEFAULT '' COMMENT '管理者邮箱' ,
+`m_area`  varchar(30) NOT NULL DEFAULT '' COMMENT '管理者地区' ,
+`m_addr_cn`  varchar(60) NOT NULL DEFAULT '' COMMENT '管理者中文地址' ,
+`m_addr`  varchar(60) NOT NULL DEFAULT '' COMMENT '管理者英文地址' ,
+`m_ub`  int(10) NOT NULL DEFAULT 0 COMMENT '管理者邮编' ,
+`m_mobile`  char(11) NOT NULL DEFAULT '' COMMENT '管理者手机' ,
+PRIMARY KEY (`id`)
+)
+;
+
+程序插入数据

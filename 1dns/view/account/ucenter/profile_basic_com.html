@@ -1,0 +1,208 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/safety_center}"  >安全设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_basic}">个人资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_basic_com}"  class="cur">企业资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_msg}" >系统通知&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_passwd}"  >修改密码&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">企业管理<span style="font-size: 14px;color: #5EB95E">(当前类型：{if ($userinfo['utype']==2)}企业账户{else}个人账户{/if})</span></span></h1>
+    </div>
+    <hr/>
+    <div class="dis30"></div>
+    <div class="am-msg-content">
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">企业名称</label>
+                <div class="am-u-sm-7">
+                    <input type="text" class="am-form-field am-radius" name="company_name" value="{$company['company_name']}">
+                    <small class="am-font-gray">请填写企业名称</small>
+                </div>
+                <div class="am-cf"></div>
+            </div>
+
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">证件号码</label>
+                <div class="am-u-sm-7">
+                    <input type="name" class="am-form-field am-radius" name="com_card" value="{$com_card['content']}">
+                    <small class="am-font-gray">请填写证件号码</small>
+                </div>
+                <div class="am-cf"></div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">营业执照</label>
+                <div class="am-u-sm-7">
+                    <div class="am-form-group am-form-file">
+                        <form action="{url /ucenter/rz_upload}" class="uploadform" method="post" enctype="multipart/form-data">
+                        <button type="button" class="am-btn am-btn-default am-btn-sm am-btn-uploadzj">
+                            <i class="am-icon-cloud-upload"></i> 上传营业执照扫描件</button>
+                            {if isset($rz['shenfenzheng'])}
+                                {if $rz['shenfenzheng']['status'] == 0}
+                                <span class="sc-tips">上传待认证</span>
+                                {elseif $rz['shenfenzheng']['status'] == 1}
+                                <span class="sc-tips">变更待认证</span>
+                                {elseif $rz['shenfenzheng']['status'] == 2}
+                                <span class="sc-tips">认证失败</span>
+                                {elseif $rz['shenfenzheng']['status'] == 3}
+                                <span class="sc-tips am-text-success">已认证</span>
+                                {/if}
+                            {else}
+                                <span class="sc-tips">未上传</span>
+                            {/if}
+                            <input  type="file" name="attach_file" value="{if isset($rz['shenfenzheng'])}1{/if}">
+                            <input type="hidden" name="name" value="shenfenzheng" />
+                            <input type="hidden" name="hash" value="{hash}" />
+                        </form>
+                    </div>
+                    <div class="file-list" {if !isset($rz['shenfenzheng'])}style="display: none;position:relative;"{/if}>
+                        <img src="{if isset($rz['shenfenzheng'])}{url static@/}{$rz['shenfenzheng']['path']}{/if}" width="200" class="Dcompany_zj" />
+                    </div>
+                    <a href="javascript:;" class="overbtn" {if !isset($rz['shenfenzheng'])}style="display: none;"{/if}>查看原图</a>
+                </div>
+                <div class="am-cf"></div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;">组织机构证件</label>
+                <div class="am-u-sm-7">
+                    <div class="am-form-group am-form-file">
+                        <form action="{url /ucenter/rz_upload}" class="uploadform" method="post" enctype="multipart/form-data">
+                            <button type="button" class="am-btn am-btn-default am-btn-sm am-btn-uploadzj">
+                                <i class="am-icon-cloud-upload"></i> 上传组织机构证件扫描件</button>
+                                {if isset($rz['jigou'])}
+                                    {if $rz['jigou']['status'] == 0}
+                                    <span class="sc-tips">上传待认证</span>
+                                    {elseif $rz['jigou']['status'] == 1}
+                                    <span class="sc-tips">变更待认证</span>
+                                    {elseif $rz['jigou']['status'] == 2}
+                                    <span class="sc-tips">认证失败</span>
+                                    {elseif $rz['jigou']['status'] == 3}
+                                    <span class="sc-tips am-text-success">已认证</span>
+                                    {/if}
+                                {else}
+                                    <span class="sc-tips">未上传</span>
+                                {/if}
+                            <input  type="file" name="attach_file" value="{if isset($rz['jigou'])}1{/if}">
+                            <input type="hidden" name="name" value="jigou" />
+                            <input type="hidden" name="hash" value="{hash}" />
+                        </form>
+                    </div>
+                    <div class="file-list" {if !isset($rz['jigou'])}style="display: none;position:relative;"{/if}>
+                        <img src="{if isset($rz['jigou'])}{url static@/}{$rz['jigou']['path']}{/if}" width="200" class="Dcompany_zj"  over="{if isset($rz['jigou'])}{url static@/}{$rz['jigou']['path']}{/if}"/>
+                    </div>
+                    <a href="javascript:;" class="overbtn" {if !isset($rz['jigou'])}style="display: none;"{/if}>查看原图</a>
+                </div>
+                <div class="am-cf"></div>
+            </div>
+           <div class="dis20"></div>
+            <div class="am-form-group">
+                <label class="am-u-sm-2" style="margin-right: -50px;"></label>
+                <div class="am-u-sm-7 am-text-left">
+                    <input type="hidden" name="company_id" value="{$company['company_id']}"/>
+                    <button type="button" class="am-btn am-btn-success am-radius company-save">{if isset($company['company_id'])}保存修改{else}升级企业用户{/if}</button>
+                </div>
+                <div class="am-cf"></div>
+            </div>
+            <div class="dis20"></div>
+    </div>
+    <div class="dis30"></div>
+    <div class="now-dns-bot">
+        <div class="dis10"></div>
+        <dl>
+            <dt>温馨提示：</dt>
+            <dd>• 上传图片须为清晰、完整，无遮挡、涂抹，图片格式为：JPG,GIF,PNG,JPEG，图片大小不超过2M。</dd>
+            <dd>• 请提交组织机构代码证和营业执照扫描件。</dd>
+            <dd>• 以上认证信息仅作为八戒DNS审核使用，不会被其他用户查看！上传成功后客服会在最短时间审核并反馈审核结果。</dd>
+        </dl>
+    </div>
+    <div class="dis30"></div>
+</div>
+{/block}
+
+{block javascript}
+<!--提交修改事件-->
+<script type="text/javascript">
+    $(".am-msg-content").find("button,a").bind("focus",function(){
+        $(this).blur();
+    });
+    $(".company-save").unbind("click").bind("click",function(){
+        var company_name = $("input[name='company_name']").val();
+        if ($.is_empty(company_name)) {
+            $.ui.error("企业名称不能为空!");
+            return false;
+        }
+        var com_card = $("input[name='com_card']").val();
+        var pattern = /^[0-9A-Za-z]*$/i;
+        if ($.is_empty(com_card) || !pattern.test(com_card) || com_card.length < 8) {
+            $.ui.error("请填写正确证件号码!");
+            return false;
+        }
+        $.ajaxPassport({
+            url:"{url /ucenter/profile_basic_com}",
+            success:function(res){
+                if (res.error == 1) {
+                    $.ui.error(res.message);
+                } else {
+                    $.ui.success(res.message);
+                }
+            },
+            data:{company_name:company_name,com_card:com_card,id:1}
+        });
+    });
+    $(function() {
+        var isopen = false;
+        $(".overbtn").bind("click", function(){
+            var obj = this;
+            if (!isopen) {
+                var img_obj = $(obj).parent().parent().find("img");
+                img_obj.attr("src",img_obj.attr("over"));
+                img_obj.attr("width","100%");
+                $(obj).html("查看缩略图");
+                isopen = true;
+            } else {
+                var img_obj = $(obj).parent().parent().find("img");
+                img_obj.attr("src",img_obj.attr("over"));
+                img_obj.attr("width","200px");
+                $(obj).html("查看原图");
+                isopen = false;
+            }
+        });
+
+        //上传认证附件
+        $("form.uploadform").data("success",function(res,formobj){
+            if(res.error == 1){
+                $.ui.error(res.message);
+            }else{
+                $.ui.success("上传企业证件成功!");
+
+                if(res.status == 0){
+                    $(formobj).find(".sc-tips").html("上传待认证");
+                }else if(res.status == 1){
+                    $(formobj).find(".sc-tips").html("变更待认证");
+                }else if(res.status == 2){
+                    $(formobj).find(".sc-tips").html("认证失败");
+                }else if(res.status == 2){
+                    $(formobj).find(".sc-tips").html("认证成功");
+                }
+                $(formobj).parent().parent().find(".file-list").show();
+                $(formobj).parent().parent().find(".overbtn").show();
+
+                var imgobj = $(formobj).parent().parent().find(".Dcompany_zj");
+                imgobj.attr("src",res.path+"?"+Math.random());
+                imgobj.attr("over",res.path);
+            }
+            $.ui.close_loading($(".Dcompany_zj").parent());
+        }).submit(function(){
+            $.ui.loading($(".Dcompany_zj").parent());
+            return $.ajaxForm(this,100);
+        }).find("input[type='file']").unbind("change").bind("change",function(){
+            var obj = this;
+            $(obj).parent().submit();
+        });
+    });
+</script>
+{/block}

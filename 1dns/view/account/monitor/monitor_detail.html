@@ -1,0 +1,374 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /monitor/monitor}" {if $do=='detail'}class="cur"{/if}>实时监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/warning}">报警信息&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_set}" {if $do=='set'}class="cur"{/if}>监控设置&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /monitor/monitor_option_domain}">添加监控&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div class="records-nav">
+        <ul>
+            <li class="domain"><i class="am-icon-desktop am-font-black"></i>&nbsp;&nbsp;<span>{$RRname}.{$domain}</span>
+                    {if ($monitor['monitor_type'] == 2)}
+                    <span style="font-size:12px;" class="am-badge am-round am-badge-warning f12" title="SOCKET监控">S</span>
+                    {elseif ($monitor['monitor_type'] == 3)}
+                    <span style="font-size:12px;" class="am-badge am-round am-badge-warning f12" title="PING监控">P</span>
+                    {else}
+                    {/if}
+            </li>
+            <li {if $do=='set'}class="cur"{/if}><a href="{url /monitor/monitor_detail?do=set&domain=$domain}&RRname={$RRname}&record_id={$record_id}" class="nav-set">监控设置</a></li>
+            <li {if $do=='detail'}class="cur"{/if}><a href="{url /monitor/monitor_detail?do=detail&domain=$domain}&RRname={$RRname}&record_id={$record_id}" class="nav-detail">监控详情</a></li>
+        </ul>
+    </div>
+    <div class="monitor_detail" {if $do=='set'}style="display:none;"{/if}></div>
+    <div class="monitor_set" {if $do=='detail'}style="display:none;"{/if} style="padding:30px 0;"></div>
+</div>
+<div class="am-cf"></div>
+{/block}
+
+{block javascript}
+{include monitor/monitor_tpl}
+<script src="{url static@/javascript/echarts/echarts.common.min.js}" language="javascript"></script>
+<script language="javaScript">
+    var domain  = "{$domain}";
+    var RRname = "{$RRname}";
+    var record_id = "{$record_id}";
+    $(function(){
+        var action    = "{$do}";
+        if (action == 'set') {
+            domain_monitor_set();
+        }else{
+            domain_monitor_detail();
+        }
+        //监控详情
+        $(".nav-detail").unbind("click").bind("click",function(){
+            domain_monitor_detail();
+        });
+        //监控设置
+        $(".nav-set").unbind("click").bind("click",function(){
+            domain_monitor_set();
+        });
+    });
+    var acls = {echo JSON::encode(C("category","domain_acl")->json(0,'ident'))};
+    var domain_monitor_set = function(){
+        if (RRname === "@") {
+            RRname = '';
+        }
+        $.ui.loading();
+        $.ajaxPassport({
+            url:"{url /api/DomainMonitor.Monitor?do=edit}",
+            success:function(res){
+                $.ui.close_loading();
+                //当前类型为修改
+                res.data.domain = domain;
+                res.data.RRname = RRname;
+                res.data.type = "edit";
+                var listhtml = ""+ easyTemplate($("#tpl_monitor_tpl").html(),res.data);
+                $(".monitor_set").html(listhtml);
+
+                monitor_tpl_set();
+            },
+            data:{domain:domain,RRname:RRname}
+        });
+    }
+</script>
+<script type="text/template" id="tpl_monitor_detail">
+    <#macro rowedit data>
+        <div data-am-widget="titlebar" class="am-titlebar am-titlebar-default" >
+            <h2 class="am-titlebar-title ">
+                监控详情
+            </h2>
+        </div>
+        <div class="domain-monitor-detail">
+            <#list data.list as record>
+                <#list record.monitor_item as item>
+                    <#if (item.record_id == data.record_id)>
+                        <div class="domain-monitor-detail-a">
+                            <a href="javascript:void (0);"
+                               class="am-icon-btn <#if (item.status == 0)>am-danger am-icon-close<#else><#if (item.status_code == 200 || item.status_code == 1)>am-success am-icon-check<#else>am-warning am-icon-warning</#if></#if>">
+                            </a>
+                        </div>
+                        <div class="domain-monitor-detail-span">
+                            <span class="span-up">
+                                <#if (item.status == 0)>
+                                    您的服务器已宕机
+                                    <#else>
+                                        <#if (item.status_code == 200 || item.status_code == 1)>
+                                                您的服务器完全正常
+                                            <#else>
+                                                ${item.reason}
+                                        </#if>
+                                </#if>
+                            </span><br/>
+                            <span class="span-down">
+                                <#if (item.status == 0)>
+                                    八戒监控尝试连接到您的服务器时发生了未知错误，这一般是网络故障导致的
+                                    <#else>
+                                        <#if (item.status_code == 200 || item.status_code == 1)>
+                                            八戒监控当前检测到您的服务器一切正常
+                                            <#else>
+                                                请检查网络或相关问题
+                                        </#if>
+                                </#if>
+                            </span>
+                        </div>
+                    </#if>
+                </#list>
+            </#list>
+        </div>
+        <div class="dis20"></div>
+        <div data-am-widget="titlebar" class="am-titlebar am-titlebar-default" >
+            <h2 class="am-titlebar-title ">
+                监控统计图
+            </h2>
+        </div>
+        <div class="domain-monitor-count">
+            <div class="count-select">
+                <span>当前线路</span>&nbsp;&nbsp;
+                <select id="monitorIP">
+                    <#list data.list as record>
+                        <#list record.monitor_item as item>
+                                <option value="${item.record_id}" <#if (data.record_id == item.record_id)>selected="selected"</#if> >${item.ip}</option>
+                        </#list>
+                    </#list>
+                </select>
+            </div>
+            <div class="count">
+                <div id="Dimg" style="width: 800px;height:400px;margin:0 auto"></div>
+            </div>
+        </div>
+        <div class="dis20"></div>
+        <div data-am-widget="titlebar" class="am-titlebar am-titlebar-default" >
+            <h2 class="am-titlebar-title ">
+                线路详情
+            </h2>
+        </div>
+        <div class="domain-acl-detail">
+            <table class="am-table am-table-bordered am-table-radius">
+                <thead>
+                <tr>
+                    <th>线路类型</th>
+                    <th>服务器IP地址</th>
+                    <th>当前状态</th>
+                </tr>
+                </thead>
+                <tbody>
+                <#list data.list as record>
+                    <#list record.monitor_item as item>
+                        <tr>
+                            <td><#if ($.is_empty(acls[item.acl]))>${cust_line[item.acl.replace('cust','')].name}<#else>${acls[item.acl].name}</#if></td>
+                            <td>${item.ip}</td>
+                            <td>
+                                <#if (item.status == 1)><#if (item.status_code==200 || item.status_code == 1)><font color="#5EB95E">您的服务器完全正常</font><#else><font color="red">服务器其他故障：${item.reason}</font></#if><#else><font color="red">您的服务器已宕机</font></#if>
+                            </td>
+                        </tr>
+                    </#list>
+                </#list>
+                </tbody>
+            </table>
+        </div>
+    </#macro>
+</script>
+<script language="javascript">
+    var cust_line = {echo JSON::encode(M("@domain_acl_set")->get_cust_list(1))};
+    var domain_monitor_detail = function(record_ids){
+        if (RRname === "@") {
+            RRname = '';
+        }
+        $.ui.loading();
+        $.ajaxPassport({
+            url:"{url /api/DomainMonitor.MonitorDetail}",
+            success:function(res){
+                $.ui.close_loading();
+                if (res.status == 1) {
+                    res.data.record_id = typeof record_ids=="undefined"?record_id:record_ids;
+                    var listhtml = ""+ easyTemplate($("#tpl_monitor_detail").html(),res.data);
+                    $(".monitor_detail").html(listhtml);
+
+                    //监控统计图
+                    var myChart = echarts.init($("#Dimg").get(0));
+                    var option = {
+                        title : {
+                            text: '',
+                            subtext: ''
+                        },
+                        tooltip : {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data:[],
+                        },
+                        toolbox: {
+                            show : true,
+                            feature : {
+                                mark : {show: true},
+                                dataView : {show: true, readOnly: false},
+                                magicType : {show: true, type: ['line', 'bar']},
+                            }
+                        },
+                        calculable : true,
+                        xAxis : [
+                            {
+                                type : 'category',
+                                boundaryGap : false,
+                                data : [],
+                                splitLine:{
+                                    show:false, // 是否显示x轴标线
+                                },
+                            }
+                        ],
+                        yAxis : [
+                            {
+                                name:'响应时间波动(ms)',
+                                type : 'value',
+                                axisLabel : {
+                                    formatter: '{value} ms'
+                                },
+                                splitLine:{
+                                    interval:2,
+                                },
+                            }
+                        ],
+                        series : [
+                            {
+                                name:'',
+                                type:'line',
+                                //smooth:true,
+                                data:[],
+                                markLine : {
+                                    data : [
+                                     //   {type : 'average', name : '平均值'}
+                                    ]
+                                },
+                                lineStyle: {
+                                    normal: {
+                                        color:'#2F7ED8',
+                                        width:2,
+                                        //shadowColor: 'rgba(0, 0, 0, 0.5)',
+                                        shadowBlur: 10
+                                    }
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color:'#2F7ED8',
+                                    }
+                                },
+                                hoverAnimation: false,
+                            },
+                            {
+                                name:'',
+                                type:'line',
+                                //smooth:true,
+                                data:[],
+                                markLine : {
+                                    data : [
+                                        //{type : 'average', name : '平均值'}
+                                    ]
+                                },
+                                lineStyle: {
+                                    normal: {
+                                        color:'#5EB95E',
+                                        width:2,
+                                        //shadowColor: 'rgba(0, 0, 0, 0.5)',
+                                        shadowBlur: 10
+                                    }
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color:'#5EB95E',
+                                    }
+                                },
+                                hoverAnimation: false,
+                            },
+                            {
+                                name:'',
+                                type:'line',
+                                //smooth:true,
+                                data:[],
+                                markLine : {
+                                    data : [
+                                      //  {type : 'average', name : '平均值'}
+                                    ]
+                                },
+                                lineStyle: {
+                                    normal: {
+                                        color:'#425663',
+                                        width:2,
+                                       // shadowColor: 'rgba(0, 0, 0, 0.5)',
+                                        shadowBlur: 10
+                                    }
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color:'#425663',
+                                    }
+                                },
+                                hoverAnimation: false,
+                            }
+                        ]
+                    };
+                    var show_map = function(record_id){
+                        $.ui.loading();
+                        $.ajaxPassport({
+                            url:"{url /api/DomainMonitor.GetMapsData}",
+                            data:{record_id:record_id},
+                            success:function(res){
+                                $.ui.close_loading();
+                                if(res.status == 1){
+                                    option.xAxis[0].data = new Array();
+                                    option.series[0].data = new Array();
+                                    option.legend.data   =new Array();
+                                    for(var monitor_node =  0; monitor_node< res.data['monitor_node'].length;monitor_node ++){
+                                        option.legend.data.push(res.data['monitor_node'][monitor_node]['domain']);
+                                        option.series[monitor_node].name = res.data['monitor_node'][monitor_node]['domain'];
+                                    }
+
+                                    if (res.data.length == 0) {
+                                        option.xAxis[0].data.push(0);
+                                        option.series[0].data.push(0);
+                                        option.series[1].data.push(0);
+                                        option.series[2].data.push(0);
+                                    }else{
+                                        for(var node_id =  1; node_id<=3;node_id ++){
+                                            for(var x =0 in res.data[node_id]){
+                                                if(node_id   == 1) {
+                                                    option.xAxis[node_id - 1].data.push(res.data[node_id][x]['dateline']);
+                                                }
+                                                option.series[node_id-1].data.push(parseInt(res.data[node_id][x]['restime']));
+                                            }
+                                        }
+                                    }
+                                    myChart.setOption(option);
+                                }else{
+                                    $("#Dimg").html("<p style='padding:60px 0 0 0;'>当前无可用图像</p>");
+                                }
+                            }
+                        });
+                    }
+                    //时间戳转日期
+                    var getLocalTime = function(nS) {
+                        return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+                    }
+
+                    $("#monitorIP").bind("change",function(){
+                        var record_ids = $(this).val();
+                        domain_monitor_detail(record_ids);
+                    });
+
+                    if (!$.is_empty(record_ids)) {
+                        var cur_id = record_ids;
+                    }else{
+                        cur_id = record_id;
+                    }
+                   show_map(cur_id);
+                }
+            },
+            data:{domain:domain,RRname:RRname}
+        });
+    }
+</script>
+{/block}

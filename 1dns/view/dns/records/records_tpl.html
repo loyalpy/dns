@@ -1,0 +1,540 @@
+<script type="text/template" id="tpl_add_RRtype_explain">
+    <#macro rowedit data>
+        <#if (data.type == "RRname")>
+                <div style="float: left;margin: 12px 0px 0px 40px;"><i class="am-icon-hand-o-right"></i></div>
+                <div style="font-size: 14px;margin: 10px 0px 10px 10px;line-height: 30px;float: left">
+                    <strong>要解析 www.sssssss.com，请填写 www ～</strong><br/>
+                    <strong>主机记录就是域名前缀，常见用法有：</strong><br/>
+                    <span class="i">www： </span>	解析后的域名为 www.sssssss.com<br/>
+                    <span class="i">@：</span> 	直接解析主域名 sssssss.com<br/>
+                    <span class="i">*：</span> 	泛解析，匹配其他所有域名 *.sssssss.com<br/>
+                </div>
+            <#elseif (data.type == "RRtype")>
+                    <div style="float: left;margin: 12px 0px 0px 40px;"><i class="am-icon-hand-o-right"></i></div>
+                    <div style="font-size: 14px;margin: 10px 0px 10px 10px;line-height: 30px;float: left">
+                        <strong>要指向空间商提供的 IP 地址，选择「类型 A」，要指向一个域名，选择「类型 CNAME」</strong><br/>
+                        <span class="i">A记录：</span> 	地址记录，用来指定域名的IPv4地址（如：8.8.8.8），如果需要将域名指向一个IP地址，就需要添加A记录。<br/>
+                        <span class="i">CNAME：</span> 	如果需要将域名指向另一个域名，再由另一个域名提供ip地址，就需要添加CNAME记录。<br/>
+                        <span class="i">TXT：</span> 	在这里可以填写任何东西，长度限制255。绝大多数的TXT记录是用来做SPF记录（反垃圾邮件）。<br/>
+                        <span class="i">NS：</span> 	域名服务器记录，如果需要把子域名交给其他DNS服务商解析，就需要添加NS记录。<br/>
+                        <span class="i">AAAA：</span> 	用来指定主机名（或域名）对应的IPv6地址（例如：ff06:0:0:0:0:0:0:c3）记录。<br/>
+                        <span class="i">MX：</span> 	如果需要设置邮箱，让邮箱能收到邮件，就需要添加MX记录。<br/>
+                        <span class="i">显性URL： </span>	从一个地址301重定向到另一个地址的时候，就需要添加显性URL记录（注：八戒DNS目前只支持301重定向）。<br/>
+                        <span class="i">隐性URL： </span>	类似于显性URL，区别在于隐性URL不会改变地址栏中的域名。<br/>
+                        <span class="i">SRV：</span> 	记录了哪台计算机提供了哪个服务。格式为：服务的名字、点、协议的类型，例如：_xmpp-server._tcp。<br/>
+                    </div>
+                <#elseif (data.type == "acl")>
+                        <div style="float: left;margin: 12px 0px 0px 40px;"><i class="am-icon-hand-o-right"></i></div>
+                        <div style="font-size: 14px;margin: 10px 0px 10px 10px;line-height: 30px;float: left">
+                            <strong> 若空间商只提供了一个 IP 地址或域名，选择「默认」就可以了</strong><br/>
+                            <strong>常见用法有:</strong><br/>
+                            <span class="i">默认： </span>	必须添加，否则只有单独指定的线路才能访问您的网站。如果双线解析，建议「默认」线路填写「电信IP」<br/>
+                            <span class="i">联通：</span> 	单独为「联通用户」指定服务器 IP，其他用户依然访问「默认」<br/>
+                            <span class="i">搜索引擎：</span> 	指定一个服务器 IP 让蜘蛛抓取<br/>
+                        </div>
+                    <#elseif (data.type == "RRvalue")>
+                            <div style="float: left;margin: 12px 0px 0px 40px;"><i class="am-icon-hand-o-right"></i></div>
+                            <div style="font-size: 14px;margin: 10px 0px 10px 10px;line-height: 30px;float: left">
+                                <strong>最常见的是将空间商提供的「IP地址」填写在这里哦～</strong><br/>
+                                <span class="i">A记录： </span>	填写您服务器 IP，如果您不知道，请咨询您的空间商<br/>
+                                <span class="i">CNAME： </span>	填写空间商给您提供的域名，例如：8jdns.com<br/>
+                                <span class="i">MX： </span>	填写您邮件服务器的IP地址或企业邮局给您提供的域名，如果您不知道，请咨询您的邮件服务提供商<br/>
+                                <span class="i">TXT： </span>	一般用于 Google、QQ等企业邮箱的反垃圾邮件设置<br/>
+                                <span class="i">NS： </span>	不常用。系统默认添加的两个NS记录请不要修改。NS向下授权，填写dns域名，例如：ns1.8jdns.com<br/>
+                                <span class="i">AAAA： </span>	不常用。解析到 IPv6 的地址。<br/>
+                                <span class="i">显性URL： </span>	填写要跳转到的网址，例如：http://www.baidu.com<br/>
+                                <span class="i">隐性URL：</span> 	填写要引用内容的网址，例如：http://www.baidu.com<br/>
+                                <span class="i">SRV： </span>	不常用。格式为：优先级、空格、权重、空格、端口、空格、主机名，记录生成后会自动在域名后面补一个“.”，这是正常现象。例如：5 0 5269 xmpp-server.l.google.com.<br/>
+                            </div>
+                        <#elseif (data.type == "RRmx")>
+                                <div style="float: left;margin: 12px 0px 0px 40px;"><i class="am-icon-hand-o-right"></i></div>
+                                <div style="font-size: 14px;margin: 10px 0px 10px 10px;line-height: 30px;float: left">
+                                    <strong>MX记录,只对MX有效,默认：5</strong><br/>
+                                    <strong>MX优先级，用来指定邮件服务器接收邮件的先后顺序（1-50），一般默认设置为5、10、15等</strong><br/>
+                                </div>
+                            <#elseif (data.type == "RRttl")>
+                                    <div style="float: left;margin: 12px 0px 0px 40px;"><i class="am-icon-hand-o-right"></i></div>
+                                    <div style="font-size: 14px;margin: 10px 0px 10px 10px;line-height: 30px;float: left">
+                                        <strong>我们默认的 600 秒是最常用的，不用修改</strong><br/>
+                                        <span class="i">TTL : </span>即 Time To Live，缓存的生存时间。指地方dns缓存您域名记录信息的时间，缓存失效后会再次到八戒DNS获取记录值。<br/>
+                                        <span class="i">600（10分钟）：</span> 	建议正常情况下使用 600。<br/>
+                                        <span class="i">60（1分钟）：</span> 	如果您经常修改IP，修改记录一分钟即可生效。长期使用 60，解析速度会略受影响。<br/>
+                                        <span class="i">3600（1小时）：</span> 	如果您IP极少变动（一年几次），建议选择 3600，解析速度快。如果要修改IP，提前一天改为 60，即可快速生效<br/>
+                                    </div>
+        </#if>
+    </#macro>
+</script>
+
+<script type="text/template" id="tpl_addedit">
+    <#macro rowedit data>
+     <#if  (data.type == 'edit')>
+        <td></td>
+        <td>
+            <input type="text" class="am-form-field am-radius am-input-sm RRname"  data-explain="RRname" value="${data.RRname}" />
+        </td>
+        <td>
+            <div class="tselect tselect-type am-input-sm" data-explain="RRtype" data-name="RRtype" data-label="请选择类型">
+                <a href="javascript:void(0)" class="tselect-text e"></a>
+                <input type="hidden" name="RRtype" class="RRtype" value="${data.RRtype}" />
+                <input type="hidden" name="RRtype_text" value="${data.RRtype}" />
+                <div class="tselect-box" style="display:none">
+                    <div class="in">
+                        <a class="sel0" data-v="" href="javascript:void(0);">不选</a>
+                        {foreach items = $data_config['RRtype']}
+                            <a data-v="{$key}" title="{$item}" class="sel0 e" href="javascript:void(0);">{$item}</a>
+                        {/foreach}
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td>
+            <div class="tselect tselect-acl am-input-sm" data-explain="acl" data-name="acl" data-label="请选择线路">
+                <a href="javascript:void(0)" class="tselect-text e"></a>
+                <input type="hidden" name="acl" class="acl" value="${data.acl}" />
+                <input type="hidden" name="acl_text" value="${data.acl_name}" />
+                <div class="tselect-box" style="display:none">
+                    <div class="in">
+                        <div class="level0"><a class="sel<#if (data.disabled == 1)>1<#else>0</#if>" data-v="" href="javascript:void(0);">不选</a></div>
+                        {set $aclist = C("category","domain_acl")->get_level(0)}
+                        {foreach items = $aclist}
+                        <div class="level0">
+                            {if $item['childrens']}
+                            <a data-v="{$item['ident']}" title="{$item['name']}" class=" {if in_array($item['ident'],$my_acls)}sel0{else}sel1{/if} e" href="javascript:void(0);">{$item['name']} <cite class="am-icon-angle-right"></cite></a>
+                           <div class="sub2" style="">
+                               {foreach items=$item['childrens'] item=$item2}
+                               <div class="level1">
+                                   {if $item2['childrens']}
+                                   <a data-v="{$item2['ident']}" title="{$item2['name']}" class="level1 {if in_array($item2['ident'],$my_acls)}sel0{else}sel1{/if}  e" href="javascript:void(0);">{$item2['name']} <cite class="am-icon-angle-right"></cite></a>
+                                   <div class="sub3" style="">
+                                       {foreach items=$item2['childrens'] item=$item3}
+                                      <a data-v="{$item3['ident']}" title="{$item3['name']}" class="level1 {if in_array($item3['ident'],$my_acls)}sel0{else}sel1{/if}  e" href="javascript:void(0);">{$item3['name']}</a>
+                                       {/foreach}
+                                   </div>
+                                   {else}
+                                   <a data-v="{$item2['ident']}" title="{$item2['name']}" class="level1 {if in_array($item2['ident'],$my_acls)}sel0{else}sel1{/if} e" href="javascript:void(0);">{$item2['name']}</a>
+                                   {/if}
+                               </div>
+                               {/foreach}
+                           </div>
+                            {else}
+                            <a data-v="{$item['ident']}" title="{$item['name']}" class="  {if in_array($item['ident'],$my_acls)}sel0{else}sel1{/if} e" href="javascript:void(0);">{$item['name']}</a>
+                            {/if}
+                        </div>
+                        {/foreach}
+                        {set $serverR = tCache::read("service_group_".$domain_row['service_group']);}
+                        {if $serverR['data']['diyLine']['value'] == 1}
+                            {set $diyIp = M("domain_acl_set")->query("domain='$domain' AND uid=$uid AND status=1","name,id,uid","id DESC",500);}
+                            {if count($diyIp)>0}
+                                <hr/>
+                                <div class="level1"><a class="sel0" style="color:darkgray;">自定义线路</a></div>
+                                {foreach $items = $diyIp}
+                                <div class="level0"><a class="sel0" data-v="cust{$item['id']}" href="javascript:void(0);">{$item['name']}</a></div>
+                                {/foreach}
+                            {/if}
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td>
+            <input type="text" class="am-form-field am-radius am-input-sm RRvalue"  data-explain="RRvalue"  value="${data.RRvalue}" />
+        </td>
+        <td>
+            <input type="text" class="am-form-field am-radius am-input-sm RRmx" <#if (data.RRtype != 'MX')>readonly</#if> data-explain="RRmx"  value="${data.RRmx}" />
+        </td>
+        <td>
+            <input type="text" class="am-form-field am-radius am-input-sm RRttl"  data-explain="RRttl"  value="${data.RRttl}"/>
+        </td>
+        <td class="am-text-right">
+            <input type="hidden" class="am-record-domain" value="${data.domain_id}"/>
+            <input type="hidden" class="am-record-record_id" value="${data.record_id}"/>
+            <button type="button" class="am-btn am-btn-success am-btn-xs am-radius am-save-records">保存</button>
+            <button type="button" class="am-btn am-btn-default am-btn-xs am-radius am-cancel-records">取消</button>
+        </td>
+     <#else>
+             <td><input type="checkbox" name="recordId[]" value="${data.record_id}"/></td>
+             <td><span class="btn-edit">${data.RRname}</span></td>、、
+             <td><span class="btn-edit"><#if ($.is_empty(dataConfig['RRtype'][data.RRtype]))>-<#else>${dataConfig['RRtype'][data.RRtype]}</#if></span></td>
+             <td><span class="btn-edit"><#if ($.is_empty(acls[data.acl]))>${cust_line[data.acl.replace('cust','')].name}<#else>${acls[data.acl].name}</#if></span></td>
+             <td><span class="btn-edit">${data.RRvalue}</span></td>
+             <td><span class="btn-edit"><#if (data.RRmx == 0)>_<#else>${data.RRmx}</#if></span></td>
+             <td><span class="btn-edit">${data.RRttl}</span></td>
+             <td class="am-text-right">
+                 <#if (data.status == 0)><i class="am-icon-pause" alt="已暂停解析"></i>&nbsp;</#if>
+                 <i class="am-icon-edit btn-edit" alt="编辑"></i>
+                  <input type="hidden" class="domain_id" value="${data.domain_id}" />
+                 <input type="hidden" class="record_id" value="${data.record_id}" />
+             </td>
+     </#if>
+    </#macro>
+</script>
+<!--URL通知-->
+<script type="text/template" id="tpl_domain_URL">
+    <#macro rowedit data>
+        <div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1">
+            <div class="am-modal-dialog">
+                <div class="am-modal-hd">
+                    <i class="am-icon-exclamation-triangle" style="color: #DC6B2B;"></i>&nbsp;&nbsp;设置URL将需要通知审核才能生效！
+                    <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+                </div>
+                <div class="dis10"></div>
+                <div class="am-modal-bd">
+                    <p style="color: #FF490B;font-size: 12px;">审核通过将自动生效，我们将在48小时内完成审核</p>
+                    <p style="font-size: 12px;">您有任何疑问请致电我们,或者通过在线QQ联系我们！</p>
+                </div>
+                <div class="dis15"></div>
+            </div>
+        </div>
+    </#macro>
+</script>
+<!--域名记录添加修改-->
+<script type="text/javascript">
+    var supper_domain = '{echo "(".implode(")|(",tValidate::support_domain()).")"}';
+    var acls = {echo JSON::encode(C("category","domain_acl")->json(0,'ident'))};
+    var cust_line = {echo JSON::encode(M("@domain_acl_set")->get_cust_list(1))};
+    var show_hide_tips = function(hide,type){
+        if(hide == true){
+            if($(".add_tpl").find("button.am-save-records").length == 0) {
+                $(".add_tips").hide();
+            }
+        }else{
+            $(".add_tips td").html(""+easyTemplate($("#tpl_add_RRtype_explain").html(),{type:type}));
+            $(".add_tips").show();
+        }
+    }
+    var add_edit_record = function(cur_row){
+        var formhtml = "";
+        if($.is_empty(cur_row)){     //添加
+            var data = {domain_id:{$domain_id},record_id:0,'type':'edit',RRtype:'A',RRname:'',RRvalue:'',acl:'any',RRmx:'',RRttl:600,status:1};
+            formhtml = formhtml + easyTemplate($("#tpl_addedit").html(),data);
+            $(".add_tpl").prepend("<tr>"+formhtml+"</tr>");
+            cur_row = $(".add_tpl tr:first");
+            //域名解析记录提示
+            cur_row.find('.am-input-sm').unbind("mouseenter").bind("mouseenter",function(){
+                show_hide_tips(false,$(this).data("explain"));
+            });
+            cur_row.find("input.RRname").focus();
+            cur_row.data("records",data);
+            show_hide_tips(false,"RRname");
+        }else{                      //修改
+            var data = cur_row.data("records");
+            data.type = 'edit';
+            formhtml = formhtml + easyTemplate($("#tpl_addedit").html(),data);
+            cur_row.empty().html(formhtml);
+        }
+        $.ui.form.select(cur_row);
+        var record_id  = cur_row.find('.am-record-record_id').val();
+        //绑定RRtype select 事件
+        cur_row.find('.RRtype').data("onchange",function(obj){
+            if(cur_row.find('.RRtype').val()=='MX'){
+                cur_row.find('.RRmx').attr({'readonly':false});
+            }else{
+                cur_row.find('.RRmx').attr({'readonly':true});
+            }
+        });
+        //取消操作
+        cur_row.find(".am-cancel-records").unbind("click").bind("click",function(){
+            var obj = this;
+            var new_cur_row = $(obj).parent().parent();
+            if(record_id == 0){
+                new_cur_row.empty().remove();
+
+                show_hide_tips(true);
+            }else {
+                var data = cur_row.data("records");
+                data.type = '';
+                var rowhtml = "" + easyTemplate($("#tpl_addedit").html(), data);
+                new_cur_row.empty().html(rowhtml);
+                new_cur_row.find(".btn-edit").unbind("click").bind("click",function(){
+                    var obj = this;
+                    var new_new_cur_row = $(obj).parent().parent();
+                    add_edit_record(new_new_cur_row);
+                })
+            }
+        });
+        //增加域名解析提交记录操作
+        cur_row.find("input").keypress(function(e){
+            var obj  = this;
+            var new_new_cur_row = $(obj).parent().parent();
+            if(e.keyCode == 13){
+                new_new_cur_row.find(".am-save-records").click();
+            }
+        });
+        cur_row.find(" .am-save-records").unbind("click").bind("click",function(){
+            var obj = this;
+            var new_cur_row = $(obj).parent().parent();
+            var old_data = new_cur_row.data("records");
+
+            var record_id  = $(obj).parent().parent().find('.am-record-record_id').val();
+            var RRname = new_cur_row.find(' .RRname').val().trim();
+            var RRvalue  = new_cur_row.find(' .RRvalue').val().trim();
+            var RRtype   = new_cur_row.find(' .RRtype').val().trim();
+            var RRttl      = new_cur_row.find(' .RRttl').val().trim();
+            var RRmx     = new_cur_row.find(' .RRmx').val().trim();
+            var RRacl     = new_cur_row.find(' .acl').val().trim();
+            var domain_id  = new_cur_row.find(' .am-record-domain').val();
+            var status = old_data.status;
+
+            if(RRname === '@'){
+                RRname = '';
+            }
+            switch(RRtype){
+                case 'A':
+                    if(!$.dns.is_ip(RRvalue)){
+                        $.ui.tooltip("非法ip！",new_cur_row.find(".RRvalue").get(0));
+                        return false;
+                    }
+                    break;
+                case 'MX':
+                case 'NS':
+                case 'CNAME':
+                    if(!$.dns.is_domain2(RRvalue)){
+                        $.ui.tooltip(RRtype + "值非法！",new_cur_row.find(".RRvalue").get(0));
+                        return false;
+                    }
+                    break;
+                case 'AAAA':
+                    if(!$.dns.is_ipv6(RRvalue)){
+                        $.ui.tooltip("AAAA值非法！",new_cur_row.find(".RRvalue").get(0));
+                        return false;
+                    }
+                    break;
+                case 'TXT':
+                    if($.is_empty(RRvalue)){
+                        $.ui.tooltip("不能为空控制255任意字符！",new_cur_row.find(".RRvalue").get(0));
+                        return false;
+                    }
+                    break;
+                case 'SRV':
+                    var srv_error = 0;
+                    if(RRname == ""){
+                        srv_error = 1;
+                    }else{
+                        var reg =/^_([\w-]+)((._([\w-]+))+)$/;
+                        if(!reg.test(RRname.toLowerCase())){
+                            srv_error = 1;
+                        }
+                    }
+                    if(srv_error == 1){
+                        $.ui.tooltip("子域名不正确！",new_cur_row.find(".RRname").get(0));
+                        return false;
+                    }
+                    var tmp = RRvalue.split(' ');
+                    if(tmp.length != 4){
+                        srv_error = 1;
+                    }else{
+                        var z= /^[0-9]*$/;
+                        if(!z.test(tmp[0]) || !z.test(tmp[1]) || !z.test(tmp[2])){
+                            srv_error = 1;
+                        }
+
+                        if(tmp[2] <= 0){
+                            srv_error = 1;
+                        }
+
+                        if(!$.dns.is_domain2(tmp[3])){
+                            alert(tmp[3]);
+                            srv_error = 1;
+                        }
+                    }
+                    if(srv_error == 1){
+                        $.ui.tooltip("记录值不正确,合法的格式为优先级 空格 权重 空格 端口 空格 主机名！",new_cur_row.find(".RRvalue").get(0));
+                        return false;
+                    }
+                    break;
+                case 'URLY':
+                case 'URLN':
+                    if(RRname == '*'){
+                        $.ui.tooltip("URL转发暂不支持泛解析！",new_cur_row.find(".RRname").get(0));
+                        return false;
+                    }
+                    if(!$.dns.is_request_url(RRvalue)){
+                        $.ui.tooltip("记录值不正确,格式：http://www.8jdns.com！",new_cur_row.find(".RRvalue").get(0));
+                        return false;
+                    }
+                    break;
+
+            };
+            if(!$.in_array(RRname,['','@','*']) && !$.dns.is_hostname(RRname) && RRtype != 'SRV'){
+                $.ui.tooltip("主机名非法！",new_cur_row.find(".RRname").get(0));
+                return false;
+            }
+            var data = {RRname:RRname,RRvalue:RRvalue,RRtype:RRtype,RRttl:RRttl,RRmx:RRmx,acl:RRacl,domain_id:domain_id,record_id:record_id,status:status};
+            $.ajaxPassport({
+                url:U("/records/api?action=DomainRecord.EditByUid"),
+                success: function(res){
+                    if(res.status == 1){
+                        if(res.data.bz){
+                            $.ui.alert(res.data.bz);
+                        }
+                        $.ui.success(res.msg);
+                        res.data.type = "show";
+                        var rowhtml = "" + easyTemplate($("#tpl_addedit").html(),res.data);
+                        new_cur_row.data("records",res.data);
+                        if(record_id == 0){
+                            new_cur_row.empty().html(rowhtml);
+                        }else{
+                            new_cur_row.empty().html(rowhtml);
+                        }
+                        new_cur_row.find(".btn-edit").unbind("click").bind("click",function(){
+                            var obj = this;
+                            var new_new_cur_row = $(obj).parent().parent();
+                            add_edit_record(new_new_cur_row);
+                        });
+
+                        show_hide_tips(true);
+                    }else{
+                        var tip = res.data.tips;
+                        if(typeof res.data.tips == 'undefined'){
+                            tip = "RRname";
+                        }
+                        if (tip == 'alert') {
+                            $.ui.alert(res.msg);
+                            return false;
+                        }
+                        $.ui.tooltip(res.msg,new_cur_row.find("."+tip).get(0));
+                    }
+                    if (RRtype == 'URLY' || RRtype == 'URLN') {
+                        var html = "" + easyTemplate($("#tpl_domain_URL").html());
+                        $(".my-domian-upgrade").html(html);
+                        $(".my-domian-upgrade").find('#doc-modal-1').modal({width: 400});
+                    }
+                },
+                data:data,
+            })
+            return false;
+        });
+    }
+</script>
+
+<!--域名记录列表，批量操作-->
+<script type="text/javascript">
+    var curpage = 1;
+    var get_records_list = function(page,keyword){
+        var keyword  = $.is_empty(keyword)?'':keyword;
+        $.ui.loading($(".record-list"));
+        $.ajaxPassport({
+            url:U("/records/api?action=DomainRecord.GetListByDomain"),
+            success: function(res){
+                $.ui.close_loading($(".record-list"));
+                curpage = page;
+                $('.add_tpl').empty();
+                $('.list_tpl').empty();
+                $(".add_tips").hide();
+                for(var i in res.data.list){
+                    record_id = res.data.list[i]['record_id'];
+                    $('.list_tpl').append("<tr class="+"record_"+record_id+">"+easyTemplate($("#tpl_addedit").html(),res.data.list[i])+"</tr>");
+                    var cur_row = $('.list_tpl tr:last');
+                    cur_row.data("records",res.data.list[i]);
+                    cur_row.find(".btn-edit").unbind("click").bind("click",function(){
+                        var obj = this;
+                        var new_cur_row = $(obj).parent().parent();
+                        add_edit_record(new_cur_row);
+                    })
+                }
+                $('.pagebar').html(res.data.pagebar);
+
+            },
+            data:{domain:"{$domain}",page:page,keyword:keyword}
+        });
+    }
+    var batch_op = {
+        url: U("/records/api?action=DomainRecord."),
+        exe_url:"",
+        data:{},
+    };
+    var ids= new Array();
+    var batch_records_op = function(obj) {
+        var record_do = $(obj).data("do");
+        var ids_tmp = $.fetch_ids("recordId[]");
+        ids = ids_tmp.split(",");
+        if (ids == "") {
+            $.ui.error('请选择要操作的记录！')
+            return;
+        }
+        var record_confirm = "";
+        if (record_do == "stop") {
+            record_confirm = "你确定要暂停记录吗？";
+            batch_op.exe_url =batch_op.url + "Status";
+            batch_op.data.status = 0;
+        } else if (record_do == "start") {
+            record_confirm = "你确定要启用记录吗？";
+            batch_op.exe_url =batch_op.url + "Status";
+            batch_op.data.status = 1;
+        }else if (record_do == "del") {
+            record_confirm = "你确定要删除记录吗？";
+            batch_op.exe_url =batch_op.url + "Del";
+        }
+        $.ui.confirm(function(){
+            batch_records_detial_op(0);
+        },record_confirm) ;
+    }
+    var num = 0;
+    var monitor_queue = new Array();
+    var batch_records_detial_op = function(i){
+        batch_op.data.record_id=ids[i];
+        if( i>=ids.length || typeof ids[i] == "undefined"){
+            num = 0;
+            return false;
+        }
+        $.ui.success("操作中..");
+        $.ajaxPassport({
+            url: batch_op.exe_url,
+            success: function (res) {
+                if (res.status == 1) {
+                    num++;
+                    var recordId = ".record_"+ids[i];
+                    if (batch_op.exe_url.split(".")[1] == 'Del') {
+                        monitor_queue.push(res.data);
+                        setTimeout(function () {
+                            $(recordId).remove();
+                        }, 50);
+                    }else{
+                        monitor_queue.push(0);
+                        if(batch_op.data.status==1){
+                            $(recordId).find(".am-icon-pause").removeClass("am-icon-pause").addClass("am-icon-play");
+                        }else{
+                            $(recordId).find(".am-icon-play").removeClass("am-icon-play").addClass("am-icon-pause");
+                        }
+                    }
+                    get_records_list(curpage);
+                }
+                //执行最后一次时提示操作结果
+                if (i == (ids.length - 1)) {
+                    if (num >0) {
+                        $.ui.success("成功操作"+num+"条记录");
+                        //根据频率执行域名监控,只有在删除的情况下执行此操作
+                        if (batch_op.exe_url.split(".")[1] == 'Del') {
+                            var monitorNum = uniQueue(monitor_queue);
+                            for (j=0;j<monitorNum.length;j++) {
+                                if (monitorNum[j] != 0) {
+                                    $.exeJS("{url /monitor/update_rate_queue?rate=}"+monitorNum[j]);
+                                }
+                            }
+                        }
+                        monitor_queue = [];
+
+                    }else{
+                        $.ui.error(res.msg);
+                    }
+                }
+                $('#my-confirm').modal("close");
+                batch_records_detial_op(i+1);
+            },
+            data: batch_op.data,
+        });
+    }
+    //数组去重
+    var uniQueue = function(array){
+        var arr=[];
+        var m;
+        while(array.length>0){
+            m=array[0];
+            arr.push(m);
+            array=$.grep(array,function(n,i){
+                return n==m;
+            },true);
+        }
+        return arr;
+    }
+</script>

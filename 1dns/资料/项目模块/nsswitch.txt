@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS `wo_domain_nsswitch` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,  
+  `domain_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '域名ID',
+  `domain` varchar(80) NOT NULL DEFAULT '' COMMENT '域名',
+  `old_nsg_group` char(10) NOT NULL DEFAULT '0' COMMENT '老的nsgroup',
+  `new_nsg_group` char(10) NOT NULL DEFAULT '0' COMMENT '新的nsgroup',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0创建1新生成2老已清除',
+  `dateline` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '时间',
+  `uid` int(10) unsigned NOT NULL COMMENT '用户ID',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;

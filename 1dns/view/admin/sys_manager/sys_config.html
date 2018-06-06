@@ -1,0 +1,53 @@
+{block main}
+<div class="main-nav">
+  <div class="name">站点配置</div>
+  <div class="navbtn">{if $this->userinfo['urole'] == 1}
+  <!--button-->
+  <button type="button" data-url="/sys_manager/flush_cache" class="btn btn-danger btn-sm t-ajax-button" data-loading-text="清除整站缓存……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;清除整站缓存</button>
+  <!--end button-->
+  {/if}</div>
+  <div class="cl"></div>
+</div>
+<div class="form-content">
+<form action="{url /sys_manager/sys_config}" method="post" class="theform form" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+{/block}
+{block javascript}
+{include tpl/form}
+<script language="javascript">
+var formdata = {
+	site_name:{type:"text",label:"站点名称",name:"data[site_name]",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"站点名称必须填写",item_css:""},
+	site_domain:{type:"text",label:"站点域名",name:"data[site_domain]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	site_dir:{type:"text",label:"站点目录",name:"data[site_dir]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	seo_title:{type:"text",label:"站点标题",name:"data[seo_title]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	seo_keyword:{type:"text",label:"站点关键词",name:"data[seo_keyword]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	seo_description:{type:"text",label:"站点描述",name:"data[seo_description]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	style:{type:"text",label:"默认样式",name:"data[style]",value:"default",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	top_tel:{type:"text",label:"联系电话",name:"data[top_tel]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	tel:{type:"text",label:"咨询电话/400电话",name:"data[tel]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	qq:{type:"text",label:"咨询QQ",name:"data[qq]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	qq1:{type:"text",label:"售前QQ",name:"data[qq1]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	qq2:{type:"text",label:"售后QQ",name:"data[qq2]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	kh:{type:"textarea",label:"口号",name:"data[kh]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	shui:{type:"text",label:"充值开票税点",name:"data[shui]",value:"",data_sr:[],css:"",require:"",desc:"1-100之间",item_css:""},
+	//order_expiry:{type:"text",label:"订单失效时间",name:"data[order_expiry]",value:"0",data_sr:[],css:"low",require:"",desc:" 分钟",item_css:""},
+	copyright:{type:"textarea",label:"版权信息",name:"data[copyright]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	icp:{type:"text",label:"备案号",name:"data[icp]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	licence:{type:"text",label:"许可证",name:"data[licence]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	online_qq:{type:"textarea",label:"在线QQ",name:"data[online_qq]",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	reg_captcha:{type:"radio",label:"注册验证码",name:"data[reg_captcha]",value:"",data_sr:[{v:"否",key:0},{v:"是",key:1}],css:"",require:"",desc:"",item_css:""},
+	log_captcha:{type:"radio",label:"登录验证码",name:"data[log_captcha]",value:"",data_sr:[{v:"否",key:0},{v:"是",key:1}],css:"",require:"",desc:"",item_css:""},
+	is_close:{type:"radio",label:"临时关闭",name:"data[is_close]",value:"",data_sr:[{v:"否",key:0},{v:"是",key:1}],css:"",require:"",desc:"",item_css:""},
+	//log_captcha:{type:"radio",label:"登录验证码",name:"data[log_captcha]",value:"",data_sr:[{v:"否",key:0},{v:"是",key:1}],css:"",require:"",desc:"",item_css:""},
+	//reg_captcha:{type:"radio",label:"注册验证码",name:"data[reg_captcha]",value:"",data_sr:[{v:"否",key:0},{v:"是",key:1}],css:"",require:"",desc:"",item_css:""},
+	{if $this->check_purview('/sys_manager/sys_config_save')}
+	btn:{type:"button",label:"",value:"保存修改",desc:""}
+	{/if}
+};
+$(function(){
+	$.loadform(formdata,"{url /sys_manager/sys_config?do=get}");
+})
+</script>
+{/block}

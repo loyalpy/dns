@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>八戒DNS帮助</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../static/css/mui.min.css">
+	<style>
+		html,
+		body {
+			background-color: #efeff4;
+		}
+		.mui-views,
+		.mui-view,
+		.mui-pages,
+		.mui-page,
+		.mui-page-content {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #efeff4;
+		}
+		.mui-pages {
+			top: 46px;
+			height: auto;
+		}
+		.mui-scroll-wrapper,
+		.mui-scroll {
+			background-color: #efeff4;
+		}
+		.mui-page.mui-transitioning {
+			-webkit-transition: -webkit-transform 300ms ease;
+			transition: transform 300ms ease;
+		}
+		.mui-navbar {
+			position: fixed;
+			right: 0;
+			left: 0;
+			z-index: 10;
+			height: 44px;
+			background-color: #f7f7f8;
+		}
+		.mui-page {
+			display: none;
+		}
+		.mui-pages .mui-page {
+			display: block;
+		}
+		.mui-page .mui-table-view:first-child {
+			margin-top: 15px;
+		}
+		.mui-page .mui-table-view:last-child {
+			margin-bottom: 30px;
+		}
+		.mui-table-view {
+			margin-top: 20px;
+		}
+		.mui-fullscreen {
+			position: fixed;
+			z-index: 20;
+			background-color: #000;
+		}
+		.mui-ios .mui-navbar .mui-bar .mui-title {
+			text-align: center;
+		}
+		#about_detail .con{
+			padding:20px 30px;
+			background-color: #fff;
+		}
+		#about_detail .con-title{
+			text-align: center;
+			padding:20px 30px 0px 30px;
+			background-color: #fff;
+		}
+		.unk-t{
+			margin: 10px 0px 0px 10px;
+		}
+		.a-desc{
+			font-size: 12px;
+			color: #8f8f94;
+			font-weight: 400
+		}
+		#about_detail img{
+			width: 100%;
+		}
+		.mui-preview-image.mui-fullscreen {
+			position: fixed;
+			z-index: 20;
+			background-color: #000;
+		}
+		.mui-preview-header,
+		.mui-preview-footer {
+			position: absolute;
+			width: 100%;
+			left: 0;
+			z-index: 10;
+		}
+		.mui-preview-header {
+			height: 44px;
+			top: 0;
+		}
+		.mui-preview-footer {
+			height: 50px;
+			bottom: 0px;
+		}
+		.mui-preview-header .mui-preview-indicator {
+			display: block;
+			line-height: 25px;
+			color: #fff;
+			text-align: center;
+			margin: 15px auto 4;
+			width: 70px;
+			background-color: rgba(0, 0, 0, 0.4);
+			border-radius: 12px;
+			font-size: 16px;
+		}
+		.mui-preview-image {
+			display: none;
+			-webkit-animation-duration: 0.5s;
+			animation-duration: 0.5s;
+			-webkit-animation-fill-mode: both;
+			animation-fill-mode: both;
+		}
+		.mui-preview-image.mui-preview-in {
+			-webkit-animation-name: fadeIn;
+			animation-name: fadeIn;
+		}
+		.mui-preview-image.mui-preview-out {
+			background: none;
+			-webkit-animation-name: fadeOut;
+			animation-name: fadeOut;
+		}
+		.mui-preview-image.mui-preview-out .mui-preview-header,
+		.mui-preview-image.mui-preview-out .mui-preview-footer {
+			display: none;
+		}
+		.mui-zoom-scroller {
+			position: absolute;
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-box-align: center;
+			-webkit-align-items: center;
+			align-items: center;
+			-webkit-box-pack: center;
+			-webkit-justify-content: center;
+			justify-content: center;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			-webkit-backface-visibility: hidden;
+		}
+		.mui-zoom {
+			-webkit-transform-style: preserve-3d;
+			transform-style: preserve-3d;
+		}
+		.mui-slider .mui-slider-group .mui-slider-item img {
+			width: auto;
+			height: auto;
+			max-width: 100%;
+			max-height: 100%;
+		}
+		.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+			width: 100%;
+		}
+		.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+			display: inline-table;
+		}
+		.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+			display: table-cell;
+			vertical-align: middle;
+		}
+		.mui-preview-loading {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			display: none;
+		}
+		.mui-preview-loading.mui-active {
+			display: block;
+		}
+		.mui-preview-loading .mui-spinner-white {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -25px;
+			margin-top: -25px;
+			height: 50px;
+			width: 50px;
+		}
+		.mui-preview-image img.mui-transitioning {
+			-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+			transition: transform 0.5s ease, opacity 0.5s ease;
+		}
+		@-webkit-keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+		@keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+		@-webkit-keyframes fadeOut {
+			0% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+			}
+		}
+		@keyframes fadeOut {
+			0% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+			}
+		}
+		p img {
+			max-width: 100%;
+			height: auto;
+		}
+	</style>
+</head>
+<body class="mui-fullscreen">
+<!--页面主结构开始-->
+<div id="app" class="mui-views">
+	<div class="mui-view">
+		<div class="mui-navbar">
+		</div>
+		<div class="mui-pages">
+		</div>
+	</div>
+</div>
+<!--页面主结构结束-->
+<!--单页面开始-->
+<div id="about_nav" class="mui-page">
+	<!--页面标题栏开始-->
+	<div class="mui-navbar-inner mui-bar mui-bar-nav">
+		<div class="mui-input-row mui-search">
+			<input type="search" name="keyword" value="" class="mui-input-clear" placeholder="请输入关键词">
+		</div>
+		<!--页面主内容区结束-->
+	</div>
+	<!--页面标题栏结束-->
+	<!--页面主内容区开始-->
+	<div class="mui-page-content unk">
+		<div class="mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<ul class="mui-table-view mui-table-view-chevron" id="navcontent"></ul>
+				<div class="mui-content-padded"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--单页面结束-->
+<div id="about_detail" class="mui-page">
+	<div class="mui-navbar-inner mui-bar mui-bar-nav">
+		<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left" href="#about_nav">
+			<span class="mui-icon mui-icon-left-nav"></span>返回
+		</button>
+		<h1 class="mui-center mui-title">详情</h1>
+	</div>
+	<div class="mui-page-content">
+		<div class="mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<div class="con-title"></div>
+				<div class="con"></div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/template" id="tpl_aboutnav">
+	<#list data.list as det>
+		<li class="mui-table-view-cell" id="nav_${det.tid}">
+			<a href="javascript:void(0);" class="mui-navigate-right"><span class="a-subject">${det.subject}</span><br/><span class="a-desc">${det.description}</span></a>
+		</li>
+	</#list>
+</script>
+<script type="text/template" id="tpl_page">
+	<#if (data.totalpage>1)>
+		<ul class="mui-pager">
+			<li class="mui-previous <#if (data.previous == 0)>mui-disabled</#if>">
+				<a href="<#if (data.previous == 0)>javascript:;<#else>helpdetail.html?<#if (data.keyword)>keyword=${data.keyword}<#else>id=${data.list[0]['fid']}</#if>&page=${data.previous}</#if>">
+					上一页
+				</a>
+			</li>
+			<li class="mui-next <#if (data.page == data.totalpage)>mui-disabled</#if>">
+				<a href="<#if (data.page == data.totalpage)>javascript:;<#else>helpdetail.html?<#if (data.keyword)>keyword=${data.keyword}<#else>id=${data.list[0]['fid']}</#if>&page=${data.next}</#if>">
+					下一页
+				</a>
+			</li>
+		</ul>
+	</#if>
+</script>
+<!-- jquery -->
+<script src="../static/js/mui.min.js "></script>
+<script src="../static/js/mui.view.js "></script>
+<script src="../static/js/mui.zoom.js"></script>
+<script src="../static/js/mui.previewimage.js"></script>
+
+<script src="../static/js/lib/jquery-1.11.2.min.js "></script>
+<script src="../static/js/lib/app.1.0.js "></script>
+
+<script>
+	mui.init();
+	//初始化单页view
+	var viewApi = mui('#app').view({
+		defaultPage: '#about_nav'
+	});
+	//初始化单页的区域滚动
+	mui('.mui-scroll-wrapper').scroll();
+
+	(function($){
+		//搜素事件
+		app.on(".mui-search","tap",function () {
+			var keyword =$("input[name='keyword']").val();
+			if (!keyword) {
+				return false;
+			}
+			get_list_topic(1,'',keyword);
+		})
+		var get_list_topic = function(page,id,keyword){
+			var page = typeof page == "undefined"?1:page;
+			var keyword = typeof keyword == "undefined"?"":keyword;
+			//文章列表请求
+			app.ui.loading();
+			app.getJSON(app.u("/site/helper_detail"),{id:id,page:page,keyword:keyword},function(res){
+				if(res.error == 1){
+					app.alert("请求出错");
+				}else{
+					app.ui.close_loading();
+					var navhtml = app.tpl("#tpl_aboutnav",res);
+					if (res.total > 0) {
+						$("#navcontent").html(navhtml);
+						//分页处理
+						if (keyword) {
+							res.keyword = encodeURI(encodeURI(keyword));
+						}
+						var pagehtml = app.tpl("#tpl_page",res);
+						$(".mui-content-padded").html(pagehtml);
+
+					}else{
+						$(".unk").html("<span class='mui-icon mui-icon-close unk-t'></span>"+"<span class='unk-t'>请求出错,内容不存在!</span>");
+					}
+
+					$("#navcontent li").each(function(index){
+						var obj = this;
+						app.on("#"+$(obj).attr("id"),"tap",function(){
+							var tid = res['list'][index]['tid'];
+							var text_title = $(obj).find("a .a-subject").text();
+							//文章详情请求
+							app.ui.loading();
+							app.getJSON(app.u("/site/helper_topic"),{tid:tid},function(res1){
+								app.ui.close_loading();
+								if (res1.error == 1) {
+									app.alert("文章不存在！");
+								}else{
+									$("#about_detail .con-title").html(text_title);
+									$("#about_detail .con").html(res1['article_row']);
+
+									$("img").attr("data-preview-src","");
+									$("img").attr("data-preview-group",1);
+									viewApi.go("#about_detail");
+									mui.previewImage();
+								}
+							})
+
+						});
+					})
+				}
+			});
+		}
+		//读取导航
+		var id = app.req("id");
+		var page = app.req("page");
+		var keyword = decodeURI(app.req("keyword"));
+		get_list_topic(page,id,keyword);
+	})($);
+	//处理view的后退与webview后退
+	var oldBack = mui.back;
+	mui.back = function() {
+		if (viewApi.canBack()) { //如果view可以后退，则执行view的后退
+			viewApi.back();
+		} else { //执行webview后退
+			oldBack();
+		}
+	};
+	mui.scrollTo(0,1000);
+</script>
+</html>

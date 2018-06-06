@@ -1,0 +1,126 @@
+{block main}
+<div class="main-nav">
+  <div class="name">图片管理</div>
+  <div class="navbtn0 rl">
+  <button clip="" id="Ball_clip" class="btn btn-success copyclip" >复制所有图片</button>
+  </div>
+  <div class="navbtn">
+  <!--button-->
+  {if $this->check_purview("/photos_manager/photoslist_edit")}
+  <a href="{url /photos_manager/photoslist_edit}" class="btn btn-primary btn-sm">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增图集</a>
+  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /photos_manager/photoslist_attach?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box photos-list-box">
+<div class="tpl"></div>
+</div>
+<div class="pagebar"></div>
+<div class="dis20"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{webroot cache/static/areadata.js}"></script>
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+<div class="photos-item">
+<div class="pic"><img src="{webroot attach/photos/}${data.path}/${data.filename}<#if (data.width>100)>-100-100</#if>.${data.ext}" width="100" height="100" /></div>
+<div class="name e">${data.description}</div>
+<div class="catname e">${data.catname}</div>
+<div class="pbtn table-item-op">
+<button clip="http://{echo tServer::get_host()}{webroot /attach/photos/}${data.path}/${data.filename}.${data.ext}" class="btn btn-xs btn-success copyclip" type="button">拷贝</button>&nbsp;&nbsp;
+<a href="{url /photos_manager/photoslist_edit?do=edit&id=}${data.photos_id}"><span class="glyphicon glyphicon-edit"></span></a> 
+<a href="javascript:void(0);" class="delbtn" data-url="{url /photos_manager/photoslist_del?id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a> 
+</div>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var search_formdata = {
+	fid:{type:"select",label:"分类",name:"fid",value:"{$condi['fid']}",disabled:0,data_sr:{echo JSON::encode($catlist)},css:"low",require:"",desc:"",item_css:"item-100"},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+//搜索
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(res){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_func(this);
+		 });
+		$(".delbtn").click(function(){
+			del_func(this);
+		 });
+		 $("#Ball_clip").attr("clip",res.all_imgpath);
+		 $('.copyclip').zclip({
+		       path: "{webroot common/javascript/jquery.zclip/ZeroClipboard.swf}",
+		       copy: function(){
+		          var obj = this;
+		          return $(obj).attr("clip");
+		  　　　 }
+		   });
+	});
+}
+var edit_func = function(obj,edit){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改图集"});
+	$("#myModal").find(".modal-dialog").width(1120);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 loadlist(1);
+		 return true;
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				$.exeJS(res.js);
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					loadlist(1);
+				}
+			}
+		});
+	}
+}
+$(function(){
+	  //加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 
+	 loadlist(1);
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+</script>
+{/block}

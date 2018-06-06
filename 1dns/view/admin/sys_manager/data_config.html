@@ -1,0 +1,199 @@
+{block main}
+<div class="main-nav">
+  <div class="name">数据配置</div>
+  <div class="navbtn">
+  <!--button-->
+  <button type="button" data-url="/sys_manager/data_config?do=makecache" class="btn btn-default btn-sm t-ajax-button" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button>
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<div class="com-box">
+	<div class="leftnav2">
+		<ul id="myTab">
+			{if $this->check_purview('/sys_manager/data_config_dns_version')}
+		<li><a href="javascript:void(0);" data-key="dns_version">DNS软件版本</a></li>
+			{/if}
+			{if $this->check_purview('/sys_manager/data_config_suport_domain')}
+		<li><a href="javascript:void(0);" data-key="suport_domain">支持域名</a></li>
+			{/if}
+			{if $this->check_purview('/sys_manager/data_config_RRtype')}
+		<li><a href="javascript:void(0);" data-key="RRtype">记录类型</a></li>
+			{/if}
+			{if $this->check_purview('/sys_manager/data_config_domain_group')}
+		<li><a href="javascript:void(0);" data-key="domain_group">域名固定分组</a></li>
+			{/if}
+			{if $this->check_purview('/sys_manager/data_config_service_num')}
+		<li><a href="javascript:void(0);" data-key="service_num">购买套餐时间</a></li>
+			{/if}
+			{if $this->check_purview('/sys_manager/data_config_scan_host')}
+		<li><a href="javascript:void(0);" data-key="scan_host">扫描主机</a></li>
+			{/if}
+			{if $this->check_purview('/sys_manager/data_config_register_domain')}
+		<li><a href="javascript:void(0);" data-key="register_domain">域名注册类型</a></li>
+			{/if}
+			{if $this->check_purview('/sys_manager/data_config_domain_agent')}
+		<li><a href="javascript:void(0);" data-key="domain_agent">域名注册代理商</a></li>
+			{/if}
+			<li><a href="javascript:void(0);" data-key="domain_register_type">域名注册实名制审核</a></li>
+			<li><a href="javascript:void(0);" data-key="record_import_type">记录导入模式</a></li>
+		</ul>
+	</div>
+	<div class="dataconfig-content"></div>
+	<div class="cl"></div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_tabcontent">
+<#macro form data>
+<form class="t-ajax-form form" action="{url /sys_manager/data_config}" method="POST" >
+<div class="dis5"></div>
+<button type="button" class="btn btn-danger btn-xs additem"><span class="glyphicon glyphicon-plus"></span> 添加</button>
+<div class="dis10"></div>
+<table class='table  table-condensed table-bordered' cellpadding="0" cellspacing="0" style='width:600px;'>
+			 <thead>
+			 <tr>
+			 <th>名称</th>
+			 <th>编码</th>
+			 <th>操作</th>
+			 </tr>
+			 </thead>
+		     <tbody id='item_box_${data.name}'>
+		     <#list data.datalist as list>
+			  <tr>
+			  <td><input type="text" name="name[]" class="nhigh" value="${list.value}" /></td>
+			  <td><input type="text" name="code[]" class="low" value="${list.key}" /></td>
+			  <td>
+			  <p class='table-item-op'>
+			  <span class="glyphicon glyphicon-arrow-up"></span>
+			  <span class="glyphicon glyphicon-arrow-down"></span>
+			  <span class="glyphicon glyphicon-remove"></span>
+			  </p>
+			  </td>
+			  </tr>
+			  </#list>
+			 </tbody>
+</table>
+<input type="hidden" value="{hash}" name="hash" />
+<input name="item" value="${data.name}" type="hidden" />
+<input name="do" value="edit" type="hidden" />
+<button type="submit" class="btn btn-success" tabindex="4" data-loading-text="处理中……">完成修改</button>
+</form>
+</#macro>
+</script>
+<script type="text/template" id="tpl_tabcontent_item">
+<#macro item mydata>
+<#list mydata.datalist as list>
+			  <tr>
+			  <td><input type="text" name="name[]" class="nhigh" value="${list.value}" /></td>
+			  <td><input type="text" name="code[]" class="low" value="${list.key}" /></td>
+			  <td>
+			  <p class='table-item-op'>
+			  <span class="glyphicon glyphicon-arrow-up"></span>
+			  <span class="glyphicon glyphicon-arrow-down"></span>
+			  <span class="glyphicon glyphicon-remove"></span>
+			  </p>
+			  </td>
+			  </tr>
+</#list>
+</#macro>
+</script>
+<script type='text/javascript'>
+//按钮(点击绑定)
+	function init_button(indexValue,idstr){
+		//功能操作按钮
+		$('.c_'+idstr+' tbody tr:eq('+indexValue+') .table-item-op .glyphicon').each(
+			function(i){
+				var tr_obj = $(this).parent().parent().parent();
+				switch(i){
+					//向上排序
+					case 0:
+					$(this).click(
+						function(){
+							var insertIndex = tr_obj.prev().index();
+							if(insertIndex >= 0){
+								$('.c_'+idstr+' tbody tr:eq('+insertIndex+')').before(tr_obj);
+							}
+						}
+					)
+					break;
+					//向下排序
+					case 1:
+					$(this).click(
+						function(){
+							var insertIndex = tr_obj.next().index();
+							$('.c_'+idstr+' tbody tr:eq('+insertIndex+')').after(tr_obj);
+						}
+					)
+					break;
+					//删除排序
+					case 2:
+					$(this).click(
+						function(){
+							tr_obj.remove();
+						}
+					)
+					break;
+				}
+			}
+		)
+	}
+  $(function(){
+  	$('#myTab a').click(function (e) {
+	  e.preventDefault();
+	  var obj = this;
+	  var is = parseInt($(obj).attr("loaded"));
+	  var item = $(obj).attr("data-key").replace("#","");
+	  if(is != 1){
+	  	    $.ajaxPassport({
+		  	    "url":("{url /sys_manager/data_config?do=get&item=}"+item),
+		  	    "success":function(res){
+		  	    	            var tpl_s = $("#tpl_tabcontent").html();
+					  	    	var tpl_v = {name:item,datalist:[]};
+					  	    	if(res.data){
+					  	    		for(var i in res.data){
+					  	    			tpl_v.datalist.push({"key":i,"value":res.data[i]});
+					  	    		}
+					  	    	}
+					  	    	var html = "" + easyTemplate(tpl_s,tpl_v);
+					  	    	
+					  	    	if(!$(".c_"+item).get(0)){
+					  	    		$(".dataconfig-content").append("<div class='c c_"+item+"'></div>");
+					  	    	}
+					  	    	$(".c_"+item).html(html);
+						  	    //初始按钮
+						  	    $(".c_"+item).find("table tbody tr").each(
+									function(i){
+										init_button(i,item);
+									}
+								);
+						  	    //添加按钮
+						  	    $(".c_"+item).find("button.additem").click(function(){
+						  	    	var tpl_s = $("#tpl_tabcontent_item").html();
+					  	    		var tpl_v = {"datalist":[{"key":"","value":""}]};
+					  	    		var size = $(".c_"+item).find("table tbody tr").size();
+					  	    		$(".c_"+item).find("table tbody").append(""+easyTemplate(tpl_s,tpl_v));
+					  	    		init_button(size,item);
+						  	    });
+						  	    //初始化表单
+						  	   $(".c_"+item).find("form.t-ajax-form").each(function(i){
+									$(this).submit(function(){
+										return $.ajaxForm(this,i);
+									});
+								});
+							  	$(obj).attr("loaded",1);
+		  	    },
+		  	    "loading_txt":"正在加载数据……"
+	  	    });
+	  }
+	  $('#myTab a').removeClass("cur");
+	  $(obj).addClass("cur");
+	  
+	  $(".dataconfig-content .c").hide();
+	  $(".c_"+item).show();
+	});
+	$('#myTab a:first').click();
+  })
+</script>
+{/block}

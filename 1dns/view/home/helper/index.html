@@ -1,0 +1,91 @@
+{block header}{/block}
+{block main}
+<div class="site-helper">
+    <div class="helper-top">
+        <div class="search">
+            <form class="the_searchform form" method="POST" action="{url /helper/cat}">
+                <input type="text" name="keyword" placeholder="请输入关键词,找到您想要的答案"  value="{$keyword}"/>
+                <button type="submit" style="display: none">提交</button>
+            </form>
+        </div>
+    </div>
+    <div class="dis40"></div>
+    <div class="help-box aps">
+        <!-- search nav-->
+        <div class="search-navi">
+            <table class="navi-table">
+                <col width="230px" />
+                <col width="420px" />
+                <col />
+                <tbody>
+                <tr>
+                    <td class="top0" valign="top">
+                        {foreach $items = $res_level}
+                            {if $item['level'] == 1}
+                            <div class="item citem {if $key == 1}item-c{/if}" _id="{$item['id']}">
+                                <div class="in">
+                                    <a href="javascript:void(0);" _id="{$item['id']}">{$item['name']}    	  <cite class="arrow"></cite>
+                                    </a>
+                                </div>
+                            </div>
+                            {/if}
+                        {/foreach}
+                    </td>
+                    <td class="top1" valign="top">
+                        {foreach $items = $res_level}
+                            {if $item['level'] == 2}
+                            <div class="item item{$item['pid']} {if $item['id'] ==29}item-c{/if}" style="display:None;" _id="{$item['id']}">
+                                <div class="in">
+                                    <a href="javascript:void(0);" _id="{$item['id']}">{$item['name']}<span class="txt-org f10"> ({$item['threads']})</span>
+                                        <cite class="arrow"></cite>
+                                    </a>
+                                </div>
+                            </div>
+                            {/if}
+                        {/foreach}
+                    </td>
+                    <td class="top2" valign="top">
+                        <div class="tip">请跟随左侧向导选择您遇到的问题</div>
+                        <ul>
+                            {foreach $items = $res_title}
+                            <li style="display:none;" class="cat{$item['fid']}"><a href="{url /helper/article/tid/}{$item['tid']}" target="_blank" class="txt-blue">{$item['subject']}</a></li>
+                            {/foreach}
+                        </ul>
+                        <div class="dis20"></div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- end search nav-->
+    </div>
+    <div class="dis40"></div>
+</div>
+{/block}
+{block javascript}
+<script type="text/javascript">
+    $(function(){
+        $(".img").click(function(){
+            $("button").click();
+        });
+        $("td.top0").find(".citem").click(function(){
+            var top_id = $(this).attr("_id");
+            $("td.top0").find(".item").removeClass("item-c");
+            $(this).removeClass("item-c").addClass("item-c");
+            $("td.top1").find(".item").hide();
+            $("td.top1").find(".item"+top_id).show();
+            $("td.top2").find("li").hide();
+            $("td.top2").find(".tip").html("请跟随左侧向导选择您遇到的问题");
+        });
+        $("td.top1").find(".item").click(function(){
+            var top_id = $(this).attr("_id");
+            $("td.top1").find(".item").removeClass("item-c");
+            $(this).removeClass("item-c").addClass("item-c");
+            $("td.top2").find("li").hide();
+            $("td.top2").find("li.cat"+top_id).show();
+            $("td.top2").find(".tip").html("问题描述");
+        });
+        $(".item-c").click();
+    });
+</script>
+{/block}

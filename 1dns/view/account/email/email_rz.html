@@ -1,0 +1,23 @@
+<div style="border-bottom: #cccccc 1px solid; border-left: #cccccc 1px solid; padding-bottom: 20px; margin: 0px auto; padding-left: 20px; width: 600px; padding-right: 20px; height: 1%; clear: both; font-size: 12px; border-top: #cccccc 1px solid; border-right: #cccccc 1px solid; padding-top: 20px" id=regist>
+  <div style="padding-bottom: 5px; background-color: #eaf5fb; padding-left: 10px; padding-right: 10px; color: #105bac; clear: both; padding-top: 5px"><strong style="font-size: 16px">{$site_config['site_name']}({$site_config['site_domain']}) | 邮件认证通知</strong></div>
+  <div style="margin: 10px">
+    <div style="border-bottom: #e7e7e7 1px solid; padding-bottom: 20px; margin: 10px; padding-left: 0px; padding-right: 0px; padding-top: 20px">
+      <p style="margin-top: 10px"><strong style="font-size: 16px">亲爱的{$this->userinfo['email']}，您好！</strong></p>
+      <div style="line-height: 23px; padding-left: 30px">
+        <p>感谢您注册{$site_config['site_name']}！<br>
+          您的登录账号：<strong><a href="mailto:{$this->userinfo['email']}" target=_blank>{$this->userinfo['email']}</a></strong></p>
+        <div style="margin: 10px 0px">
+          <div style="border-bottom: #000 1px solid; text-align: center; border-left: #000 1px solid; padding-bottom: 0px; line-height: 23px; padding-left: 5px; width: 100px; padding-right: 5px; background: #4695e2; height: 25px; font-size: 12px; border-top: #000 1px solid; cursor: pointer; border-right: #000 1px solid; padding-top: 0px"><a style="color: #fff" href="{echo tUrl::get_host()}{echo U('/register/verify?code='.urlencode($this->rzcode))}" target=_blank>点击激活账号</a></div>
+          <p>如果您点击上述链接无效，请把下面的代码拷贝到浏览器的地址栏中：<a style="table-layout: fixed; overflow: hidden; word-break: break-all" href="{echo tUrl::get_host()}{echo U('/register/verify?code='.urlencode($this->rzcode))}" target=_blank>
+		  {echo tUrl::get_host()}{echo U('/register/verify?code='.urlencode($this->rzcode))}</a></p>
+        </div>
+        <p>本邮件由系统自动发出，请勿回复。<br>
+          感谢您使用<a href="{echo tUrl::get_host()}" target=_blank>{$site_config['site_name']}</a>，<span style="padding-top: 10px">祝您在{$site_config['site_name']}收获价值。</span><a href="{$site_config['site_domain']}" target="_blank">{$site_config['site_name']}</a></p>
+      </div>
+    </div>
+  </div>
+  <div style="padding-bottom: 5px; margin: 10px; padding-left: 5px; padding-right: 5px; color: #999999; text-decoration: none; padding-top: 5px">
+    <p>如果您在使用过程中遇到任何问题，您可以写信给我们：<a style="color: #999999" href="mailto:service@{$site_config['site_domain']}" target=_blank>service@{$site_config['site_domain']}</a></p>
+    <p>或者拨打我们的客服电话：{$site_config['top_tel']}  与我们联系，我们会尽快为您解决</p>
+  </div>
+</div>

@@ -1,0 +1,177 @@
+{block left}
+{/block}
+{block main}
+<div class="combox">
+    <div class="records-nav">
+        <ul>
+            <li class="domain">
+                <a href="{url /domains/mylist}"><i class="am-icon-globe"></i></a>
+                <span>{if $domain_cn}{$domain_cn}{else}{$domain}{/if}</span>
+            </li>
+            <li><a href="{url /records/records_setline?domain=$domain}">自定义线路</a></li>
+            <li><a href="{url /records/records_set?domain=$domain}">域名设置</a></li>
+            <li class="cur"><a href="{url /records/records_count?domain=$domain}">解析量统计</a></li>
+            <li><a href="{url /domains/dns/}{$domain}">记录设置</a></li>
+        </ul>
+    </div>
+    <div class="dis20"></div>
+    <div class="records-content">
+        <div class="img-header" style="font-size: 14px;">
+            <div class="serchtime" style="position: relative;left:30px;">
+                <span>查询时间</span>&nbsp;&nbsp;
+                <select style="width: 150px;" id="Mtimetype"><option value="day" selected="selected">今天</option><option value="week">最近一周</option><option value="month">最近一个月</option></select>
+            </div>
+            <div class="dis10"></div>
+            <div class="serchname" style="position: relative;left:30px;">
+                <span>查看域名</span>&nbsp;&nbsp;
+                <select style="width: 150px;" id="MRRname">
+                    <option value="0" selected="selected">所有</option>
+                    {foreach items=$RRname}
+                    {set $kk = str_replace('#','.',$key);}
+                    <option value="{$key}">{$kk}.{$domain}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="dis20"></div>
+        </div>
+        <div class="countimage-box" id="user_reg_month" style="width: 1080px; height:320px; margin: 0 auto"></div>
+    </div>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script language="javascript" src="{url static@/javascript/highcharts/highcharts.js}"></script>
+<script type="text/javascript">
+    var show_map = function(RRname,timetype){
+        var RRname =  (RRname == "@")?"_at_":RRname;    // 特殊标记
+        var timetype = typeof timetype == "undefined"?"day":timetype;
+
+        $.ui.loading();
+        $.ajaxPassport({
+            url:"{url /api/Domain.Maps}",
+            data:{timetype:timetype,RRname:RRname,domain:"{$domain}"},
+            success:function(res){
+                $.ui.close_loading();
+                if(res.status == 1){
+
+                    if (RRname == 0) {
+                        RRname = "";
+                    }else if (RRname == "_at_") {
+                        RRname = "@.";
+                    }else{
+                        RRname = RRname+".";
+                    }
+
+                    if (timetype == "week") {
+                        var day_t1 = "周";
+                        var day_t2 = "最近一周";
+                        var day_t3 = "上周";
+                    }else if (timetype == "month") {
+                        day_t1 = "月";
+                        day_t2 = "最近一月";
+                        day_t3 = "上月";
+                    }else{
+                        day_t1 = "日";
+                        day_t2 = "今日";
+                        day_t3 = "昨日";
+                    }
+
+                    var total1 = 0;
+                    var g1ns1 = new Array();
+                    var g1ns2 = new Array();
+                    for(var x in res.data['domain1']){
+                        g1ns1.push(x);
+                        g1ns2.push(res.data['domain1'][x]);
+                        total1 = total1+ parseInt(res.data['domain1'][x]);
+                    }
+
+                    var total2 = 0;
+                    var g1ns3 = new Array();
+                    var g1ns4 = new Array();
+                    for(var x in res.data['domain2']){
+                        g1ns3.push(x);
+                        if (timetype == "day") {
+                            g1ns4.push(res.data['domain2'][x]);
+                        }
+                        total2 = total2+ parseInt(res.data['domain2'][x]);
+                    }
+
+                    $("#user_reg_month").highcharts({
+                        chart: {
+                            type: "line",
+                            marginRight: 130,
+                            marginBottom: 25
+                        },
+                        title: {
+                            text: "域名"+RRname+"{$domain}"+day_t1+"统计图",
+                            x: -20 //center
+                        },
+                        subtitle: {
+                            text: day_t2+"请求数:"+total1+"人次 | "+day_t3+"请求数:"+total2+"人次",
+                            x: -20
+                        },
+                        xAxis: {
+                            categories: g1ns1,
+                            tickInterval:3
+                        },
+                        yAxis: {
+                            title: {
+                                text: "请求数"
+                            },
+                            plotLines: [{
+                                value: 0,
+                                width: 1,
+                                color: "#808080"
+                            }]
+                        },
+                        tooltip: {
+                            valueSuffix: "次",
+                            shadow:false,
+                            shared: true,
+                            crosshairs: true,
+                            borderColor: "#bbbbbb",
+                            borderRadius: 0,
+                            borderWidth: 1
+                        },
+                        legend: {
+                            layout: "vertical",
+                            align: "right",
+                            verticalAlign: "top",
+                            x: -10,
+                            y: 100,
+                            borderWidth: 0
+                        },
+                        series: [{
+                            name: day_t2+"请求数",
+                            data: g1ns2,
+                            color:"#48BEF4",
+                            index:1,
+                        },{
+                            name: day_t3+"请求数",
+                            data: g1ns4,
+                            color:"#90ED7D",
+                            marker: {
+                                symbol: "diamond"
+                            }
+                        }
+                        ]
+                    });
+                }else{
+                    $("#user_reg_month").html("<p style='padding:60px 0 0 0;'>当前无可用图像</p>");
+                }
+            }
+        });
+    }
+    show_map("");
+    $("#Mtimetype").bind("change",function(){
+        var timetype = $(this).val();
+        show_map("",timetype);
+    });
+    $("#MRRname").bind("change",function(){
+        var RRname = $(this).val();
+        var timetype = $("#Mtimetype").val();
+        show_map(RRname,timetype);
+    })
+</script>
+{/block}

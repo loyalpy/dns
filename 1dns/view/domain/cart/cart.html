@@ -1,0 +1,294 @@
+{block main}
+<div class="aps1">
+        <div class="dis20"></div>
+        <div class="cart-top-tip aps1">提醒：.cn 域名注册后需要提交身份资料审核，目前只支持大陆身份证，其它类型证件的用户请谨慎购买</div>
+        <div class="dis10"></div>
+        <div class="order-shopping">
+                <div class="nav">
+                        <ul>
+                                <li class="un-use use1">
+                                        <div class="icon">
+                                                <span class="s cur">1</span>
+                                                <font class="cur">查看购物车</font>
+                                                <span class="cart_icon_right"></span>
+                                        </div>
+                                </li>
+                                <li class="un-use use2">
+                                        <div class="icon">
+                                                <span  class="s">2</span>
+                                                <font class="">提交资料</font>
+                                                <span class="cart_icon_right"></span>
+                                        </div>
+                                </li>
+                                <li class="un-use use3">
+                                        <div class="icon">
+                                                <span class="s">3</span>
+                                                <font class="">确认订单</font>
+                                                <span class="cart_icon_right"></span>
+                                        </div>
+                                </li>
+                                <li class="un-use use4">
+                                        <div class="icon">
+                                                <span class="s">4</span>
+                                                <font >支付</font>
+                                        </div>
+                                </li>
+                        </ul>
+                </div>
+                <div class="content">
+                        <div class="dis10"></div>
+                        <div class="content-shop">
+                                <div class="step1" style="display: block;">
+                                        <div class="step1_empty" {if !empty($list['list'])}style="display:none;"{/if}>
+                                                <span>购物车空空的哦~，去首页<a href="{url /domain/index}">搜索</a>心仪的域名吧~ </span>
+                                        </div>
+                                        <div class="step1_list">
+                                                <form class="the_searchform form" method="POST" action="{url /cart/cart_sub}">
+                                                        <div class="dis20"></div>
+                                                        {if count($list['list'])>0}
+                                                        <div class="cart-type" style="border-left: 2px solid #5D9FD6;padding-left: 10px;font-size: 18px">域名注册</div>
+                                                        <hr/>
+                                                        <div class="cart-list">
+                                                                <table class="table">
+                                                                        <col />
+                                                                        <col width="120px"/>
+                                                                        <col width="120px"/>
+                                                                        <col width="140px"/>
+                                                                        <col width="110px"/>
+                                                                        <col width="110px"/>
+                                                                        <col width="90px"/>
+                                                                        <thead>
+                                                                        <tr>
+                                                                                <th>域名</th>
+                                                                                <th>类型</th>
+                                                                                <th>单价</th>
+                                                                                <th>时长</th>
+                                                                                <th>优惠</th>
+                                                                                <th>总计</th>
+                                                                                <th>操作</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody class="add-cart">
+                                                                        {foreach items=$list['list']}
+                                                                        <tr>
+                                                                                <td>
+                                                                                        {$item['domain']}
+                                                                                        <input type="hidden" name="domain" {if isset($item['renew_price'])}data-renew_price="{$item['renew_price']}"{/if} data-cart_id="{$item['cart_id']}" data-price="{$item['price']}" data-num="{$item['num']}" data-zk="{$item['amount_promation']}">
+                                                                                </td>
+                                                                                <td>{if $item['type'] == 1}新购{else}续费{/if}</td>
+                                                                                <td class="price"><span>{$item['price']}</span>元</td>
+                                                                                <td>
+                                                                                        <select class="form-control" name="num"  style="width: 80px;">
+                                                                                                {if $item['type'] == 3}
+                                                                                                        {set $num_arr = array(1);}
+                                                                                                {elseif $item['type'] == 2}
+                                                                                                        {set $num_arr = array(1,2,3,4,5,6,7,8,9);}
+                                                                                                {else}
+                                                                                                        {set $num_arr = array(1,2,3,4,5,6,7,8,9,10);}
+                                                                                                {/if}
+                                                                                                {foreach items=$num_arr key=$key2 item=$item2}
+                                                                                                <option {if $item['num'] == $item2}selected="selected"{/if} value="{$item2}">{$item2}年</option>
+                                                                                                {/foreach}
+                                                                                        </select>
+                                                                                </td>
+                                                                                <td class="zk"><font>{$item['amount_promation']}</font></td>
+                                                                                <td class="total"><font>{$item['amount']}</font></td>
+                                                                                <td><a href="javascript:void (0);" class="Del" data-type="0" data-domain="{$item['domain']}">删除</a></td>
+                                                                        </tr>
+                                                                        {/foreach}
+                                                                        </tbody>
+                                                                </table>
+                                                        </div>
+
+                                                        {if !empty($list['list'])}
+                                                                {if count($coupon) > 0}
+                                                                <div class="cart-type" style="border-left: 2px solid #5D9FD6;padding-left: 10px;font-size: 18px">代金券</div>
+                                                                <div class="dis10"></div>
+                                                                <div class="coupon-c">
+                                                                        {foreach items = $coupon}
+                                                                        {if $key == 0}
+                                                                        <input type="checkbox" name="coupon" {if intval($list['amount']) > $item['need_balance']}checked="checked"{else}disabled{/if} data-code="{$item['code']}"  value="{$item['balance']}"/>&nbsp;&nbsp;{$item['name']}&nbsp;{if intval($list['amount']) <= $item['need_balance']}(未满{$item['need_balance']}元,不能使用){/if}<br/>
+                                                                        {/if}
+                                                                        {/foreach}
+                                                                </div>
+                                                                {/if}
+                                                        {/if}
+
+                                                        <div class="dis30"></div>
+                                                        <div class="cart-add-order">
+                                                                <a type="button" class="btn btn-default back-tape" href="{url /domain/lists}">继续购物</a>
+                                                                <div class="go-add">
+                                                                        <input type="hidden" name="hash" value="{hash}" />
+                                                                        <input type="hidden" name="cart_ids" value="" />
+                                                                        <input type="hidden" name="coupons" value="" />
+                                                                        套餐总价：<span class="total">{echo sprintf("%.2f",($list['amount']+$list['amount_promation']))}</span>元<br/>
+                                                                        <div class="coupon-console">- 代金券：<span class="coupon-m">0.00</span>元<br/></div>
+                                                                        <div style="border-bottom: 1px solid silver;width: 300px;float: right;">- 共优惠：<span class="coupon">{$list['amount_promation']}</span>元</div><br/>
+                                                                        <div class="dis20"></div>
+                                                                        应付总价：<span class="total-sum" ><strong style="color: #FA7821;font-size: 34px;">{$list['amount']}</strong></span>元&nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-info go-account">立即购买</button><br/>
+                                                                </div>
+                                                        </div>
+                                                        {/if}
+                                                </form>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+        <div class="dis60" style="margin-bottom: 220px"></div>
+</div>
+{/block}
+{block javascript}
+{include ucenter/order_tpl}
+<script type="text/javascript">
+        $(function () {
+                domain_register_tips();
+                //点击时间按钮触发事件
+                $(".add-cart tr select").unbind("change").bind("change",function(){
+                        var obj=this;
+                        var cart_id = $(obj).parent().parent().find("input[name='domain']").data("cart_id");
+                        var num = $(obj).val();
+                        $.ui.loading();
+                        $.ajaxPassport({
+                                url:"{url /cart/edit_cart}",
+                                success:function(){
+                                        $.ui.close_loading();
+                                        account_total($(obj).parent().parent());
+                                },
+                                data:{cart_id:cart_id,num:num},
+                        });
+                });
+                //删除购物车
+                $(".Del").unbind("click").bind("click",function () {
+                        var obj = this;
+                        var domain = $(obj).data("domain");
+                        $.ui.loading();
+                        $.ajaxPassport({
+                                url:U("/cart/del_cart"),
+                                success:function (res) {
+                                        $.ui.close_loading();
+                                        $.ui.success(res.message);
+                                        if (res.error == 0) { //ok
+                                                $(obj).parent().parent().remove();
+                                                checked_no();
+
+                                                if ($(".cart-list").find("table tbody tr").length == 0) {
+                                                        $(".step1 .step1_empty").show();
+                                                        $(".step1 .step1_list").hide();
+                                                }
+
+                                                domain_register_tips();
+                                        }else{//false
+                                                $.ui.error(res.message);
+                                        }
+                                },
+                                data:{domain:domain}
+                        });
+                })
+                //去结算
+                $(".go-account").click(function(){
+                        var coupon_codes = new Array();
+                        //优惠代金券
+                        $(".content-shop").find("input[name='coupon']:checked").each(function(){
+                                var obj = this;
+                                coupon_codes.push($(obj).data('code'));
+                        });
+                        if (coupon_codes.length > 1) {
+                                $.ui.error("一次性只能消费一张代金券！");
+                                return false;
+                        }
+                        $("input[name='coupons']").val(coupon_codes.join(","));
+                        return true;
+                });
+                //代金券计算
+                coupon_fun();
+                //点击时触发代金券函数
+                $(".content-shop").find(".coupon-c input[name='coupon']").unbind("click").bind("click",function(){
+                        coupon_fun("c");
+                });
+        });
+        //计算总价,域名服务套餐
+        var account_total = function(dobj){
+                var obj = dobj;
+                var num = obj.find("select[name='num']").val();
+                var price   = obj.find("input[name='domain']").data("price");
+                var renew_price = obj.find("input[name='domain']").data("renew_price");
+                var be_num = obj.find("input[name='domain']").data("num");
+                var zk = obj.find("input[name='domain']").data("zk");
+
+                //优惠价
+                var youhui = parseFloat(num) * (parseFloat(zk)/parseFloat(be_num));
+                obj.find("td.zk font").html($.to_float2(youhui));
+                //总计
+                if (typeof renew_price == "undefined") {//续费
+                        var total  = $.to_float2(parseInt(num) *parseFloat(price)-youhui);
+                }else{//新买
+                        total = $.to_float2(parseFloat(price)+(parseInt(num-1) *parseFloat(renew_price))-youhui);
+                }
+
+                obj.find("td.total font").html($.to_float2(total));
+
+                //套餐总价,优惠价,应付总价
+                checked_no();
+        }
+        //套餐总价,优惠价,应付总价
+        var checked_no = function(){
+
+                //套餐总价,优惠价,应付总价
+                var service_total = 0;
+                var service_zk = 0;
+
+                $(".content-shop").find("tr input[name='domain']").each(function(){
+                        var obj=this;
+                        var tmp1_price = $(obj).parent().parent().find("td.price span").html();
+                        var renew_price = $(obj).data("renew_price");
+                        var tmp1_num = $(obj).parent().parent().find("select[name='num']").val();
+                        var tmp2 = $(obj).parent().parent().find("td.zk font").html();
+                        if (typeof renew_price == "undefined") {//续费
+                                service_total = service_total + parseFloat(tmp1_price) * parseInt(tmp1_num);
+                        }else{//新买
+                                service_total = service_total + (parseFloat(tmp1_price) +parseFloat(renew_price) * parseInt(tmp1_num-1));
+                        }
+                        service_zk = service_zk + parseFloat(tmp2);
+                });
+
+                $(".go-add span.total").html($.to_float2(service_total));
+                $(".go-add span.coupon").html($.to_float2(service_zk));
+                $(".go-add strong").html($.to_float2(service_total-service_zk));
+
+                //代金券计算
+                coupon_fun();
+        }
+        //如果代金券存在，计算代金券价格todo:优惠值大于套餐 解决方法，显示隐藏法 套餐总价算法
+        var coupon_fun = function (type) {
+                var coupon_m =  0;
+                var c_num = 0;
+                $(".content-shop").find(".coupon-c input[name='coupon']").each(function () {
+                        var obj = this;
+                        coupon_m += parseInt($(obj).val());
+
+                        if ($(obj).is(':checked')) {
+                                c_num ++;
+                        }
+                });
+                if (c_num > 0) {
+                        $(".cart-add-order").find(".coupon-console").show();
+                        $(".cart-add-order").find("span.coupon-m").html($.to_float2(coupon_m));
+                        $("input[name='coupon_m']").val(coupon_m);
+
+                        $(".go-add strong").html($.to_float2($(".go-add strong").html() - $.to_float2(coupon_m) <= 0?0:$(".go-add strong").html() - $.to_float2(coupon_m)));
+                }else{
+                        $(".cart-add-order").find(".coupon-console").hide();
+                        //仅点击checkbox恢复
+                        if (type == "c") {
+                                $(".go-add strong").html($.to_float2(parseInt($(".go-add strong").html()) + parseInt(coupon_m)));
+                        }
+                        //如果代金券金额大于套餐金额
+                        if (parseInt($(".go-add span.total").html()) < coupon_m) {
+                                $(".go-add strong").html($.to_float2(parseInt($(".go-add span.total").html()) - parseInt($(".go-add span.coupon").html()) - parseInt($(".go-add span.total_yu").html())));
+                        }
+                }
+                c_num = 0;
+        }
+</script>
+{/block}

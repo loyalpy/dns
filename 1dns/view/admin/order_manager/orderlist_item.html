@@ -1,0 +1,186 @@
+{block main}
+<div class="main-nav">
+  <div class="name">订单管理</div>
+  <div class="navbtn0">
+  {set $expiry_s = array(1=>"已到期",3=>"3天内到期",7=>"7天内到期",30=>"一个月内到期")}
+  <a class="btn {if $expiry == 0}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /order_manager/orderlist?expiry=0}"><cite class="glyphicon glyphicon-th"></cite> 所有</a> 
+  {foreach items=$expiry_s}
+  <a class="btn {if $expiry == $key}btn-info{else}btn-default{/if} btn-sm" title="{$item}" href="{url /order_manager/orderlist?expiry=$key}"><cite class="glyphicon glyphicon-th"></cite> {$item}</a> 
+  {/foreach}
+  </div>
+  <div class="navbtn">
+  <!--button-->
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /order_manager/orderlist?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+	<col width="130px" />
+	<col width="130px" />	
+	<col width="120px" />
+	<col width="180px" />
+	<col width="80px" />
+	<col />
+	<col width="80px" />
+	<col width="90px" />
+	<thead>
+	<tr>
+	<th>开始时间</th>
+	<th>结束时间</th>
+	<th>服务器编号</th>
+	<th>订单编号</th>	
+	<th>金额</th>
+	<th>附加</th>
+	<th>服务状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block css}
+<link href="{webroot common/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+<script language="javascript" src="{webroot cache/static/areadata.js}"></script>
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td>${data.start_dateline}</td>
+    <td>${data.expiry}</td>
+    <td class="font-blue"><font>${data.server_no}</font></td>
+    <td class="f12"><a  href="javascript:void(0);" class="font-blue f12 order_no" data-content="">${data.order_no}</a><br/>
+    ${data.buy_uname} &nbsp;<font class="font-gray">${data.dateline}</font></td>
+    <td class="font-org f14">${data.new_amount}<font class="f12 font-gray"></font></td>
+    <td class="font-gray">${data.specs_str} -> ${data.new_specs_str}</td>
+    <td><#if (data.in_start == 1)><i class="font-green glyphicon glyphicon-stop f14" title="已完成"></i> 已生效
+        <#else><i class="font-gray glyphicon glyphicon-stop f14" title="无效"></i> 等待生效
+        </#if>
+    </td>
+    <td> - </td>
+	</tr>
+</#macro>
+</script>
+
+<!--日志查询-->
+<script type="text/template" id="tpl_loglist">
+<#macro rowedit data>
+
+</#macro>
+</script>
+
+{javascript bootstrap-datetimepicker/bootstrap-datetimepicker.min.js,bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var search_formdata = {
+	startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+	enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+	keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"item-200"},
+    btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+/* 服务器日志查询 */
+var view_order = function(page,order_no){
+	$.ajaxPassport({
+		url:"{url /order_manager/orderlist_log?order_no=}"+order_no,
+		success:function(res){
+			if(res.error == 1){
+				$.tips(res.message,"error");
+			}else{
+				res.title = "查看订单变更日志";
+				var edit_c = "" + easyTemplate($("#tpl_loglist").html(),res);
+				$("#myModal").find(".modal-dialog").width("79%");
+				$("#myModal").find(".modal-content").html(edit_c);
+				$('#myModal').modal();
+			}
+		},
+		data:{page:page}
+	});
+}
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(res){
+		var keyword = $(".the_searchform").find("input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		//财务收入
+		$(".edit_finance_btn").click(function(){
+			edit_finance_in($(this).attr("data-order_id"),$(this).attr("data-id"));
+		});
+	    //默认ajax请求
+		$(".t-ajax-button").each(function(i){
+			$.t_ajax_button(this);
+		});
+		//鼠标移至订单号显示提示
+		$("a.order_no").popover({
+			html:true,
+			trigger:"hover",
+		});
+		//查看工单日志
+		$(".thelistform").find(".view_loglist").click(function(){
+			view_loglist(1,$(this).attr("data-order_no"));
+		});
+		$(".thelistform").find(".count_4").html(res.count_4);
+		$(".thelistform").find(".count_2").html(res.count_2);
+		$(".thelistform").find(".sum_4").html(res.sum_4);
+		$(".thelistform").find(".sum_2").html(res.sum_2);
+		$(".thelistform").find(".sum_total").html(res.sum_total);
+	});
+}
+
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		});
+	}
+}
+$(function(){
+	  //加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },function(res){
+	 
+	 },".the_searchform");
+	 $(".date-ymd").datetimepicker({
+		language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"   
+	});
+	 loadlist(1);
+})
+</script>
+
+{/block}

@@ -1,0 +1,136 @@
+{block main}
+<div class="am-uc-left">
+	<div class="leftnav" id="Leftnav">
+		<ul>
+			<li><a href="{url /finance/index}"  class="cur">账户首页&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/recharge}">在线充值&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="javascript:void(0);" class="sms_recharge_btn"  >短信充值&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/recharge_detail}" >收支明细&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/coupon}">代金券&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/tg}">推广中心&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+		</ul>
+	</div>
+</div>
+<div class="am-uc-right am-uc-right-index">
+
+	{set $ad = tCache::read("ad_5");$time = time();}
+	{if count($ad) > 0}
+		{foreach items=$ad}
+		{if $time > $item['start_dateline'] && $time < $item['end_dateline']}
+		{if M("domain")->get_one("uid  = '$uid'","count('domain')") > 0}
+		<a href="{$item['linkurl']}" ><img src="{url static@/$item[imgurl]}"  style="cursor: pointer"/></a>
+		{else}
+		<a href="{url /domains/add}"><img src="{url static@/$item[imgurl]}"/></a>
+		{/if}
+		{/if}
+	{/if}
+	{/foreach}
+	<div class="dis10"></div>
+	<div>
+		<h1><a href="{if $this->userinfo['utype'] >1}/ucenter/profile_basic_com{else}/ucenter/profile_basic{/if}" class="list_tit_name">我是{if $this->userinfo['utype'] == 3}代理会员
+		{elseif $this->userinfo['utype'] == 2}企业{else}个人{/if}</a>
+		<font class="font-org f14">({$this->userinfo['setting']['ulevel_name']})</font>
+		</h1>
+	</div>
+	<hr/>
+	<div class="dis10"></div>
+	<div class="am-finance-content">
+		<div class="finance-new">
+			<a href="{url account@/domains/index}">
+			<i class="am-icon-lg am-icon-globe am-text-primary"></i>
+			<h3>域名解析数</h3>
+			<p class="finance-new-num">
+				<span class="am-text-warning">{$this->userinfo['account']['domains']}</span> 个
+			</p>
+			</a>
+		</div>
+		<div class="finance-new">
+			<a href="{url domain@/ucenter/index}">
+			<i class=" am-icon-wordpress am-text-primary am-icon-lg"></i>
+			<h3>域名注册数</h3>
+			<p class="finance-new-num">
+				<span class="am-text-warning">{$this->userinfo['account']['register_domains']}</span> 个
+			</p>
+			</a>
+		</div>
+		<div class="finance-new">
+			<a href="{url account@/monitor/monitor}">
+			<i class="am-icon-lg am-icon-desktop  am-text-primary"></i>
+			<h3>监控数</h3>
+			<p class="finance-new-num ">
+				<span class="am-text-warning">{$domainJNum}</span> 条
+			</p>
+			</a>
+		</div>
+
+		<div class="finance-new">
+			<a href="{url account@/order/order}">
+			<i class="am-icon-lg am-icon-th-list am-text-primary"></i>
+			<h3>域名解析订单{if isset($this->userinfo['setting']['rate'])}<span class="font-org">({if $this->userinfo['setting']['rate']>=0 && $this->userinfo['setting']['rate'] < 100}{echo $this->userinfo['setting']['rate']/10}折{else}无折扣{/if})</span>{/if}</h3>
+			<p class="finance-new-num">
+				<span class="am-text-warning">{echo M("order")->get_one("uid=$uid AND status>0","count(order_no)")}</span> 个
+			</p>
+			</a>
+		</div>
+		<div class="finance-new">
+			<a href="{url domain@/ucenter/order}">
+			<i class=" am-icon-th am-text-primary am-icon-lg"></i>
+			<h3>域名注册订单{if isset($this->userinfo['setting']['regrate'])}<span class="font-org">({if $this->userinfo['setting']['regrate']>=0 && $this->userinfo['setting']['regrate'] < 100}{echo $this->userinfo['setting']['regrate']/10}折{else}无折扣{/if})</span>{/if}</h3>
+			<p class="finance-new-num">
+				<span class="am-text-warning">{echo M("register_order")->get_one("uid=$uid AND status=4","count(order_no)")}</span> 个
+			</p>
+			</a>
+		</div>
+		<div class="finance-new">
+			<a href="{url account@/finance/recharge?type=2}">
+			<i class="am-icon-lg am-icon-dollar  am-text-primary"></i>
+			<h3>充值订单</h3>
+			<p class="finance-new-num ">
+				<span class="am-text-warning">{echo M("recharge")->get_one("uid=$uid AND status=1","count(id)")}</span> 条
+			</p>
+			</a>
+		</div>
+
+		<div class="finance-new">
+			<a href="{url /finance/recharge}">
+				<i class="am-icon-lg am-icon-yen am-text-primary"></i>
+				<h3>账户余额</h3>
+				<p class="finance-new-num">
+					<span class="am-text-warning">{$this->userinfo['account']['balance']}</span>元
+				</p>
+			</a>
+		</div>
+		<div class="finance-new">
+			<a href="{url /finance/recharge_detail?type=2}">
+			<i class="am-icon-lg am-icon-envelope-o am-text-primary"></i>
+			<h3>短信条数</h3>
+			<p class="finance-new-num">
+				<span class="am-text-warning">{$this->userinfo['account']['sms']}</span>条
+			</p>
+			</a>
+		</div>
+		<div class="finance-new">
+			<a href="{url /finance/recharge_detail?type=3}">
+			<i class="am-icon-lg am-icon-bookmark-o am-text-primary"></i>
+			<h3>账户积分</h3>
+			<p class="finance-new-num">
+				<span class="am-text-warning">{$this->userinfo['account']['point']}</span>
+			</p>
+			</a>
+		</div>
+		
+		<div class="clear"></div>
+	</div>
+</div>
+{/block}
+
+{block javascript}
+{include finance/sms_recharge}
+<script type="text/javascript">
+	$(function(){
+		$("a,button").bind("focus",function(){
+			$(this).blur();
+		});
+	});
+</script>
+{/block}

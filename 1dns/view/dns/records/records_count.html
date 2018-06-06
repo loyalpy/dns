@@ -1,0 +1,160 @@
+{block left}
+{/block}
+{block main}
+<div class="combox">
+    <div class="records-nav">
+        <ul>
+            <li class="domain"><a href="#"><i class="am-icon-globe"></i></a> <span>{if $domain_cn}{$domain_cn}{else}{$domain}{/if}</span></li>
+            <li class="cur"><a href="{url /records/records_count}">解析量统计</a></li>
+            <li><a href="{url /records/records}">记录设置</a></li>
+        </ul>
+    </div>
+    <div class="dis20"></div>
+    <div class="records-content">
+        <div class="img-header" style="font-size: 14px;">
+            <div class="serchtime" style="position: relative;left:30px;">
+                <span>查询时间</span>&nbsp;&nbsp;
+                <select style="width: 150px;" id="Mtimetype"><option value="day" selected="selected">今天</option><option value="week">最近一周</option><option value="month">本月</option></select>
+            </div>
+            <div class="dis10"></div>
+            <div class="serchname" style="position: relative;left:30px;">
+                <span>查看域名</span>&nbsp;&nbsp;
+                <select style="width: 150px;" id="MRRname">
+                    <option value="0" selected="selected">所有</option>
+                    {foreach items=$RRname}
+                    <option value="{$key}">{$key}.{$domain}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="dis20"></div>
+        </div>
+        <div id="Dimg" style="width: 1000px;height:400px;margin:0 auto"></div>
+    </div>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script src="{url static@/javascript/echarts/echarts.common.min.js}" language="javascript"></script>
+<script type="text/javascript">
+    var myChart = null;
+    var chart_option = {
+        title : {
+            text:"",
+            subtext: '',
+            x: 'center'
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            //data:['请求次数']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : [],
+                splitLine:{
+                    show:false, // 是否显示x轴标线
+                },
+            }
+        ],
+        yAxis : [
+            {
+                name:'请求数(次)',
+                type : 'value',
+                splitLine:{
+                    interval:2,
+                },
+            }
+        ],
+        series : [
+            {
+                name:'请求次数',
+                type:'line',
+                smooth:true,
+                stack: '总量',
+                data:[],
+                lineStyle: {
+                    normal: {
+                        color:'#2F7ED8',
+                        width:3,
+                        shadowBlur: 10
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color:'#2F7ED8',
+                    }
+                },
+            },
+        ]
+    };
+    var show_map = function(RRname,timetype){
+        var RRname =  (RRname == "@")?"_at_":RRname;    // 特殊标记
+        var timetype = typeof timetype == "undefined"?"day":timetype;
+        $.ui.loading();
+        $.ajaxPassport({
+            url:"{url /records/api?action=Domain.Maps}",
+            data:{timetype:timetype,RRname:RRname,domain:"{$domain}"},
+            success:function(res){
+                $.ui.close_loading();
+                if(res.status == 1){
+                    if(myChart){
+                        echarts.dispose(myChart);
+                    }
+                    myChart = echarts.init($("#Dimg").get(0));
+                    var total = 0;
+                    chart_option.xAxis[0].data = new Array();
+                    chart_option.series[0].data = new Array();
+                    for(var x in res.data){
+                        chart_option.xAxis[0].data.push(x);
+                        chart_option.series[0].data.push(res.data[x]);
+                        total = total+ parseInt(res.data[x]);
+                    }
+                    if (RRname == 0 || RRname == "_at_") {
+                        RRname = '';
+                    }
+                    var st = RRname?RRname+".":'';
+                    if (timetype == 'day') {
+                        chart_option.title.text = "域名("+st+"{$domain})请求量图(今天)";
+                        chart_option.title.subtext = "今天已请求："+total+"次(统计结果延迟1小时)";
+                    }else if (timetype == 'week'){
+                        chart_option.title.text = "域名("+st+"{$domain})请求量图(最近一周)";
+                        chart_option.title.subtext = "最近一周已请求："+total+"次(统计结果延迟1小时)";
+                    }else{
+                        chart_option.title.text = "域名("+st+"{$domain})请求量图(本月)";
+                        chart_option.title.subtext = "本月已请求："+total+"次(统计结果延迟1小时)";
+                    }
+
+                    myChart.setOption(chart_option);
+                }else{
+                    $("#Dimg").html("<p style='padding:60px 0 0 0;'>当前无可用图像</p>");
+                }
+            }
+        });
+    }
+    show_map("");
+    $("#Mtimetype").bind("change",function(){
+        var timetype = $(this).val();
+        show_map("",timetype);
+    });
+    $("#MRRname").bind("change",function(){
+        var RRname = $(this).val();
+        var timetype = $("#Mtimetype").val();
+        show_map(RRname,timetype);
+    })
+</script>
+{/block}

@@ -1,0 +1,38 @@
+ALTER TABLE  `wo_domain` ADD  `inlock` TINYINT( 1 ) NOT NULL DEFAULT  '0' COMMENT  '是否锁定' AFTER  `status`;
+
+CREATE TABLE IF NOT EXISTS `wo_domain_del` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `domain_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '域名ID',
+  `domain` varchar(60) NOT NULL DEFAULT '',
+  `is_cn` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否中文域名',
+  `domain_cn` varchar(80) NOT NULL COMMENT '中文域名', 
+  `dateline` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
+  `inns` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否指向1 已指向 2 未指向',
+  `group_id` int(10) NOT NULL DEFAULT '0' COMMENT '自定义组',
+  `service_group` char(10) NOT NULL COMMENT '套餐组',
+  `service_expiry` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '套餐期限',
+  `ns_group` char(10) NOT NULL COMMENT '默认DNS组',
+  `uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '当前拥有人',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 
+
+CREATE TABLE IF NOT EXISTS `wo_domain_record` (
+  `record_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `domain_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `domain` varchar(60) NOT NULL DEFAULT '',
+  `acl` varchar(20) NOT NULL DEFAULT '0' COMMENT '线路',
+  `acltype` char(2) NOT NULL DEFAULT 'DI' COMMENT '线路类型',
+  `RRname` varchar(60) NOT NULL DEFAULT '@',
+  `RRtype` varchar(10) NOT NULL DEFAULT 'A',
+  `RRvalue` varchar(255) NOT NULL DEFAULT '0.0.0.0',
+  `RRmx` tinyint(2) unsigned NOT NULL DEFAULT '0',
+  `RRttl` mediumint(8) unsigned NOT NULL DEFAULT '600',
+  `bz` varchar(1024) NOT NULL DEFAULT '',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `inlock` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否为锁定',
+  `indel` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否管理删除',
+  `uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '当前拥有人',
+  PRIMARY KEY (`record_id`),
+  KEY `uid` (`uid`),
+  KEY `domain_id` (`domain_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

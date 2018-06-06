@@ -1,0 +1,114 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/index}"  class="showtype ">全部域名&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/transfer}"  class="showtype cur">域名转入&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/template}"  class="showtype ">信息模板&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/order}"  class="showtype"> 我的订单&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div class="am-alert am-alert-secondary basic-t-t" data-am-alert>
+        <button type="button" class="am-close">&times;</button>
+        <p style="color: #F68300">提示：域名转入前，请确保域名没有被设置禁止域名转移，更新，锁定，即处于正常状态！</p>
+    </div>
+    <div>
+        <h1><span class="list_tit_name">转入域名</span> <span class="list_tit_count am-text-sm am-text-success">(0)</span></h1>
+        <a type="button" href="{url ucenter/transfer_submit}" class="am-btn am-btn-success am-btn-sm"><i class="am-icon-plus"></i> 添加域名转入</a>
+    </div>
+    <div class="dis20"></div>
+    <div class="listbody" style="position: relative;"></div>
+    <div class="dis30"></div>
+</div>
+{/block}
+
+{block javascript}
+<!--域名列表-->
+<script type="text/template" id="tpl_domain_list">
+    <#macro rowedit data>
+        <table class="am-table am-table-hover domain-register-table">
+            <col  width="200px"/>
+            <col />
+            <col width="180px" />
+            <col width="200px"  />
+            <thead>
+            <tr>
+                <th>域名</th>
+                <th>转入状态</th>
+                <th>提交时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="tpl am-form">
+            <#if (data.list.length > 0)>
+                <#list data.list as domain>
+                    <tr>
+                        <td><font color="#0095E2">${domain.domain}</font></td>
+                        <td>
+                            <#if (domain.status == 0)><font color="orange">待支付</font>
+                                <#elseif (domain.status == 1)><font color="green">已支付</font>
+                                <#elseif (domain.status == 2)><font color="gray">${domain.bz}</font>
+                                <#elseif (domain.status == 3)><font color="gray">转移失败:${domain.bz}</font>
+                                <#elseif (domain.status == 4)><font color="green">转移成功</font>
+                                <#elseif (domain.status == 5)><font color="green">续费失败</font>
+                                    <#else>
+                            </#if>
+                        </td>
+                        <td>${$.time_to_string(domain.dateline,"Y-m-d")}</td>
+                        <td>
+                            <#if (domain.status == 0)>
+                                <a href="{url ucenter/transfer_pay?domain=}${domain.domain}"><font color="#0095E2">支付订单</font></a>
+                            <#elseif (domain.status == 1)>
+                                <a href="{url ucenter/transfer_progress?domain=}${domain.domain}"><font color="#0095E2">提交处理</font></a>
+                            <#elseif (domain.status == 2)> 
+                                <a href="{url ucenter/transfer_succ?domain=}${domain.domain}"><font color="#0095E2">查看详情</font></a>
+                            <#elseif (domain.status == 3)> 
+                                <a href="{url ucenter/transfer_progress?domain=}${domain.domain}"><font color="#0095E2">重新提交</font></a>
+                            <#elseif (domain.status == 4)> ------
+                            <#elseif (domain.status == 5)> 
+                                <a href="{url account@/finance/recharge_detail}"><font color="#0095E2">已退款</font></a>
+                            <#else>
+                            </#if>
+                        </td>
+                    </tr>
+                </#list>
+                <#else>
+                    <tr>
+                        <td class="am-text-sm" colspan="6">
+                            <a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">您还没使用域名转入操作?</a>
+                            <a href="{url ucenter/transfer_submit}">添加域名转入</a>
+                        </td>
+                    </tr>
+            </#if>
+            </tbody>
+        </table>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<script type="text/javascript">
+    $(function () {
+        //加载域名列表
+        load_tpl_list(1);
+    });
+    var load_tpl_list = function(page){
+        $.ui.loading($(".listbody"),0);
+        $.ajaxPassport({
+            url:"{url /ucenter/transfer}",
+            success:function(res){
+                //console.log(res);
+                $.ui.close_loading($(".listbody"));
+                var listhtml = ""+ easyTemplate($("#tpl_domain_list").html(),res);
+                $(".listbody").html(listhtml);
+
+                $("a").bind("focus",function(){
+                    $(this).blur();
+                });
+                $(".list_tit_count").html("("+res['list'].length+")");
+            },
+            data:{page:page,do:"get"},
+        });
+    }
+</script>
+{/block}

@@ -1,0 +1,179 @@
+{block main}
+   <!--左边导航-->
+    <div class="am-uc-left">
+	  <div class="leftnav" id="Leftnav">
+		  <ul>
+			  <li class="aftergroup"><a href="javascript:void(0)" data-type="all" data-tit="全部域名" class="showtype">全部域名&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+			  <li><a href="javascript:void(0)" data-type="lastupdate" data-tit="最近操作"  class="showtype">最近操作&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+			  <li><a href="javascript:void(0)" data-type="error" data-tit="错误域名"  class="showtype">错误域名&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+			  <li><a href="javascript:void(0)" data-type="nogroup"  data-tit="未分组" class="showtype">未分组&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+		  </ul>
+	  </div>
+	</div>
+    <!--左边导航结束-->
+    <!--右边内容 -->
+    <div class="am-uc-right">
+
+		{set $ad = tCache::read("ad_5");$time = time();}
+		{if count($ad) > 0}
+			{foreach items=$ad}
+				{if $time > $item['start_dateline'] && $time < $item['end_dateline']}
+					{if M("domain")->get_one("uid  = '$uid'","count('domain')") > 0}
+					<img src="{url static@/$item[imgurl]}" class="img-ad"  style="cursor: pointer"/>
+					{else}
+					<a href="{url /domains/add}"><img src="{url static@/$item[imgurl]}"/></a>
+					{/if}
+				{/if}
+			{/foreach}
+		{/if}
+		<div class="dis10"></div>
+	    <div>
+	    	<h1><span class="list_tit_name">全部域名</span> <span class="list_tit_count am-text-sm am-text-success">(0)</span></h1>
+	    </div>
+		<div class="am-g">
+			<a href="javascript:void(0)" class="am-btn am-btn-success am-dropdown-toggle am-radius am-btn-sm btn-adddomain">
+			<span class="am-icon-plus"></span> 添加域名 
+			</a>&nbsp;&nbsp;&nbsp;&nbsp;
+
+			<div class="am-dropdown" data-am-dropdown>
+				<button class="am-btn am-btn-default am-dropdown-toggle am-radius am-btn-sm" data-am-dropdown-toggle>分组 <span class="am-icon-caret-down"></span></button>
+				<ul class="am-dropdown-content" style="width:200px;" id="Usetgroup">
+					<li class="am-dropdown-header">添加分组</li>
+					<li>
+						<div style="padding:3px 18px;">
+							<input type="text" style="width:100px;" id="add-group"/>&nbsp;<button class="am-btn am-btn-xs am-btn-success btn-add-group" type="button">添加</button>
+						</div>
+					</li>
+					{foreach items=$data_config['domain_group']}
+					<li ><a href="javascript:void(0)" class="set_group" data-group_id="{$key}"><span style="font-size:12px;color:#999;">移动到</span> {$item}</a></li>
+					{/foreach}
+					<li class="am-divider aftergroup"></li>
+				</ul>
+			</div>
+
+			<div class="am-dropdown" data-am-dropdown>
+				<button class="am-btn am-btn-default am-dropdown-toggle am-radius am-btn-sm" data-am-dropdown-toggle>更多操作 <span class="am-icon-caret-down"></span></button>
+				<ul class="am-dropdown-content">
+					<li class="am-dropdown-header">选择后操作</li>
+					<li><a href="javascript:void (0)" class="domainOption" data-do="stop">暂停</a></li>
+					<li><a href="javascript:void (0)" class="domainOption" data-do="start">启用</a></li>
+					<li class="am-divider"></li>
+					<li><a href="javascript:void (0)" class="domainOption" data-do="lock">锁定</a></li>
+					<li><a href="javascript:void (0)" class="domainOption" data-do="unlock">解锁</a></li>
+					<li class="am-divider"></li>
+					<li><a href="javascript:void (0)" class="domainOption" data-do="del">删除</a></li>
+					<li><a href="javascript:void (0)" class="domainTransfer">过户</a></li>
+					<li class="am-divider"></li>
+					<li><a href="{url /domains/add}" data-do="stop">批量添加域名</a></li>
+					<li><a href="javascript:void (0)" class="domainFind">域名找回</a></li>
+				</ul>
+			</div>&nbsp;&nbsp;&nbsp;
+
+			<a href="{url /domains/add}" class="am-text-sm">批量添加域名</a>
+
+
+			<div class="quickserch" style="float: right;width: 200px;">
+				<input type="text" class="am-form-field am-radius am-input-sm am-serch-domains" placeholder="快速查找域名" />
+			</div>
+		</div>
+		<div class="dis10"></div>
+	 	<div class="listbody" style="position: relative;">
+	 		<table class="am-table am-table-hover">
+	            <col width="30px"/>
+	            <col  />
+	            <col width="150px" />
+	            <col width="200px" />
+	            <thead>
+	            <tr>
+	                <th><input type="checkbox" data-name="domainId[]" class="checkall"/></th>
+	                <th>域名</th>
+	                <th></th>
+	                <th class="am-text-right"></th>
+	            </tr>
+	            </thead>
+	            <tbody class="tpl am-form">
+	            </tbody>
+	         </table>
+	 	</div>
+	 	<div class="pagebar"></div>
+		<div class="my-domian-upgrade"></div>
+		<div class="my-domian-find"></div>
+		<div class="my-domian-transfer"></div>
+    </div>
+    <!--右边内容结束 -->
+    <div class="am-cf"></div>
+{/block}
+
+{block javascript}
+{include domains/domains_tpl}
+{include order/order_cart}
+{if $this->userinfo['bd']['status'] != 2}
+{include misc/wxbd}
+{/if}
+<script type="text/javascript">
+	var check_nsdomain_url = "{echo tUtil::js('api@/Common/CheckNS')}";
+	var check_expirydomain_url = "{echo tUtil::js('api@/Common/CheckExpiry')}";
+
+	$(function(){
+		$("a").bind("focus",function(){
+			$(this).blur();
+		});
+		//添加域名
+		$(".btn-adddomain").click(function(){
+			var strId = $(".listbody").find("input[name='domainId[]']").val();
+			if (typeof strId == "undefined") {
+				$(".listbody").find("tr.d-t-intor").remove();
+			}
+			add_domain();
+		});
+		//添加分组
+		$(".btn-add-group").click(function(){
+			add_domains_group(this);
+		});
+		//域名列表批量操作
+		$(".domainOption").click(function(){
+			batch_domain_op(this);
+		});
+		//域名找回
+		$(".domainFind").click(function () {
+			domain_find_op();
+		});
+		//域名过户
+		$(".domainTransfer").click(function(){
+			domain_transfer_op();
+		});
+		//搜索功能
+		$("input.am-serch-domains").keyup(function(){
+			var keyword = $(this).val();
+			var type = $("#Leftnav").find(".cur").attr("data-type");
+			var group_id = $("#Leftnav").find(".cur").attr("data-group_id");
+			if (typeof  type == "undefined") {
+				type = "all";
+			}
+			if (typeof group_id == "undefined") {
+				group_id = 0;
+			}
+			if (!$.is_empty(keyword)){
+				load_domains_list(1,type,group_id,keyword);
+			}else{
+				load_domains_list(1,type,group_id);
+			}
+		});
+
+		//点击广告升级套餐
+		$(".img-ad").unbind("click").bind("click",function(){
+			var utype = "{$utype}";
+			if (utype == 2) {
+				add_cart_step1(1,0, "vvip1", "");
+			}else{
+				add_cart_step1(1,0, "vip1", "");
+			}
+		});
+
+		//加载分组列表
+		load_domains_group("all");
+		//加载域名列表
+		load_domains_list(1,"all");
+	})
+</script>
+{/block}

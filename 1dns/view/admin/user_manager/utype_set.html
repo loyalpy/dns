@@ -1,0 +1,126 @@
+{block main}
+<div class="main-nav">
+  <div class="name">用户类型配置</div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview('/sys_manager/data_config')}
+  <button type="button" data-url="/sys_manager/data_config?do=makecache" class="btn btn-default btn-sm t-ajax-button" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button> 
+	  {/if}
+	  {if $this->check_purview('/user_manager/utype_set_add')}
+	  <a href="javascript:void(0)" data-url="{url /user_manager/utype_set?do=edit&id=0}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增用户类型</a>
+	  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form action=""></form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+    <col width="45px" />
+	<col />
+	<col width="100px" />
+	<thead>
+	<tr>
+	<th>编号</th>
+	<th>用户类型名称</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+</form>
+<!-- end list box -->
+{/block}
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class="font-gray">${data.code}</td>
+    <td class="font-black">${data.name}</td>
+    <td>
+	<p class="table-item-op">
+		{if $this->check_purview('/user_manager/utype_set_edit')}
+	<a href="javascript:void(0);" class="editbtn" data-url="{url /user_manager/utype_set?do=edit&id=}${data.code}"><span class="glyphicon glyphicon-edit"></span></a>
+		{/if}
+		{if $this->check_purview('/user_manager/utype_set_del')}
+		<a href="javascript:void(0);" class="delbtn" data-url="{url /user_manager/utype_set?do=del&id=}${data.code}"><span class="glyphicon glyphicon-remove"></span></a>
+		{/if}
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /user_manager/utype_set?do=edit}" method="post" class="theform form form-1" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var formdata = {
+	name:{type:"text",label:"用户名称",name:"name",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"用户名称必须填写",item_css:""},
+	code:{type:"text",label:"类型编号",name:"code",value:"",data_sr:[],css:"",require:"datatype='n1-3'",desc:"用户名称必须填写",item_css:""},    
+    id:{type:"hidden",label:"",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+var load_list = function(){
+	$.loadlist([],function(res){
+		$(".editbtn").click(function(){
+			edit_func(this);
+		});
+		$(".delbtn").click(function(){
+			del_func(this);
+		});
+	},"{url /user_manager/utype_set?do=get}");
+}
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改机房"});
+	$("#myModal").find(".modal-dialog").width(760);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 load_list();
+		 return true;
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		})
+	}
+}
+$(function(){
+	 load_list();
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+</script>
+{/block}

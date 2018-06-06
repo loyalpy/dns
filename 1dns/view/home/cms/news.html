@@ -1,0 +1,83 @@
+{block title}{if isset($cate['name']) && $cate['name']}{$cate['name']}{else}八戒DNS{/if}-{$site['seo_title']}{/block}
+{block seo}
+	<meta name="keywords" content="{$cate['name']},八戒DNS,{$site_config['seo_keyword']}" />
+	<meta name="description" content="{$cate['name']},八戒DNS,{$site_config['seo_description']}" />
+{/block}
+{block header}{/block}
+{block main}
+<div class="news-wrap">
+	<div class="artview">
+	   <!--sidebar-->
+		<div class="sidebar">
+			<div class="artarea">
+				{if $data['list']}
+					{foreach items=$data['list']}
+					<dl>
+						<dt><a href="{url /cms/news_topic/tid/$item[tid]}" target="_blank">{echo tFun::keyword_replace($keyword,$item['subject'])}</a></dt>
+						<dd class="art"><a href="{url /cms/news_topic/tid/$item[tid]}" target="_blank">{echo tFun::keyword_replace($keyword,tUtil::substr($item['description'],120,1))}..</a></dd>
+						<dd class="time">
+							<!--<span>{echo tTime::get_datetime("Y-m-d H:i",$item['dateline'])}</span>-->
+							<a class="more" href="{url /cms/news_topic/tid/$item[tid]}" style="position:relative;top:-36px;">查看详情</a>
+						</dd>
+					</dl>
+					{/foreach}
+				{else}
+				<div class="f14 font-red">
+					<!--<img src="{skin static@/images/noresult.png}" /> -->
+					<span style="position:relative;top:-20px;">很抱歉，暂无信息</span>
+				</div>
+				{/if}
+			</div>
+			<div class="pagebar">
+				{$data['pagebar']}
+			</div>
+		</div>
+		<!--sidebar end-->
+		<!--mainbar-->
+		<div class="mainbar">
+			<div class="search-form">
+				<form action="{url /cms/news/fid/$fid}" method="POST">
+					<input type="hidden" name="hash" value="{hash}" />
+					<img class="img" src="{skin  home@images/helper/search.jpg}">
+					<input type="text" name="keyword" value="{if $keyword}{$keyword}{else}{/if}"  class="key" />
+					<button type="submit" style="display: none">提交</button>
+				</form>
+			</div>
+			<div class="dis30"></div>
+			<h1>新闻目录</h1>
+			<div class="dis10"></div>
+			<div class="cmslist-nav">
+				<ul>
+					{foreach items = $cates}
+					<li><a class="{if isset($cate['id']) && $cate['id'] == $item['id']}curr{/if}" href="{url /cms/news/fid/$item[id]}">{$item['name']}<font class="font-org">({$item['threads']})</font></font></a></li>
+					{/foreach}
+				</ul>
+			</div>
+			<div class="dis30"></div>
+			<h1>推荐</h1>
+			<div class="dis10"></div>
+			<div class="siderand">
+				{if $tuinews}
+				<ul>
+					{foreach items=$tuinews}
+					<li><a href="{url /cms/news_topic/tid/$item[tid]}" title="{$item['subject']}" >{$item['subject']}</a></li>
+					{/foreach}
+				</ul>
+				{/if}
+			</div>
+		</div>
+		<!--mainbar end-->
+	</div>
+</div>
+{/block}
+{block javascript}
+<script language="javascript" src="{url static@/javascript/utils/share.js}"></script>
+<script type="text/javascript">
+	$(function(){
+		$(".img").click(function(){
+			$("button").click();
+		});
+	});
+</script>
+{/block}
+{block friendlink}{/block}

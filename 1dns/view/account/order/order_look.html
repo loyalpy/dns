@@ -1,0 +1,166 @@
+{block main}
+<div class="main-nav">
+  <div class="name">订单详情</div>
+  <div class="navbtn"></div>
+  <div class="cl"></div>
+</div>
+<div class="form-content">
+<form action="" method="post" class="theform form" role="form">
+<input type="hidden" value="" name="uid" />
+<div class="tpl"></div>
+</form>
+</div>
+{if $datalist['pay_status']==2}
+	<div class="alert alert-success" ><span class="glyphicon glyphicon-ok-sign"></span>&nbsp;订单已完成支付</div>
+{else}
+	<div class="alert alert-danger" ><span class="glyphicon glyphicon-remove-sign"></span>&nbsp;订单未支付</div>
+{/if}
+
+<table class="table table-bordered">
+	<tr>
+		<td class="col-xs-12">
+			<div class="row">
+				<div class="col-md-12">订单号 : {$datalist['order_no']}</div>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div class="row">
+				<div class="col-md-12">&nbsp;</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">服务器ID/名称 : {$datalist['buy_uname']}</div>
+				<div class="col-md-6">{if $datalist['type']==0}<font class="font-red">时长</font>{else}<font class="font-red">续费时长</font>{/if} : 1年</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">&nbsp;</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">订单创建时间 : {echo date('Y-m-d H:i:s',$datalist['start_dateline'])}</div>
+				<div class="col-md-6">支付时间 : {echo date('Y-m-d H:i:s',$datalist['pay_dateline'])} </div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">&nbsp;</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">&nbsp;</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12"><dt>配置变更信息</dt></div>
+			</div>
+		</td>		
+	</tr>
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-6">变更前 </div>
+				<div class="col-md-6">变更后 </div>					
+			</div>
+		</td>
+	</tr>	
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-6">内存 :  </div>
+				<div class="col-md-6">内存 :  </div>									
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-6">宽带 :  </div>
+				<div class="col-md-6">宽带 :  </div>									
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-6">磁盘 :  </div>
+				<div class="col-md-6">磁盘 :  </div>									
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-6">&nbsp;</div>														
+			</div>
+			<div class="row">
+				<div class="col-md-6"><dt>配置变更信息</dt></div>														
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-6">续费前(服务到期时间)</div>
+				<div class="col-md-6">续费后(服务到期时间)</div>									
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-6">2014-11-12 15:16:21</div>
+				<div class="col-md-6">2014-12-12 15:54:12</div>									
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-12">&nbsp;</div>														
+			</div>
+		</td>
+	</tr>	
+	<tr class="active">
+		<td >		
+			<div class="row">
+				<div class="col-md-3">产品名称</div>														
+				<div class="col-md-1">数量</div>														
+				<div class="col-md-4">具体配置</div>														
+				<div class="col-md-2">付款方式</div>														
+				<div class="col-md-2">金额</div>														
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td >		
+			<div class="row">
+				<div class="col-md-3">费v个是电饭锅的说法广东省国防生的法规大概福德宫发到个的双方各是电饭锅十多个第十个十多个的</div>														
+				<div class="col-md-1">23</div>														
+				<div class="col-md-4">的发斯蒂芬稍等飞十大发生的规范化活动方式很感动发生过导师工读生分公司的方式工单发到发到过放电发到的的工单高防</div>														
+				<div class="col-md-2">年付</div>														
+				<div class="col-md-2">467</div>														
+			</div>
+			<div class="row">
+				<div class="col-md-12">&nbsp;</div>														
+			</div>
+			<div class="row">
+				<div class="col-md-8">&nbsp;</div>														
+				<div class="col-md-4"> 订 单 金 额 : </div>														
+			</div>
+			<div class="row">
+				<div class="col-md-12">&nbsp;</div>														
+			</div>
+			<div class="row">
+				<div class="col-md-8">&nbsp;</div>														
+				<div class="col-md-4">代金券金额 : </div>														
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div class="row">
+				<div class="col-md-8">&nbsp;</div>														
+				<div class="col-md-4">实际支付金额 : </div>														
+			</div>
+		</td>
+	</tr>				
+</table>
+
+
+{/block}

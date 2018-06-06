@@ -1,0 +1,97 @@
+域名模块后台：
+1.域名管理 - 列表  (域名 用户 服务器组	套餐 解析 状态(暂停,正常) 操作   如果指向则显示正常,未指向说明)
+             修改  (修改TTL ... 备注之类)
+	     套餐  (服务器组, 套餐,套餐期限   -->日志归属系统)
+	     过户  (过户到别的用户名下)
+2.域名黑白名单 
+3.域名日志
+
+
+域名模块前台
+1. 产品套餐展示
+2. 添加域名(批量添加,单个添加购买套餐)
+3. 域名管理(分组,星标,状态,锁定)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************************************************88/
+CREATE TABLE IF NOT EXISTS `wo_domain` (
+  `domain_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `domain` varchar(60) NOT NULL DEFAULT '',
+  `is_cn` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否中文域名',
+  `domain_cn` varchar(80) NOT NULL DEFAULT '' COMMENT '中文域名',  
+  `ttl` int(8) NOT NULL DEFAULT '600' COMMENT '默认ttl 600',
+  `records` smallint(6) unsigned NOT NULL DEFAULT '0' COMMENT '记录数',  
+  `dateline` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
+  `lastupdate` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后更新',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '状态',
+  `inflag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '星标',
+  `inns` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否指向',
+  `group_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '自定义组',  
+  `service_group` char(10) NOT NULL DEFAULT '' COMMENT '套餐组',
+  `service_expiry` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '套餐期限',
+  `ns_group` char(10) NOT NULL DEFAULT '' COMMENT '默认DNS组',
+  `uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '当前拥有人',  
+  `bz` varchar(80) NOT NULL,
+  `sysbz` varchar(80) NOT NULL,
+  PRIMARY KEY (`domain_id`),
+  KEY `uid` (`uid`),
+  KEY `status` (`status`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 
+
+CREATE TABLE IF NOT EXISTS `wo_domain_group` (
+  `group_id` int(10) unsigned NOT NULL AUTO_INCREMENT,  
+  `name` varchar(30) NOT NULL,
+  `uid` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`group_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100 ;
+
+
+CREATE TABLE IF NOT EXISTS `wo_domain_log` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `domain_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '域名ID',
+  `domain` varchar(60) NOT NULL DEFAULT '',
+  `uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '操作人',
+  `modi_item` varchar(20) NOT NULL DEFAULT '' COMMENT '修改项',
+  `modi_from` varchar(120) NOT NULL DEFAULT '',
+  `modi_to` varchar(120) NOT NULL DEFAULT '',
+  `modi_log` varchar(80) NOT NULL DEFAULT '' COMMENT '日志说明',
+  `ipaddr` varchar(30) NOT NULL DEFAULT '' COMMENT '操作IP',
+  `dateline` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `domain` (`domain`),
+  KEY `modi_item` (`modi_item`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 
+
+CREATE TABLE IF NOT EXISTS `rc_domain_whiteblack` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `domain` varchar(80) NOT NULL DEFAULT '' COMMENT '域名',
+  `type` tinyint(1) NOT NULL DEFAULT '0'COMMENT '0黑名单 1白名单',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;
+
+
+CREATE TABLE IF NOT EXISTS `rc_domain_find` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `domain_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '域名ID',
+  `domain` varchar(80) NOT NULL DEFAULT '' COMMENT '域名',
+  `email` varchar(80) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `dateline` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '时间',
+  `uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `fhash` varchar(32) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `domain_uid` (`domain_id`,`uid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0

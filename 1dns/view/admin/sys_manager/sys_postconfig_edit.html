@@ -1,0 +1,114 @@
+{code 
+	$id = R("id","int");
+	$this->pid = R("pid","int");
+	$data = M('postcate')->get_row("id=$id");
+
+	if(!isset($data['id']))
+		  $data = array(
+		   'name'=>'',
+		   'code'=>'',
+		   'pid'=>$this->pid,
+		   'isindex'=>0,
+		   'isbold'=>0,
+		   'ishot'=>0,
+		   'status'=>0,
+		   'sort'=>0,
+		   'color'=>''
+		  );
+	 $this->pid = $data['pid'];
+}
+{/code}
+<div class="headbar clearfix">
+<div class="operating"></div>
+<ul class="tab" name="menu1">
+<li id="tab_1" class="curr"><a href="javascript:void(0)" hidefocus="true" onclick="util.tab_show('1')">基本信息</a></li>
+<li id="tab_2"><a href="javascript:void(0)" hidefocus="true" onclick="util.tab_show('2')">SEO信息</a></li>
+</ul>
+</div>
+<div class="content_box">
+	<div class="content form_content">
+	<form id="form_edit"  class="form signin-form" action="{url /sysadmin/sys_postconfig}" method="post">
+	<div id="tab_1_show">
+	<table class="form_table">
+					<col width="150px" />
+					<col />
+					<tr>
+						<th><label for="Mname">名称</label>：</th>
+						<td><input id="Mname" name="name"  check="1" type="text" value="{$data['name']}" />&nbsp;&nbsp;<span id="Mname_tip"></span>
+						
+						&nbsp;&nbsp;序号：<input name="sort" class="xlow" value="{$data['sort']}" /></td>
+					</tr>
+					<tr>
+						<th><label for="Mcode">编码</label>：</th>
+						<td><input id="Mcode" name="code"  check="1" type="text" value="{$data['code']}" />&nbsp;&nbsp;<span id="Mcode_tip"></span></td>
+					</tr>
+					<tr>
+						<th><label for="Mcode">上级分类</label>：</th>
+						<td><select name="pid">
+						<option value="0">顶级分类</option>
+						{echo C('category','postcate')->get(0,$data['pid'],1)}
+						</select>
+						</td>
+					</tr>
+					<tr>
+						<th><label>首显</label>：</th>
+						<td class="reset-inputs"><input type="checkbox" {if $data['isindex'] == 1} checked="checked"{/if} name="isindex" value="1" /> <span class="txt-gray">首页显示</span></td>
+					</tr>
+					<tr>
+						<th><label>加粗</label>：</th>
+						<td class="reset-inputs"><input type="checkbox" {if $data['isbold'] == 1} checked="checked"{/if} name="isbold" value="1" /> <span class="txt-gray">加粗显示</span></td>
+					</tr>
+					<tr>
+						<th><label>热点</label>：</th>
+						<td class="reset-inputs"><input type="checkbox" {if $data['ishot'] == 1} checked="checked"{/if} name="ishot" value="1" /> <span class="txt-gray">热点显示</span></td>
+					</tr>
+					<tr>
+						<th><label>状态</label>：</th>
+						<td class="reset-inputs"><input type="checkbox" {if $data['status'] == 1} checked="checked"{/if} name="status" value="1" /> <span class="txt-gray">加粗显示</span></td>
+					</tr>
+					<tr>
+						<th><label>颜色</label>：</th>
+						<td class="reset-inputs"><select name="color">
+   <option value="">默认</option>
+ <option value="#FF5500" {if $data['color'] == '#FF5500'} selected="selected"{/if}>橙色</option>
+ <option value="#CC0000" {if $data['color'] == '#CC0000'} selected="selected"{/if}>红色</option>
+ <option value="#00FF00" {if $data['color'] == '#00FF00'} selected="selected"{/if}>蓝色</option>
+ <option value="#239400" {if $data['color'] == '#239400'} selected="selected"{/if}>绿色</option>
+ <option value="#000000" {if $data['color'] == '#000000'} selected="selected"{/if}>黑色</option>
+ <option value="#CCCCCC" {if $data['color'] == '#CCCCCC'} selected="selected"{/if}>灰色</option>
+ </select></td>
+					</tr>
+	</table>
+	</div>
+	<div id="tab_2_show" style="display:None;">
+	<table class="form_table">
+					<col width="150px" />
+					<col />
+					<tr>
+						<th><label>SEO标题</label>：</th>
+						<td><textarea rows="2" cols="60" name="seo_title">{$data['seo_title']}</textarea></td>
+					</tr>
+					<tr>
+						<th><label>SEO关键词</label>：</th>
+						<td><textarea rows="2" cols="60" name="seo_keyword">{$data['seo_keyword']}</textarea></td>
+					</tr>
+					<tr>
+						<th><label>SEO描述</label>：</th>
+						<td><textarea rows="3" cols="60" name="seo_description">{$data['seo_description']}</textarea></td>
+					</tr>
+	</table>
+	</div>
+	<table class="form_table">
+					<col width="150px" />
+					<col />
+					<tr>
+					<td></td><td>
+					<input type="hidden" value="{$data['id']}" name="id" />
+			        <input type="hidden" value="{hash}" name="hash" />
+			        <input type="hidden" value="edit" name="do" />
+			        <button type="button" onclick="util.form_save(this,'form_edit');" class="submit" tabindex="4" >完成修改</button></td>
+				   </tr>
+	</table>
+	</form>
+</div>
+</div>

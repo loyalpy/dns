@@ -1,0 +1,135 @@
+{block main}
+<div class="am-uc-top">
+    <i class="am-icon-wordpress"></i>&nbsp;
+    {$domain}
+</div>
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav" style="padding-top: 20px">
+        <ul>
+            <li><a href="{url /ucenter/basic?domain=}{$domain}"   class="showtype ">基本信息&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_edit?domain=}{$domain}"   class="showtype">域名信息修改&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_rz?domain=}{$domain}"  class="showtype">域名实名认证&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_transfer?domain=}{$domain}"  class="showtype">域名过户&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_dns?domain=}{$domain}"   class="showtype cur">DNS修改创建&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_zs?domain=}{$domain}"   class="showtype">域名证书&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_status?domain=}{$domain}"   class="showtype">安全设置&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right" style="padding-top: 25px">
+    <div class="basic-top">&nbsp;&nbsp;&nbsp;DNS修改创建</div>
+    <div class="now-dns s-dns-1">
+        <table class="am-table now-dns-table">
+            <col width="200px"/>
+            <col />
+            <thead>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="l">当前域名DNS为：</td>
+                <td>
+                    <span>{$dns['dns1']}</span><br/>
+                    <span>{$dns['dns2']}</span><br/>
+                    <a href="javascript:void (0);" class="change-dns">修改域名DNS</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="now-dns s-dns-2">
+        <table class="am-table now-dns-table">
+            <col width="200px"/>
+            <col />
+            <thead>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="l">当前域名DNS为：</td>
+                <td>{$dns['dns1']}&nbsp;&nbsp;&nbsp;{$dns['dns2']}</td>
+            </tr>
+            <tr>
+                <td class="l" style="font-weight: bold">修改域名DNS</td>
+                <td class="input-td">
+                    <span style="font-weight: bold">请输入修改的域名DNS（注：域名DNS最少填写2个，最多填写6个 ）</span><br/>
+                    <div>
+                        <input type="text" name="ns1" value="" class="am-form-field am-radius" placeholder="如：dns1.8jdns.com"/><i class="s">请输入正确的DNS</i>
+                    </div>
+                    <div>
+                        <input type="text" name="ns2" value="" class="am-form-field am-radius input-td-last" placeholder="如：dns2.8jdns.com"/><i class="s">请输入正确的DNS</i>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button type="button" class="am-btn am-btn-default am-btn-xs am-radius add-input" style="display: none"><i class="am-icon-plus"></i> 添加DNS</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="now-dns-sub s-dns-2">
+        <button type="button" class="am-btn am-btn-primary am-radius edit-sub">修改DNS</button>
+    </div>
+    <div class="dis30"></div>
+    <div class="now-dns-bot">
+        <div class="dis10"></div>
+        <dl>
+            <dt>温馨提示：</dt>
+            <dd>• 修改DNS后，各地运营商递归解析服务器约需要24-48小时方可完全刷新同步，请耐心等待。</dd>
+            <dd>• 请最少配置两个域名服务器以保证您的域名能够被正常解析！</dd>
+        </dl>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+    var domain ="{$domain}";
+    $(function () {
+        $(".change-dns").click(function () {
+            $(".s-dns-1").hide();
+            $(".s-dns-2").show();
+        });
+        //添加输入框
+        $(".add-input").click(function () {
+            var len = $(".input-td").find("input").length;
+            if (len > 4) {
+                $(this).attr("disabled",true);
+            }
+            var html = "<div><input type='text' name='ns3' value='' class='am-form-field am-radius' placeholder='如：dns2.8jdns.com'/><i class='s'>请输入正确的DNS</i></div>";
+            $(".input-td").append(html);
+        })
+        //修改dns
+        $(".edit-sub").click(function () {
+            var dns_s = new Array();
+            var num = $(".input-td").find("input").length;
+            $(".input-td").find("input").each(function () {
+               if ($.is_empty($(this).val()) && !$.dns.is_domain($(this).val())) {
+                   $(this).parent().find("i.s").show();
+               }else{
+                   $(this).parent().find("i.s").hide();
+                   dns_s.push($(this).val());
+               }
+            });
+            if (dns_s.length != num) {
+                return false;
+            }
+            $.ui.loading();
+            $.ajaxPassport({
+                url:"{url /ucenter/basic_dns}",
+                success:function (res) {
+                    $.ui.close_loading();
+                    if (res.error == 1) {
+                        $.ui.error(res.message);
+                    }else{
+                        setTimeout(function () {
+                            window.location.replace("{url /ucenter/basic_dns?domain=}"+domain);
+                        },500);
+                        $.ui.success(res.message);
+                    }
+                },
+                data:{domain:domain,dns:dns_s.join(";"),do:"edit"}
+            });
+        });
+    });
+</script>
+{/block}

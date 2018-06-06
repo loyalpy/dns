@@ -1,0 +1,315 @@
+{block left}
+{/block}
+{block main}
+{set $ns_group = M("@domain_ns_group")->get_cache_by_ns($domain_row['ns_group']);}
+{set $ns_group_ns = isset($ns_group['ns'])?$ns_group['ns']:"";}
+<div class="records combox">
+{if $domain_row['inns'] == 0}
+    <div class="page-tip">
+        <strong>还差最后一步，即可开始使用 八戒DNS,将当前NS改成八戒DNS对应套餐的NS</strong>
+        <div style="width:500px;margin:8px 0 0 0;">
+        <table class="am-table ">
+            <tbody>
+             <tr>
+             <td class="am-warning">
+                 {if $domain_row['ns'] && $domain_row['ns'] != -1}
+                 {echo str_replace(';',"<br/>",$domain_row['ns']);}
+                 {else}
+                 未检测到NS
+                 {/if}
+             </td>
+             <td class="am-warning"><cite class="am-icon-angle-double-right am-text-warning"></cite></td>
+             <td class="am-success">
+                {if $ns_group_ns}
+                {echo str_replace(';',"<br/>",$ns_group_ns);}
+                {else}
+                f1g1ns1.dnspig.com<br/>
+                f1g1ns2.dnspig.com
+                {/if}
+             </td>   
+            </tbody>
+        </table>
+        </div>
+
+        <b>
+            为避免多次修改您的DNS,请先选好域名套餐,我们提供稳定的收费套餐：
+            <a class="txt-blue" target="_blank" href="{url home@/product/buy}">标准版,豪华版,旗舰版</a>
+        </b>
+        <br>
+        注意不能同时和其他 DNS 混用，会导致解析混乱哦～
+        <span id="transmark" style="display: none; width: 0px; height: 0px;"></span>
+        <br>
+        修改 DNS 服务器需要最长 48 小时的全球生效时间，请耐心等待
+        <br>
+        遇到困难？
+        <a class="txt-blue" target="_blank" href="{url home@/helper/index}">
+            寻找技术支持
+            <span class="f9">>></span>
+        </a>
+        <br>
+        <button class="close" onclick="$(this.parentNode).hide();"></button>
+    </div>
+    <div class="dis10"></div>
+{/if}
+
+    {if $domain_bind}
+        <div class="am-alert am-alert-secondary basic-t-t" data-am-alert style="background-color: #FDEFE4;color: #F37B1D">
+            <button type="button" class="am-close">&times;</button>
+            <p style="font-size: 14px">已绑定域名<strong> {$domain_bind}</strong>，绑定期间不能进行添加，修改，暂停，删除操作。如需操作，请先
+                <a href="{url /records/records_set?domain=$domain_bind}" style="color: #0E90D2">解绑</a>
+            </p>
+        </div>
+    {/if}
+
+    <div class="records-nav">
+        <ul>
+            <li class="domain">
+                <a href="javascript:void (0);"><i class="am-icon-globe"></i></a>
+                <span>{if $domain_cn}{$domain_cn}{else}{$domain}{/if}</span>
+                <span style="color: darkgray;font-size: 12px;" title="共{$domain_row['records']}条记录">({$domain_row['records']})</span>
+
+                <span class="texticon texticon-{$domain_row['service_group']} domian-upgrade" data-domain="{$domain}" style="width:18px;height: 20px;line-height: 20px;color: white;">{echo tUtil::substr($service_group['name'],1,'')}</span>
+                {if $domain_row['status'] == 0}
+                    <cite class="am-icon-minus-circle am-text-danger" title="域名解析已暂停"></cite>
+                {/if}
+
+                {if $domain_row['inlock'] == 1}
+                    <cite class="am-icon-lock am-font-black" title="域名已锁定"></cite>
+                {/if}
+
+            </li>
+            <li><a href="{url /records/records_setline?domain=$domain}">自定义线路</a></li>
+            <li><a href="{url /records/records_set?domain=$domain}">域名设置</a></li>
+            <li><a href="{url /records/records_count?domain=$domain}">解析量统计</a></li>
+            <li class="cur"><a href="{url /domains/dns/}{$domain}">记录设置</a></li>
+        </ul>
+    </div>
+    <div class="dis10"></div>
+    <div class="record-op" id="accordion">
+        <div class="record-op-l">
+            {if !$domain_bind}
+                <button type="button" class="am-btn am-btn-success am-dropdown-toggle am-radius am-btn-sm am-add-records"><span class="am-icon-plus"></span> 添加记录 </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button type="button" class="am-btn am-btn-default am-btn-sm am-radius recordsOption" data-do="stop">暂停</button>
+                <button type="button" class="am-btn am-btn-default am-btn-sm am-radius recordsOption" data-do="start">启用</button>
+                <button type="button" class="am-btn am-btn-default am-btn-sm am-radius recordsOption" data-do="del">删除</button>
+                {if $domain_row['records'] == 0}
+                <button type="button" class="am-btn am-btn-warning am-btn-sm am-radius am-import-btn">自动导入</button>
+                {/if}
+                {if $batch_import_records == 1}
+                <button type="button" class="am-btn am-btn-default am-btn-sm am-radius batch-import-records" data-domain="{$domain}">批量导入</button>
+                {/if}
+            {/if}
+        </div>
+        <a href="#do-not-say-1" data-am-collapse="{parent: '#accordion'}" class="record-op-r2">高级搜索</a>
+        <div class="record-op-r">
+            <input type="text" class="am-form-field am-radius am-input-sm am-serch-records" placeholder="快速查找记录" />
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="do-not-say-1" class="am-collapse">
+        <div class="am-panel-bd">
+            <table class="am-table">
+                <col width="40%"/>
+                <col width="30%"/>
+                <col/>
+                <tbody>
+                <tr>
+                    <td class="o">主机名：<input type="text" name="name-ser" class="am-form-field am-radius am-input-sm" placeholder="请输入主机记录"/></td>
+                    <td class="o">
+                        <span>类型：</span>
+                        <div class="tselect tselect-type am-input-sm" data-explain="rrtype-ser" data-name="rrtype-ser" data-label="请选择类型">
+                            <a href="javascript:void(0)" class="tselect-text e"></a>
+                            <input type="hidden" name="rrtype-ser" class="rrtype-ser" value="" />
+                            <div class="tselect-box" style="display:none">
+                                <div class="in">
+                                    <a class="sel0" data-v="" href="javascript:void(0);">不选</a>
+                                    {foreach items = $data_config['RRtype']}
+                                    <a data-v="{$key}" title="{$item}" class="sel0 e" href="javascript:void(0);">{$item}</a>
+                                    {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span>状态：</span>
+                        <div class="tselect tselect-type am-input-sm" data-explain="status-ser" data-name="status-ser" data-label="请选择状态">
+                            <a href="javascript:void(0)" class="tselect-text e"></a>
+                            <input type="hidden" name="status-ser" class="status-ser" value="" />
+                            <div class="tselect-box" style="display:none">
+                                <div class="in">
+                                    <a class="sel0" data-v="" href="javascript:void(0);">不选</a>
+                                    <a data-v="2" class="sel0 e" href="javascript:void(0);">正常</a>
+                                    <a data-v="1" class="sel0 e" href="javascript:void(0);">暂停</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o">记录值：<input type="text" name="value-ser" class="am-form-field am-radius am-input-sm" placeholder="请输入记录值"/></td>
+                    <td class="o">
+                        <span>线路：</span>
+                        <div class="tselect tselect-acl am-input-sm" data-explain="acl-ser" data-name="acl-ser" data-label="请选择线路">
+                            <a href="javascript:void(0)" class="tselect-text e"></a>
+                            <input type="hidden" name="acl-ser" class="acl-ser" value="" />
+                            <div class="tselect-box" style="display:none">
+                                <div class="in">
+                                    <div class="level0"><a class="sel<#if (data.disabled == 1)>1<#else>0</#if>" data-v="" href="javascript:void(0);">不选</a></div>
+                                    {set $aclist = C("category","domain_acl")->get_level(0)}
+                                    {foreach items = $aclist}
+                                    <div class="level0">
+                                        {if $item['childrens']}
+                                        <a data-v="{$item['ident']}" title="{$item['name']}" class=" {if in_array($item['ident'],$my_acls)}sel0{else}sel1{/if} e" href="javascript:void(0);">{$item['name']} <cite class="am-icon-angle-right"></cite></a>
+                                        <div class="sub2" style="">
+                                            {foreach items=$item['childrens'] item=$item2}
+                                            <div class="level1">
+                                                {if $item2['childrens']}
+                                                <a data-v="{$item2['ident']}" title="{$item2['name']}" class="level1 {if in_array($item2['ident'],$my_acls)}sel0{else}sel1{/if}  e" href="javascript:void(0);">{$item2['name']} <cite class="am-icon-angle-right"></cite></a>
+                                                <div class="sub3" style="">
+                                                    {foreach items=$item2['childrens'] item=$item3}
+                                                    <a data-v="{$item3['ident']}" title="{$item3['name']}" class="level1 {if in_array($item3['ident'],$my_acls)}sel0{else}sel1{/if}  e" href="javascript:void(0);">{$item3['name']}</a>
+                                                    {/foreach}
+                                                </div>
+                                                {else}
+                                                <a data-v="{$item2['ident']}" title="{$item2['name']}" class="level1 {if in_array($item2['ident'],$my_acls)}sel0{else}sel1{/if} e" href="javascript:void(0);">{$item2['name']}</a>
+                                                {/if}
+                                            </div>
+                                            {/foreach}
+                                        </div>
+                                        {else}
+                                        <a data-v="{$item['ident']}" title="{$item['name']}" class="  {if in_array($item['ident'],$my_acls)}sel0{else}sel1{/if} e" href="javascript:void(0);">{$item['name']}</a>
+                                        {/if}
+                                    </div>
+                                    {/foreach}
+                                    {set $serverR = tCache::read("service_group_".$domain_row['service_group']);}
+                                    {if $serverR['data']['diyLine']['value'] == 1}
+                                    {set $diyIp = M("domain_acl_set")->query("domain='$domain' AND uid=$uid AND status=1","name,id,uid","id DESC",500);}
+                                    {if count($diyIp)>0}
+                                    <hr/>
+                                    <div class="level1"><a class="sel0" style="color:darkgray;">自定义线路</a></div>
+                                    {foreach $items = $diyIp}
+                                    <div class="level0"><a class="sel0" data-v="cust{$item['id']}" href="javascript:void(0);">{$item['name']}</a></div>
+                                    {/foreach}
+                                    {/if}
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><button type="button" class="am-btn am-btn-warning am-btn-sm am-radius vance-serch">搜索</button></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="dis10"></div>
+    <div class="record-list" style="position: relative;">
+        <form method="post" id="setRecords form-with-tooltip">
+            <table class="am-table am-table-striped">
+                <col width="30px"/>
+                <col width="180px" />
+                <col width="130px" />
+                <col width="150px"/>
+                <col  />
+                <col width="90px"/>
+                <col width="70px" />
+                <col width="150px"/>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" data-name="recordId[]" class="checkall"/></th>
+                    <th>主机名</th>
+                    <th>类型</th>
+                    <th>线路</th>
+                    <th>记录值</th>
+                    <th>MX优先级</th>
+                    <th>TTL</th>
+                    <th class="am-text-right">操作</th>
+                </tr>
+                </thead>
+                <tbody class="add_tpl"></tbody>
+                <tbody class="add_tips" style="display:none;"><tr><td colspan="8"></td></tr></tbody>
+                <tbody class="list_tpl"></tbody>
+                {if $ns_group_ns}
+                {set $ns_group_ns_arr = explode(';',$ns_group_ns);}                
+                <tbody class="list_tpl_m">
+                {foreach items=$ns_group_ns_arr}
+                <tr class="am-disabled am-active">
+                    <td></td>
+                    <td>@</td>
+                    <td>NS</td>
+                    <td>默认</td>
+                    <td>{$item}</td>
+                    <td>_</td>
+                    <td>600</td>
+                    <td></td>
+                </tr>
+                {/foreach}
+                </tbody>
+                {/if}
+            </table>            
+           </form>
+    </div>
+    <div class="pagebar"></div>
+    <div class="dis20"></div>
+</div>
+<div class="my-domian-upgrade"></div>
+<div class="tpl_setting_import"></div>
+
+{/block}
+
+{block javascript}
+{include records/records_tpl}
+{include order/order_cart}
+{include records/records_import}
+{include tpl/form}
+<!--解析记录列表  start-->
+<script type="text/javascript">
+    $(function(){
+        $.ui.form.select($("#do-not-say-1"));
+        $("a").bind("focus",function(){
+            $(this).blur();
+        });
+        $(".record-list").find("input.checkall").unbind("click").bind("click",function(){
+            $.check_all(this);
+        });
+        $(".recordsOption").click(function(){
+            batch_records_op(this);
+        });
+        $(".batch-import-records").click(function () {
+            batch_import_records(this);
+        });
+        //普通搜索
+        $("input.am-serch-records").keyup(function(){
+            var keyword = $(this).val();
+            if (!$.is_empty(keyword)){
+                get_records_list(1,keyword);
+            }else{
+                get_records_list(1);
+            }
+        });
+        //高级搜索
+        $("#do-not-say-1 .vance-serch").click(function () {
+            var _obj = $(this).parent().parent().parent();
+            var name = _obj.find("input[name='name-ser']").val();
+            var value = _obj.find("input[name='value-ser']").val();
+            var type = _obj.find("input[name='rrtype-ser']").val();
+            var status = _obj.find("input[name='status-ser']").val();
+            var acl = _obj.find("input[name='acl-ser']").val();
+            get_records_list(1,'',name,value,type,status,acl);
+        });
+        $('.am-add-records').click(function(){
+            add_edit_record();
+        });
+        //升级套餐
+        $(".domian-upgrade").unbind("click").bind("click",function(){
+            var goods_name = $(this).attr("data-domain");
+            add_cart_step1(1,0,"",goods_name);
+        });
+
+        {if $domain_row['records'] > 0}
+        get_records_list(1);
+        {/if}
+    });
+</script>
+<!--解析记录列表 end-->
+{/block}

@@ -1,0 +1,266 @@
+<script type="text/template" id="tpl_goodsserver_edit">
+<#macro rowedit data>
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">${data.title}</h4>
+</div>
+<!--搜索服务器-->
+<!--end 搜索服务器-->
+<div class="form-content">
+<form action="{url /goods_manager/goodsserver_edit}" method="post" class="the_server_editform form form-2" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var goodsserver_edit_formdata = {
+	idc:{type:"select",label:"机房",name:"idc",value:"0",disabled:0,data_sr:dataConfig_A['idc'],css:"",require:"",desc:"",item_css:"col-md-4"},
+	server_no:{type:"text",label:"服务器编号",name:"server_no",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"<div class='find_serverlist' style='display:none;width:300px;'></div>",item_css:"col-md-4 font-red rl"},
+	goods_no:{type:"text",label:"产品编号",name:"goods_no",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-4 font-red"},
+	html_space0:{type:"html",value:"<h5>&nbsp;</h5>"},
+	server_us:{type:"text",label:"外形",name:"server_us",value:"",disabled:0,data_sr:dataConfig_A['server_us'],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	server_os:{type:"text",label:"系统平台",name:"server_os",value:"",disabled:0,data_sr:dataConfig_A['server_os'],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	bandwidth:{type:"text",label:"带宽限制",name:"bandwidth",value:"",disabled:0,data_sr:dataConfig_A['bandwidth'],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	
+	jiguino:{type:"text",label:"机柜",name:"jiguino",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-4"},
+	netno:{type:"text",label:"路由器",name:"netno",value:"",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-4"},
+	bz:{type:"textarea",label:"服务器备注",name:"bz",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"col-md-4"},
+	server_ips:{type:"text",label:"外网IP",name:"server_ips",value:"",disabled:0,data_sr:[],css:"high",require:"",desc:"",item_css:"col-md-4"},
+	server_in_ips:{type:"text",label:"内网IP",name:"server_in_ips",value:"",disabled:0,data_sr:[],css:"high",require:"",desc:"",item_css:"col-md-4"},
+	server_cfg:{type:"text",label:"配置",name:"server_cfg",value:"",disabled:0,data_sr:dataConfig_A['server_cfg'],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	{if $this->check_rpurview(1)}
+	server_user:{type:"text",label:"登录名",name:"server_user",value:"",disabled:0,data_sr:["administrator","root"],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	server_pass:{type:"text",label:"登录密码",name:"server_pass",value:"",disabled:0,data_sr:[],css:"low",require:"",desc:"<button type='button' class='btn btn-sm btn-default' onclick=\"$('input[name=server_pass]').val($.get_random_string(8))\">生成</button>",item_css:"col-md-4"},
+	server_port:{type:"text",label:"端口",name:"server_port",value:"",disabled:0,data_sr:["20000","22"],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	{/if}
+	inlock:{type:"switch",label:"是否锁定",label_on:"正常",label_off:"锁定",name:"inlock",value:"1",disabled:0,data_sr:[],css:"",require:"",desc:"",item_css:"col-md-4"},
+	pay_expiry:{type:"date",label:"锁定期限",name:"pay_expiry",value:"",disabled:0,data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	
+	{if $this->check_rpurview(1)}
+	html_space4:{type:"html",value:"<h5>&nbsp;</h5>"},
+	server_st:{type:"select",label:"服务状态",name:"server_st",value:"",disabled:0,data_sr:dataConfig_A['server_st'],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	start_dateline:{type:"date",label:"服务开始",name:"start_dateline",value:"",disabled:0,data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	expiry:{type:"date",label:"服务到期",name:"expiry",value:"",disabled:0,data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	amount:{type:"text",label:"续费金额",name:"amount",value:"",disabled:0,data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4"},
+	buy_uid:{type:"text",label:"购买ID",name:"buy_uid",value:"",disabled:0,data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4 font-red"},
+	uid:{type:"text",label:"销售ID",name:"uid",value:"",disabled:0,data_sr:[],css:"low",require:"",desc:"",item_css:"col-md-4 font-red"},
+	{/if}
+	html_space5:{type:"html",value:"<h5>&nbsp;</h5>"},
+	id:{type:"hidden",label:"",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    btn:{type:"button",label:"",value:"确定",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+}
+//同步订单服务器
+var rsync_goodsserver = function(obj){
+	var id = parseInt($(obj).attr("data-id"));
+	$.ajaxTips(obj,"正在同步,稍后刷新","success");
+	$.ajaxPassport({
+			url:"{url /goods_manager/goodsserver_rsync}",
+			data:{id:id},
+			success:function(res){
+				if(res.error == 1){
+					$.ajaxTips(obj,res.message,"error");
+				}else{
+					$.ajaxTips(obj,"同步成功","success");
+				}
+			}
+	});
+}
+//删除订单服务器
+var del_goodsserver = function(obj){
+	var id = parseInt($(obj).attr("data-id"));
+	if(confirm("您确定要删除该订单服务器吗？删除后数据不可恢复")){
+		$.ajaxPassport({
+			url:"{url /goods_manager/goodsserver_del}",
+			data:{id:id},
+			success:function(res){
+				if(res.error == 1){
+					$.ajaxTips(obj,res.message,"error");
+				}else{
+					$.ajaxTips(obj,"操作成功","success");
+					loadlist(1);
+				}
+			}
+		});
+	}
+}
+
+//获取机房远程数据
+var get_idc_server = function(page,keyword,idc){
+	$.ajaxPassport({
+				url:"{url /goods_manager/goodsserver_get?in_ajax=1}",
+				success:function(res){
+					if(res.error == 1){
+						$.tips(res.message,"error");
+					}else{
+						if(typeof res.list == "undefined")return false;
+						var html = "";
+						if(res.list.length > 0){
+							html += "<ul style='width:600px;'>";
+							html += "<a href='javascript:void(0);' onclick='$(this).parent().parent().hide();' class='serverno_close font-gray'><i class='glyphicon glyphicon-remove'></i></a>"
+							for(var i in res.list){
+								html += "<li><a href='javascript:void(0);' class='a_server_no font-blue' ";
+								html += " data-server_no='"+res.list[i]['server_no']+"' ";
+								html += " data-server_us='"+res.list[i]['server_us']+"' ";
+								html += " data-server_os='"+res.list[i]['server_os']+"' ";
+								html += " data-bandwidth='"+res.list[i]['bandwidth']+"' ";
+								html += " data-server_cfg='"+res.list[i]['server_cfg']+"' ";
+								html += " data-server_ips='"+res.list[i]['server_ips']+"' ";
+								html += " data-server_in_ips='"+res.list[i]['server_in_ips']+"' ";
+								html += " data-jigui='"+res.list[i]['jigui']+"' ";
+								html += " data-jiguius='"+res.list[i]['jiguius']+"' ";
+								html += " data-jiguino='"+res.list[i]['jiguino']+"' ";
+								html += " data-net='"+res.list[i]['net']+"' ";
+								html += " data-netport='"+res.list[i]['netport']+"' ";
+								html += " data-netno='"+res.list[i]['netno']+"' ";
+								html += " data-bz='"+res.list[i]['bz']+"' ";
+								html += " data-idc='"+res.list[i]['idc']+"' ";
+								
+								html += " data-client_name='"+res.list[i]['client_name']+"' ";
+								html += " data-order_st='"+res.list[i]['order_st']+"' ";
+								html += ">";
+								html += res.list[i]['server_no']+ (res.list[i]['server_ips'] != ''?("&nbsp;&nbsp;<font class='font-gray f11' style='display:none;'>("+res.list[i]['server_ips']+", "+res.list[i]['server_cfg']+")</font>"):"")+(" <font class='"+(parseInt(res.list[i]['server_st']) == 8?"font-green":"font-org")+" f11'>["+$.show_dataconfig('server_st',res.list[i]['server_st'])+"]</font>");
+								
+								html += "&nbsp;&nbsp;"+($.in_array(parseInt(res.list[i].order_st),[1,2,3,4])?"<font class=\"font-org f11\">[已登记]</font>":("<font class=\"font-green f11\">[可用]</font>"))+"";
+								html += "<font class=\"font-gray f11\">&nbsp;&nbsp;"+($.is_empty(res.list[i].client_name)?"":("["+res.list[i].client_name+"]"))+"</font>";
+								html += " </a></li>";
+							}
+							html += "</ul>";
+							html += "<div class='dis10'></div><div class='pagebar'>"+res.pagebar+"</div>";
+							$(".the_server_editform").find(".find_serverlist").html(html).show();
+							$(".the_server_editform").find(".find_serverlist .a_server_no").click(function(){
+								var obj = this;
+								var server_no = $(obj).attr("data-server_no");
+								var server_us = $(obj).attr("data-server_us");
+								var server_os = $(obj).attr("data-server_os");
+								var bandwidth = $(obj).attr("data-bandwidth");
+								var server_cfg = $(obj).attr("data-server_cfg");
+								var server_ips = $(obj).attr("data-server_ips");
+								var server_in_ips = $(obj).attr("data-server_in_ips");
+								var jigui = $(obj).attr("data-jigui");
+								var jiguius = $(obj).attr("data-jiguius");
+								var jiguino = $(obj).attr("data-jiguino");
+								var net = $(obj).attr("data-net");
+								var netport = $(obj).attr("data-netport");
+								var netno = $(obj).attr("data-netno");
+								var bz = $(obj).attr("data-bz");
+								var idc = $(obj).attr("data-idc");
+								
+								var order_st = $(obj).attr("data-order_st");
+								
+								if($.in_array(order_st,[1,2,3])){
+									$.ajaxTips(obj,"该服务器已登记正在审核中","error");
+									return false;
+								}else if($.in_array(order_st,[4])){
+									$.ajaxTips(obj,"该服务器已登记审核","error");
+									return false;
+								}
+								
+								$(".the_server_editform").find("input[name='server_no']").val(server_no);
+								$(".the_server_editform").find("input[name='server_us']").val(server_us);
+								$(".the_server_editform").find("input[name='server_os']").val(server_os);
+								$(".the_server_editform").find("input[name='bandwidth']").val(bandwidth);
+								$(".the_server_editform").find("input[name='server_cfg']").val(server_cfg);
+								$(".the_server_editform").find("input[name='server_ips']").val(server_ips);
+								$(".the_server_editform").find("input[name='server_in_ips']").val(server_in_ips);
+								$(".the_server_editform").find("input[name='jigui']").val(jigui);
+								$(".the_server_editform").find("input[name='jiguius']").val(jiguius);
+								$(".the_server_editform").find("input[name='jiguino']").val(jiguino);
+								$(".the_server_editform").find("input[name='net']").val(net);
+								$(".the_server_editform").find("input[name='netport']").val(netport);
+								$(".the_server_editform").find("input[name='netno']").val(netno);
+								$(".the_server_editform").find("textarera[name='bz']").val(bz);
+								$(".the_server_editform").find("input[name='idc']").val(idc);
+								
+								if(!$.is_empty(jiguino)){
+									$(".the_server_editform").find(".sel_jiguibox .selname").html(jiguino+(!$.is_empty(jiguius)?(" : "+jiguius):""));
+								}
+								if(!$.is_empty(netno)){
+									$(".the_server_editform").find(".sel_netbox .selname").html(netno+(!$.is_empty(netport)?(" : "+netport):""));
+								}
+								$(obj).parent().parent().parent().hide();
+							});
+						}else{
+							$(".the_server_editform").find(".find_serverlist").html(html).hide();
+						}
+					}
+				},
+				data:{idc:idc,keyword:keyword,page:page,fun:"get_idc_server"}
+			})
+}
+
+//编辑订单服务器
+var edit_goodsserver = function(server_no,id,goods_no,idc){
+	var edit_c = $("#tpl_goodsserver_edit").html();
+	var _tmp = goodsserver_edit_formdata;
+	var id = (typeof id == "undefined" || $.is_empty(id))?0:parseInt(id);
+	var server_no = (typeof server_no == "undefined" || $.is_empty(server_no))?"":server_no;
+	var idc = typeof idc == "undefined"?0:idc;
+	var goods_no = typeof goods_no == "undefined"?"":goods_no;
+	var url = "{url /goods_manager/goodsserver_edit?server_no=}"+server_no+"&id="+id+"&goods_no="+goods_no+"&idc="+idc;
+	edit_c = "" + easyTemplate(edit_c,{title:"增加/编辑服务器",server_no:server_no});
+	$("#myModal").find(".modal-dialog").width("79%");
+	$("#myModal").find(".modal-content").html(edit_c);
+
+	$.loadform(_tmp,url,function(res,thebtn){
+		loadlist(1);
+	},function(res){
+		if(id == 0)res.id = 0;
+		//获取财务记录
+		setTimeout(function(){
+		$("#myModal").find(".modal-content").find(".tpl").find("input.date-ymd").datetimepicker({
+				language:  'zh-CN',
+				autoclose: 1,
+				startView: 2,
+				minView: 2,
+				maxView: 4,
+				format:"yyyy-mm-dd",
+				pickerPosition: "bottom-right"   
+		});
+		},50);
+		
+		//获取机房服务器信息
+		$(".the_server_editform").find("input[name='server_no']").keyup(function(){
+			var obj = this;
+			var keyword = $("#myModal").find("input[name='server_no']").val();
+			//var idc = parseInt($("#myModal").find("input[name='idc']").val());
+            if(keyword.length < 3){
+            	$(obj).parent().find(".find_serverlist").html("").hide();
+            	return false;
+            }
+			if(idc == 0){
+				$.ajaxTips(obj,"请选择机房","error");
+				return false;
+			}
+			if(keyword == ""){
+				$.ajaxTips(obj,"请输入要查询的关键词,服务器编号/IP地址","error");
+				return false;
+			}
+			//去服务请求数据
+			get_idc_server(1,keyword,idc);
+		});
+	},".the_server_editform",function(res){
+		if(!$.is_empty(res.idc)){
+			_tmp.idc.disabled = 1;
+		}else{
+			_tmp.idc.disabled = 0;
+		}
+		if(!$.is_empty(res.goods_no)){
+			_tmp.goods_no.type = "ivalue";
+		}else{
+			_tmp.goods_no.type = "text";
+		}
+		/*
+		if(!$.is_empty(res.server_no)){
+			_tmp.server_no.type = "ivalue";
+		}else{
+			_tmp.server_no.type = "text";
+		}
+		*/
+	});
+	$('#myModal').modal();
+}
+$(function(){
+	
+});
+</script>

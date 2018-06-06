@@ -1,0 +1,111 @@
+{block main}
+<div class="main-nav">
+  <div class="name">登录日志</div>
+  <div class="navbtn0">
+ 
+  </div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview('/user_manager/loginlog_refresh')}
+  <button type="button" class="btn btn-default btn-sm refresh-btn" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button> 
+  	{/if}
+	  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form enctype="multipart/form-data" class="the_searchform form" method="POST" action="{url /user_manager/loginlog?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+    <col width="150px" />
+	<col width="260px" />
+	<col />
+	<col />
+	<col width="190px" />
+	<thead>
+	<tr>
+	<th>时间</th>
+	<th>用户ID</th>
+	<th>详情</th>
+	<th>登录地区/设备/浏览器</th>
+	<th>登录IP</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td>${data.dateline}</td>
+    <td class="font-green">${data.name}<span class="font-gray">(<#if (data.uid>0)>${data.uid}<#else> - </#if>)</span></td>
+
+    <td class="font-gray">${data.log_data}</td>
+    <td class="font-gray">${data.log_place} /
+    ${data.log_pc} /
+    ${data.log_ie}
+    </td>
+    <td class="font-gray">${data.log_ip}</td>
+	</tr>
+</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var formdata = {
+	startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+	enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+    keyword:{type:"text",label:"UID/关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    company:{type:"hidden",name:"company",value:"{$condi['company']}"},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		}
+	});
+}
+$(function(){
+	//加载搜索
+	 $.loadform(formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 $(".date-ymd").datetimepicker({
+		language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"   
+	});
+	 loadlist(1);
+	 $(".refresh-btn").click(function(){
+	 	 loadlist(1);
+	 });
+	 
+})
+</script>
+{/block}

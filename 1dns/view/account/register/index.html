@@ -1,0 +1,156 @@
+{block logotit}注册{/block}
+{block css}
+<style type="text/css">
+	body{background: #4c97ed;}
+</style>
+{/block}
+{block main}
+<div class="dis30"></div>
+
+<div id="loginpage">
+	<div class="img-ad-left">
+	<div class="dis20"></div>
+		{set $ad = tCache::read("ad_4");}
+		{foreach items=$ad}
+		<img src="{url static@/$item[imgurl]}"/>
+		{/foreach}
+	</div>
+
+	<div class="am-u-lg-4 am-u-md-8 am-u-sm-centered img-ad-right">
+		<div class="am-panel">
+			<div class="am-panel-bd">
+				<form method="post" class="am-form" id="Fregister">
+					<fieldset>
+						<legend class="am-text-center" style="display:none;">欢迎注册……</legend>
+
+						<div class="am-form-group">
+							<label for="doc-ipt-email-1"><span class="am-text-sm am-text-fn" style="font-size: 14px">注册邮箱</span></label>
+							<input type="email" class="js-email-validate" id="Muemail" style="padding: 6px" name="uname" data-validation-message="请输入正确可用的邮箱" minlength="3" maxlength="80" required  placeholder="输入电子邮件">
+						</div>
+
+						<div class="am-form-group">
+							<label for="doc-ipt-email-1"><span class="am-text-sm am-text-fn" style="font-size: 14px">输入密码</span></label>
+							<input type="password" class="js-eq0-validate" id="Mupass" style="padding: 6px" name="upass" minlength="6" maxlength="18" data-validation-message="请输入6~18位密码"  required placeholder="输入密码">
+						</div>
+						<div class="am-form-group">
+							<label for="doc-ipt-email-1"><span class="am-text-sm am-text-fn" style="font-size: 14px">确认密码</span></label>
+							<input type="password" class="js-eq1-validate" id="Mpass2" style="padding: 6px" name="upass2" minlength="6" maxlength="18" data-validation-message="请输入6~18位确认密码"  required  placeholder="输入确认密码">
+						</div>
+
+
+						<div class="am-cf"></div>
+						<div class="am-text-left">
+							<a href="{url home@/cms/onepage/i/about/c/agreement}" class="am-text-sm" target="_blank" style="font-size: 14px">八戒DNS域名解析服务协议<i class="am-icon-angle-right"></i></a>
+						</div>
+						<div class="dis10"></div>
+						<div class="am-cf">
+							<input value="{hash}" name="hash" type="hidden" />
+							<button type="submit" data-am-loading="{loadingText: '注册中...等待反馈'}" id="Msubmit" class="am-btn am-btn-warning
+        am-btn-block am-text-lg am-radius" style="font-size: 18px">
+								<span class="am-text-lg" style="font-size: 18px">同意以上协议并</span><span class="am-text-lg" style="font-size: 18px">注册</span>
+							</button>
+						</div>
+						<div class="dis10"></div>
+
+					</fieldset>
+				</form>
+				<div class="am-text-right">
+					<span class="am-text-xs" style="font-size: 12px">已有账号,</span> <a href="{url /login}" class="am-text-xs"  style="font-size: 12px">
+					立即登录&nbsp;<i class="am-icon-angle-right"></i></a>
+				</div>
+			</div>
+		</div>
+		<div class="dis30"></div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+$(function(){
+	 $('#Fregister').validator({
+		 	validate: function(validity) {
+		 		var v = $(validity.field).val();
+		 		if ($(validity.field).is('.js-email-validate')) {
+		            if(v.is_email()){
+			        	// 异步操作必须返回 Deferred 对象
+				        return $.ajax({
+				          url: '{url /misc/check?ctype=email}',
+				          data:{param:v},
+				          // cache: false, 实际使用中请禁用缓存
+				          dataType: 'json'
+				        }).then(function(data) {			         
+				          if(data.status == 'n'){
+				        	  validity.valid = false;
+				        	  $(validity.field).data("validation-message",data.info);
+				          }else{
+				        	  validity.valid = true;
+				          }
+				          return validity;
+				        }, function() {
+				          return validity;
+				        });
+			        }else{
+					   	$(validity.field).data("validation-message","请输入正确可用的邮箱");
+			        	validity.valid = false;
+			        }
+		      }
+		      // 本地验证，同步操作，无需返回值
+		      else if ($(validity.field).is('.js-eq1-validate')) {
+		        if (v != $("input.js-eq0-validate").val()) {
+		          validity.valid = false;
+		        }
+		      }
+		 	},
+		    onValid: function(validity) {
+		      $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+		    },
+		    onInValid: function(validity) {
+		      var $field = $(validity.field);
+	          var $group = $field.closest('.am-form-group');
+	          var $alert = $group.find('.am-alert');
+	          // 使用自定义的提示信息 或 插件内置的提示信息
+	          var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+
+	          if (!$alert.length) {
+	              //$alert = $('<div class="am-alert am-alert-danger"></div>').hide().appendTo($group);
+	          }
+	          $.ui.error(msg);
+	          //$alert.html(msg).show();
+		    },
+		    submit:function(){		    	  
+		    	  var formValidity = this.isFormValid();
+		    	  var $formelement = $(this.$element);
+		    	  if(formValidity === false){
+		    	  	  return false;
+		    	  }else{
+			    	  $.when(formValidity).then(function() {
+				      	 // 验证成功的逻辑
+				      	 $("#Msubmit").button('loading');
+				     	 $.ajaxPassport({
+			    			url:"{url /register}",
+			    			data:$formelement.serialize(),
+			    			type:"post",
+			    			success:function(res){
+			    				$("#Msubmit").button('reset');
+			    				if(res.error == 1){
+			    					$.ui.error(res.message);
+			    				}else{
+			    					setTimeout(function(){
+			    						$.redirect("{url account@/ucenter/index}")
+			    					},500);
+			    				}
+			    			}
+			    		});
+				    }, function() {
+				      	
+				    });
+			    	return false;
+		    	}
+		    }
+	});
+})
+</script>
+{/block}

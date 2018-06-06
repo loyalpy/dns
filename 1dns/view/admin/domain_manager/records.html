@@ -1,0 +1,230 @@
+{block head_menu}
+    <div class="menu">
+    <ul>
+		{if $this->check_purview("/domain_manager/records")}
+		<li><a href="{url  /domain_manager/records}" {if $c != "lock"}class="cur"{/if}>域名解析记录</a></li>
+		{/if}
+		{if $this->check_purview("/domain_manager/domain_record_check")}
+		<li><a href="{url  /domain_manager/records?c=lock}" {if $c=="lock"}class="cur"{/if}>URL审核</a></li>
+		{/if}
+    </ul>
+    </div>
+{/block}
+
+{block main}
+<div class="main-nav">
+	{if $this->check_purview("/domain_manager/domain_record_check_batch")}
+  <div class="name">记录列表</div><button type="button" class="btn btn-sm btn-default batch-p" style="float: right;">批量审核</button>
+	{/if}
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_manager/records?do=get_url}">
+	<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive table-checkall" cellpadding="0" cellspacing="0">
+	<col width="50px"/>
+	<col width="60px" />
+	<col width="100px"/>
+	<col width="140px"/>
+	<col  />
+	<col width="100px"/>
+	<col width="80px"/>
+	<col width="80px"/>
+	<col width="150px"/>
+	<thead>
+	<tr>
+	<th><input type="checkbox" data-name="records[]" class="checkall"/></th>
+	<th>ID</th>
+	<th>主机名</th>
+	<th>域名</th>
+	<th>记录值</th>
+	<th>类型</th>
+	<th>解析状态</th>
+	<th>审核状态</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+{include tpl/form}
+
+
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr class="record_${data.record_id}">
+    <td><input type="checkbox" name="records[]" value="${data.record_id}"/></td>
+    <td class="font-gray"><span class="keybox">${data.record_id}</span></td>
+    <td class="font-blue"><span class="keybox">${data.RRname}</span></td>
+    <td class="font-blue">
+		<a href="{url /domain_manager/records?keyword=}${data.domain}"><span class="keybox">${data.domain}</span><br/>
+		<span class="keybox font-gray"><#if ($.is_empty(acls[data.acl]))><a href="{url domain_manager/domain_diyline?keyword=}${cust_line[data.acl.replace('cust','')].name}" class="font-gray">自定义线路:${cust_line[data.acl.replace('cust','')].name}</a><#else>${acls[data.acl].name}</#if></span></a>
+	</td>
+    <td class="font-green"><span class="keybox">${data.RRvalue}</span></td>
+    <td><span class="keybox <#if (data.RRtype=='URLN' || data.RRtype=='URLY')>font-org</#if>">${RRtypeArr[data.RRtype]}</span></td>
+		<td class="font-gray"><cite class="<#if (data.status==1)>glyphicon glyphicon-ok font-green<#else>glyphicon glyphicon-remove font-red</#if>" title="<#if (data.status==1)>已开启<#else>已暂停</#if>"></cite></td>
+
+		<td>
+		<#if (data.inlock == 0)>
+			<span class="glyphicon glyphicon-ok font-green" data-toggle="tooltip" data-placement="right" title="审核通过"></span>
+			<#else>
+				<span class="glyphicon glyphicon-lock font-red" data-toggle="tooltip" data-placement="right" title="待审核"></span>
+		</#if>
+	</td>
+    <td>
+		{if $this->check_purview("/domain_manager/domain_record_check")}
+		<button type="button" class="btn btn-default btn-sm btn-setting-check" data-url="{url /domain_manager/domain_record_check?record_id=}${data.record_id}" data-record_id="${data.record_id}">记录操作</button>
+		{/if}
+	</td>
+	</tr>
+</#macro>
+</script>
+
+
+<script language="javascript">
+	var acls = {echo JSON::encode(C("category","domain_acl")->json(0,'ident'))};
+	var cust_line = {echo JSON::encode(M("@domain_acl_set")->get_cust_list())};
+	var RRtypev = {echo JSON::encode($RRtype)};
+	var RRtypeArr = {echo JSON::encode($RRtypeArr)};
+	var pageurl = "{$pageurl}";
+	var hash = "{hash}";
+	var c = "{$c}";
+	var search_formdata = {
+		domain: {type: "uid", label: "域名", name: "domain", value: "{$condi['domain']}", disabled: 0, data_sr:[], css: "", require: "", desc: "", item_css: ""},
+		RRtype: {type: "select", label: "记录类型", name: "RRtype", value: "", disabled: 0, data_sr:RRtypev, css: "", require: "", desc: "", item_css: ""},
+		keyword:{type:"text",label:"关键词",name:"keyword",value: "",data_sr:[],css:"",require:"",desc:"",item_css:""},
+		c:{type:"hidden",label:"关键词",name:"c",value:c,data_sr:[],css:"",require:"",desc:"",item_css:""},
+		btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+	};
+	var loadlist = function(page){
+		$.ajaxLoadlist(page,pageurl,function(){
+			var keyword = $(".the_searchform input[name='keyword']").val();
+			if(keyword != ""){
+				$(".thelistform").find(".tpl .keybox").each(function(){
+					var obj = this;
+					var html = $(obj).html();
+					$(obj).html($.replace_keyword(html,keyword))
+				});
+			};
+			//URL审核
+			$(".btn-setting-check").click(function(){
+				var url = $(this).data("url");
+				edit_setting_check_func(url);
+			});
+			$('[data-toggle="tooltip"]').tooltip();
+		});
+		//全选，全不选
+		$(".table-checkall").find("input.checkall").unbind("click").bind("click",function(){
+			$.check_all(this);
+		});
+
+		//批量审核
+		var ids= new Array();
+		$(".batch-p").unbind("click").bind("click",function(){
+			var ids_tmp  = $.fetch_ids("records[]");
+			ids = ids_tmp.split(",");
+			if (ids == "") {
+				$.ui.error('请选择要批量审核的域名记录！')
+				return;
+			}
+			$.ui.confirm(function(){
+				batch_s_domain_op(0);
+			},"你确定要批量审核域名记录吗？") ;
+		});
+		var num = 0;
+		var batch_s_domain_op = function(i){
+			var id=ids[i];
+			if( i >= ids.length || typeof ids[i] == "undefined"){
+				num = 0;
+				return false;
+			}
+			$.ui.loading();
+			$.ajaxPassport({
+				url: "{url /domain_manager/domain_record_check}",
+				type:"POST",
+				success: function (res) {
+					if (res.error == 0) {
+						num++;
+						var domainId = ".record_"+ids[i];
+						setTimeout(function () {
+							$(domainId).remove();
+						}, 50);
+					}
+					//执行最后一次时提示操作结果
+					if (i == (ids.length - 1)) {
+						if (num >0) {
+							$.ui.close_loading();
+							$.tips("成功审核"+num+"个域名记录","success");
+							//如果是删除,重新加载
+							loadlist();
+						}else{
+							$.ui.close_loading();
+							$.tips("批量审核域名失败","error");
+						}
+					}
+					batch_s_domain_op(i+1);
+				},
+				data: {record_id:id,send_email:1,inlock:1,hash:hash},
+			});
+		}
+
+	}
+	$(function(){
+		//加载搜索
+		$.loadform(search_formdata,"",function(res){
+			pageurl = res.pageurl;
+			loadlist();
+			return true;
+		},function(){
+			get_domainlist(1,'',"",".the_searchform");
+		},".the_searchform");
+		//加载列表
+		loadlist();
+	})
+</script>
+<!-- URL审核 start-->
+<script type="text/template" id="tpl-setting-group">
+	<#macro rowedit data>
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title">${data.title}</h4>
+		</div>
+		<div class="form-content">
+			<form action="{url /domain_manager/domain_record_check}" method="post" class="theform form form-2" role="form">
+				<div class="tpl"></div>
+			</form>
+		</div>
+	</#macro>
+</script>
+<script language="javascript">
+	var setting_group_formdata = {
+		domain:{type:"ivalue",label:"操作域名",name:"domain",value:'',data_sr:[],css:"font-gray",require:"",desc:"",item_css:""},
+		inlock:{type:"select",label:"审核操作",name:"inlock",value:"1",data_sr:[{v: "审核通过", key: "1"}, {v: "取消审核", key: "2"}],css:"font-gray",require:"datatype='*'",desc:"",item_css:""},
+		record_id:{type:"hidden",label:"",name:"record_id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+		btn:{type:"button",label:"",value:"提交审核",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+	};
+	var edit_setting_check_func = function(url){
+		var edit_c = $("#tpl-setting-group").html();
+		edit_c = "" + easyTemplate(edit_c,{title:"审核记录"});
+		$("#myModal").find(".modal-dialog").width(500);
+		$("#myModal").find(".modal-content").html(edit_c);
+		$.loadform(setting_group_formdata,url,function(res){
+			loadlist();
+			return true;
+		},".theform");
+		$('#myModal').modal();
+	}
+</script>
+<!-- URL审核 end-->
+{/block}

@@ -1,0 +1,197 @@
+{block head_menu}
+<div class="menu">
+    <ul>
+        {if $this->check_purview("/domain_manager/domain")}
+        <li><a href="{url  /domain_manager/domain}" >域名列表</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_qy")}
+        <li><a href="{url  /domain_manager/domain_qy}">域名牵引</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log")}
+        <li><a href="{url  /domain_manager/domain_log}">域名操作日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log_switch")}
+        <li><a href="{url  /domain_manager/domain_log_switch}" >域名切换日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_black")}
+        <li><a href="{url  /domain_manager/domain_black}" >黑白名单</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_deleted")}
+        <li><a href="{url  /domain_manager/domain_deleted}" >已删除域名</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_find")}
+        <li><a href="{url  /domain_manager/domain_find}" >域名找回</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_diyline")}
+        <li><a href="{url  /domain_manager/domain_diyline}" class="cur">自定义线路</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_bind")}
+        <li><a href="{url  /domain_manager/domain_bind}">别名绑定</a></li>
+        {/if}
+    </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+    <div class="name">自定义线路</div>
+    <div class="navbtn">
+        <!--button-->
+        <!--end button-->
+    </div>
+    <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_manager/domain_diyline?do=get_url}">
+    <div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+    <div class="list-box">
+        <table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+            <col width="40px"/>
+            <col width="180px"/>
+            <col />
+            <col width="120px"/>
+            <col width="150px"/>
+            <col width="80px"/>
+            <col width="100px"/>
+            <thead>
+            <tr>
+                <th><input type="checkbox" data-name="domain_diy[]" class="checkall"/></th>
+                <th>线路名称</th>
+                <th>IP段</th>
+                <th>线路域名</th>
+                <th>用户</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="tpl"></tbody>
+        </table>
+    </div>
+    <div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+    <#macro row data>
+        <tr>
+            <td><input type="checkbox" name="domain_diy[]" value=""/></td>
+            <td class="font-gray">[<span class="font-green">cust${data.id}</span>] 
+            <span class="font-blue">${data.name}</span></td>
+            <td class="font-gray">${data.ipaddr}</td>
+            <td class="font-gray">${data.domain}</td>
+            <td class="font-gray">${data.uid}</td>
+            <td>
+                <#if (data.status == 1)>
+                    <span class="glyphicon glyphicon-ok font-green" title="正常"></span>
+                    <#else>
+                        <span class="glyphicon glyphicon-lock font-red" title="已锁定"></span>
+                </#if>
+            </td>
+            <td>
+                {if $this->check_purview("/domain_manager/domain_diyline_sh")}
+                <button type="button" class="btn btn-default btn-xs btn-setting-sh" data-url="{url /domain_manager/domain_diyline_sh?id=}${data.id}" data-id="${data.id}">审核</button>
+                {/if}
+                {if $this->check_purview("/domain_manager/domain_diyline_del")}
+                <button type="button" class="btn btn-default btn-xs del-line" data-id="${data.id}">删除</button>
+                {/if}
+            </td>
+        </tr>
+    </#macro>
+</script>
+<!-- edit ddd -->
+<script language="javascript">
+    var pageurl = "{$pageurl}";
+    var search_formdata = {
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+    };
+    var loadlist = function(page){
+        $.ajaxLoadlist(page,pageurl,function(){
+            var keyword = $(".the_searchform input[name='keyword']").val();
+            if(keyword != ""){
+                $(".thelistform").find(".tpl .keybox").each(function(){
+                    var obj = this;
+                    var html = $(obj).html();
+                    $(obj).html($.replace_keyword(html,keyword))
+                });
+            };
+            //全选，全不选
+            $(".list-table").find("input.checkall").unbind("click").bind("click",function(){
+                $.check_all(this);
+            });
+            //自定义线路锁定
+            $(".btn-setting-sh").click(function(){
+                var url = $(this).data("url");
+                edit_setting_check_func(url);
+            });
+            //自定义线路删除
+            $(".del-line").unbind("click").bind("click",function () {
+                var id = $(this).data("id");
+                if(confirm("你确定要删除该自定义线路吗?删除后数据不可恢复！")){
+                    $.ajaxPassport({
+                        url:"{url domain_manager/domain_diyline_del}",
+                        success:function(res){
+                            if(res.error == 1){
+                                $.tips(res.message,"error");
+                            }else{
+                                $.tips(res.message,"success");
+                                loadlist();
+                            }
+                        },
+                        data:{id:id}
+                    })
+                }
+            });
+        });
+    }
+    $(function(){
+        //加载搜索
+        $.loadform(search_formdata,"",function(res){
+            pageurl = res.pageurl;
+            loadlist();
+            return true;
+        },null,".the_searchform");
+        //加载列表
+        loadlist();
+    })
+</script>
+<script type="text/template" id="tpl-setting-group">
+    <#macro rowedit data>
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">${data.title}</h4>
+        </div>
+        <div class="form-content">
+            <form action="{url /domain_manager/domain_diyline_sh}" method="post" class="theform form form-2" role="form">
+                <div class="tpl"></div>
+            </form>
+        </div>
+    </#macro>
+</script>
+<script language="javascript">
+    var setting_group_formdata = {
+        domain:{type:"ivalue",label:"操作域名",name:"domain",value:'',data_sr:[],css:"font-gray",require:"",desc:"",item_css:""},
+        status:{type:"select",label:"审核操作",name:"status",value:"1",data_sr:[{v: "解锁", key: "1"}, {v: "锁定", key: "2"}],css:"font-gray",require:"datatype='*'",desc:"",item_css:""},
+        id:{type:"hidden",label:"",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+        btn:{type:"button",label:"",value:"提交",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+    };
+    var edit_setting_check_func = function(url){
+        var edit_c = $("#tpl-setting-group").html();
+        edit_c = "" + easyTemplate(edit_c,{title:"线路操作"});
+        $("#myModal").find(".modal-dialog").width(500);
+        $("#myModal").find(".modal-content").html(edit_c);
+        $.loadform(setting_group_formdata,url,function(res){
+            loadlist();
+            return true;
+        },".theform");
+        $('#myModal').modal();
+    }
+</script>
+{/block}

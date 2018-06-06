@@ -1,0 +1,152 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/index}"  class="showtype ">全部域名&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/transfer}"  class="showtype">域名转入&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/template}"  class="showtype">信息模板&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/order}"  class="showtype cur"> 我的订单&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">我的订单</span></h1>
+    </div>
+    <div class="am-form-group am-finance-list-key" style="margin: 0px;">
+        <div class="am-form-group am-form-icon">
+            <input type="text"  class="am-form-field am-input-sm" name="startdate" onclick="laydate()" class="am-form-field" placeholder=" 开始日期">
+            <i class="am-icon-calendar"></i>
+        </div>
+    </div>
+    <div class="am-finance-list-key">
+        <div class="am-form-group am-form-icon">
+            <input type="text"  class="am-form-field am-input-sm" name="enddate" onclick="laydate()" class="am-form-field" placeholder=" 结束日期">
+            <i class="am-icon-calendar"></i>
+        </div>
+    </div>
+    <div class="am-finance-list-key" style="margin-left: 80px;">
+        <input type="text"  name="keyword" class="am-form-field infor-keyword am-input-sm" placeholder="请输入订单编号" size="35" />
+    </div>
+    <div class="am-finance-list-key">
+        <button type="button" class="am-btn am-btn-success am-radius am-btn-sm account-serch">搜索</button>
+    </div>
+    <div class="dis10"></div>
+    <div class="am-finance-content">
+        <div class="listbody"></div>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_order_list">
+    <#macro rowedit data>
+        <#list data.list as order>
+            <div style="color: gray;line-height: 32px;background-color: #F6F8FA;">&nbsp;&nbsp;订单编号：${order.order_no} &nbsp;&nbsp;&nbsp;创建时间：${$.time_to_string(order.dateline,"Y-m-d H:i:s")}&nbsp;&nbsp;&nbsp;订单总金额：<font color="#F37B1D">${order.amount}元</font><#if (order.amount_coupon > 0)>&nbsp;&nbsp;&nbsp;代金券优惠：<font color="#F37B1D">${order.amount_coupon}元</font></#if></div><hr/>
+            <table class="am-table am-table-bordered">
+                <col width="290"/>
+                <col />
+                <col width="100"/>
+                <col width="120"/>
+                <col width="130"/>
+                <tbody>
+                <#list order.order_item as order_item>
+                    <tr>
+                        <td>${order_item.domain} <font color="gray">(<#if (order_item.type == 1)>新买<#else>续费</#if>)</font></td>
+                        <td>${order_item.num}年</td>
+                        <td ><font color="<#if (order.status != 4)> red <#else> #F37B1D </#if>">${order_item.amount}元</font></td>
+                        <td class="status">
+                            <#if (order.status >= 4)>
+                                <#if (order_item.status == 2)>
+                                <font color="red">已退款</font>
+                                    <#elseif (order_item.status == 1)>
+                                        <font color="green">已完成</font>
+                                        <#else>
+                                            <font color="gray">待处理</font>
+                                </#if>
+                            <#elseif (order.status == 3)>
+                                <font color="green">已支付</font>
+                            <#elseif (order.status == 0)>
+                                已取消
+                            <#else>
+                                <font color="red">待付款</font>
+                            </#if>
+                        </td>
+                        <#if (order_item_index == 0)>
+                            <td rowspan="${order.order_item.length}" class="am-text-middle option">
+                            <#if ($.in_array(order.status,[3,4,5,6]))>
+                                <a href="{url /cart/pay?order_no=}${order.order_no}" class="am-btn am-btn-default am-radius am-btn-xs pay-order">查看</a>
+                            <#elseif (order.status == 0)>
+                            -
+                            <#else>
+                                <input type="hidden" name="order_no" data-order_no="${order.order_no}"/>
+                                <a href="{url /cart/pay?order_no=}${order.order_no}" class="am-btn am-btn-warning am-radius am-btn-xs pay-order">支付</a>&nbsp;&nbsp;
+                                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs cancel-order">取消</button>
+                            </#if>
+                            </td>
+                        </#if>
+                    </tr>
+                </#list>
+                </tbody>
+            </table>
+            <div class="dis5"></div>
+        </#list>
+        <#if (data.list.length <= 0)>
+        <a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">没有符合条件的结果?</a>
+        </#if>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/laydate/laydate.js}"></script>
+<script type="text/javascript">
+    $(function(){
+        //搜索事件
+        $(".account-serch").unbind("click").bind("click",function(){
+            var startdate = $("input[name='startdate']").val();
+            var enddate  = $("input[name='enddate']").val();
+            var keyword  = $("input[name='keyword']").val();
+            load_order_list(1,keyword,startdate,enddate);
+        });
+        load_order_list(1);
+    });
+    var load_order_list = function(page,keyword,startdate,enddate){
+        var url = "{url /ucenter/order?do=get}";
+        var keyword  = $.is_empty(keyword)?'':keyword;
+        var startdate  = $.is_empty(startdate)?'':startdate;
+        var enddate  = $.is_empty(enddate)?'':enddate;
+        $.ajaxPassport({
+            url:url,
+            success:function(res){
+                var listhtml = ""+ easyTemplate($("#tpl_order_list").html(),res.data);
+                $(".listbody").html(listhtml);
+
+                $("button,a").bind("focus",function(){
+                    $(this).blur();
+                });
+                //取消订单
+                $(".cancel-order").unbind("click").bind("click",function(){
+                    var obj = this;
+                    $.ui.confirm(function(){
+                        var order_no = $(obj).parent().find("input[name='order_no']").data("order_no");
+                        $.ui.loading();
+                        $.ajaxPassport({
+                            url:"{url /ucenter/cancel_order}",
+                            success:function(res){
+                                $.ui.close_loading();
+                                if (res.error == 0) {
+                                    $.ui.success(res.message);
+                                    $(obj).parent().parent().find(".option").html('');
+                                }else{
+                                    $.ui.error(res.message);
+                                }
+                            },
+                            data:{order_no:order_no}
+                        })
+                    },"您确定要取消订单吗？")
+                });
+            },
+            data:{page:page,keyword:keyword,startdate:startdate,enddate:enddate},
+        });
+    }
+</script>
+{/block}

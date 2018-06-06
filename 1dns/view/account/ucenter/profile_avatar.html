@@ -1,0 +1,234 @@
+{block main}
+<div class="in-content">
+<div class="main-nav">
+  <div class="name">修改头像</div>
+  <div class="navbtn"></div>
+  <div class="cl"></div>
+</div>
+<div class="form-content">
+ <!--avatar -->
+		<table class="formtable" cellpadding="0" cellspacing="0">
+		  <col width="68px" />
+		  <col />
+		  <tbody>
+		  <tr>
+		  <th class="f14"><label>头像：</label></th>
+		  <td style="padding-top:18px;line-height:21px;"><span class="btn-liulan rl" style="position:relative;"><button type="button" style="position:relative;z-index:0;" class="btn btn-info btn-sm">浏览</button>
+		  <span id="btn_upload_logo"></span>
+		  </span>
+		  &nbsp;<br/>
+		  <span class="txt-gray">仅支持jpg、gif、png格式的图片 / 大小 2M以下;</span>
+		  </td>
+		  </tr>
+		  <tr>
+		  <th></th>
+		  <td>
+		        <table cellpadding="0" width="624" align="left" cellspacing="0" border="0">
+		            <tr>
+		                <td width="322" valign="top" align="center" style="padding:0;">
+		                    <div class="avatar-orgin">
+		                    <img src="{$avatarpath}" {if $noset == 1}style="display:none;"{/if} id="target" alt="头像" />
+		                    </div>
+		                </td>
+		                <td width="300" valign="top" align="center" style="padding:0;">
+		                    <div class="avatar-preview rl" id="Dpreviewbox">
+			                    <div class="big" style="border:solid 1px #ccc;width:150px;height:150px;overflow:hidden;">
+			                    <img src="{echo tFun::avatar($uid)}" id="preview1" alt="头像预览" />
+			                    </div>
+			                    <div class="middle" style="border:solid 1px #ccc;width:50px; height:50px; overflow:hidden;">
+			                    <img src="{echo tFun::avatar($uid)}" id="preview2" alt="头像预览" />
+			                    </div>
+			                    <div class="small" style="border:solid 1px #ccc;width:30px; height:30px; overflow:hidden;">
+			                    <img src="{echo tFun::avatar($uid)}" id="preview3" alt="头像预览" />
+			                    </div>
+			                    <div class="clearboth"></div>
+		                    </div>
+		                </td>
+		            </tr>
+		        </table>
+		  </td>
+		  </tr>
+		  <tr>
+		  <th></th>
+		  <td>
+		  <div class="dis20"></div>
+		  <input type="hidden" name="x" value="0" id="x" />
+		  <input type="hidden" name="y" value="0" id="y" />
+		  <input type="hidden" name="cw" value="0" id="cw" />
+		  <input type="hidden" name="ch" value="0" id="ch" />
+		  <button type="button" id="save_thumb" class="btn btn-success btn-lg">保存</button>&nbsp;&nbsp;&nbsp;
+		  <a href="javascript:void(0);" id="Mconcelcut" class="btn btn-default btn-lg">取消裁切</a>&nbsp;
+		  <a href="javascript:void(0);" id="Mclear" class="btn btn-default btn-lg">删除上传</a>
+		  </td>
+		  </tr>
+		  </tbody>
+		</table>
+        <!--end avatar -->
+</div>
+</div>
+{/block}
+
+{block css}
+<link rel="stylesheet" type="text/css" href="{url static@/javascript/jquery.imgareaselect-0.9.10/css/imgareaselect-default.css}" />
+{/block}
+
+{block javascript}
+<!--avatar js-->
+<script language="javascript" src="{url static@/javascript/jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.js}"></script>
+<script language="javascript" src="{url static@/javascript/jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.pack.js}"></script>
+<script language="javascript">
+             var imgw = 150;
+             var imgh = 150;
+             var aspectRatio = "1:1";//parseInt((imgw/imgh)*10)/10;
+             var imgcut_obj;
+            //图片LOGO上传成功后
+            function thk_uploaded(str){
+                 eval("res="+str);
+                 $("#imgeditbox").fadeIn("fast");
+                 $("#delbtn_img").fadeIn("fast");
+
+                 var image = new Image();
+                 image.src = U("/")+res.path+'?random='+Math.random();
+
+                 $("#target").attr("src",image.src).show();
+                 $("#preview1").attr("src",image.src).show();
+                 $("#preview2").attr("src",image.src).show();
+                 $("#preview3").attr("src",image.src).show();
+
+                 if(imgcut_obj){
+                    imgcut_obj = null;
+                 }
+                 init_imgcut();
+                 $.ajaxPassport({
+                 	url:"/ucenter/avatar",
+                 	success:function(re){
+
+                 	}
+                 });
+             }
+            //图片LOGO上传中
+            function thk_uploading(p1,p2){
+            	 $.tips("正在上传头像……","loading");
+            }
+            //图片上传失败
+            function thk_upload_error(s){
+            	alert("");
+            }
+            //选择更新预览对象
+            function updatePreview(img, selection){
+            	var scaleX1 = 150 / (selection.width || 1);
+			    var scaleY1 = 150 / (selection.height || 1);
+
+			    var scaleX2 = 50 / (selection.width || 1);
+			    var scaleY2 = 50 / (selection.height || 1);
+
+			    var scaleX3 = 30 / (selection.width || 1);
+			    var scaleY3 = 30 / (selection.height || 1);
+
+			    var src = $("#target").attr("src");
+                $("#preview1").attr("src",src);
+                $("#preview2").attr("src",src);
+                $("#preview3").attr("src",src);
+
+			    $('#preview1').css({
+			        width: Math.round(scaleX1 * 300) + 'px',
+			        height: Math.round(scaleY1 * 300) + 'px',
+			        marginLeft: '-' + Math.round(scaleX1 * selection.x1) + 'px',
+			        marginTop: '-' + Math.round(scaleY1 * selection.y1) + 'px'
+			    });
+			    $('#preview2').css({
+			        width: Math.round(scaleX2 * 300) + 'px',
+			        height: Math.round(scaleY2 * 300) + 'px',
+			        marginLeft: '-' + Math.round(scaleX2 * selection.x1) + 'px',
+			        marginTop: '-' + Math.round(scaleY2 * selection.y1) + 'px'
+			    });
+			    $('#preview3').css({
+			        width: Math.round(scaleX3 * 300) + 'px',
+			        height: Math.round(scaleY3 * 300) + 'px',
+			        marginLeft: '-' + Math.round(scaleX3 * selection.x1) + 'px',
+			        marginTop: '-' + Math.round(scaleY3 * selection.y1) + 'px'
+			    });
+			    //更新坐标
+                    $('#x').val(selection.x1);
+                    $('#y').val(selection.y1);
+                    $('#cw').val(selection.width);
+                    $('#ch').val(selection.height);
+			}
+            //初始化裁切对象
+            function init_imgcut(){
+            	imgcut_obj = $('#target').imgAreaSelect({ aspectRatio:"1:1",handles: true,onSelectChange: updatePreview,onSelectEnd:function(){
+
+            	},instance: true });
+            	//updatePreview(null, {width:300,height:300,x1:0,y1:0,x2:300,y2:300})
+            	if(typeof imgcut_obj.cancelSelection == "function")imgcut_obj.cancelSelection();
+            }
+            $(function(){
+               //插入FLASH
+               $.insert_flash("_btn=&_p={url /front_attach/avatar_upload/uid/}{$this->userinfo['uid']}","btn_upload_logo","{url static@/public/flash/upload}",62,27);
+               //初始化裁切对象
+               init_imgcut();
+               //保存图片
+               $('#save_thumb').click(function(){
+                        var x = parseInt($('#x').val());
+                        var y = parseInt($('#y').val());
+                        var w = parseInt($('#cw').val());
+                        var h = parseInt($('#ch').val());
+                        var obj = this;
+                        if(w==0 || h==0){
+                        	$.tips("请选择图片裁剪区域","error");
+                            return false;
+                        }else{
+                        	$.ajaxPassport({
+                        		url:"{url /ucenter/profile_avatar}",
+                        		success:function(res){
+                        			if(res.error == 1){
+	                                    $.tips(res.message,"error");
+	                                }else{
+	                                    $.tips(res.message,"success");
+	                                    $("img.myavatar_30").attr("src","{url /misc/avatar/uid/$uid/size/30}"+'?random='+Math.random());
+	                                    $("img.myavatar_50").attr("src","{url /misc/avatar/uid/$uid/size/50}"+'?random='+Math.random());
+	                                    $("img.myavatar_150").attr("src","{url /misc/avatar/uid/$uid/size/150}"+'?random='+Math.random());
+	                                    if(typeof imgcut_obj.cancelSelection == "function")imgcut_obj.cancelSelection();
+	                                }
+                        		},
+                        		loading_txt:"正在处理……",
+                        		data:{'do':'save',"x":x,"y":y,"w":w,"h":h,"in_ajax":1}
+                        	});
+                       }
+              });
+              //取消裁切
+              $("#Mconcelcut").click(function(){
+              	 if(typeof imgcut_obj.cancelSelection == "function")imgcut_obj.cancelSelection();
+              })
+               //删除LOGO
+               $('#Mclear').click(function(){
+              	  var obj = this;
+              	  if(confirm("您确定要删除该头像吗？")){
+              	  	      $.ajaxPassport({
+                        		url:"{url /ucenter/profile_avatar}",
+                        		success:function(res){
+                        			if(res.error == 1){
+	                                    $.tips(res.message,"error");
+	                                }else{
+	                                    $.tips(res.message,"success");
+	                                    $("#target").attr("src","").hide();
+
+			                            $("#preview1").attr("src","{url /misc/avatar/uid/$uid/size/150?}"+Math.random()).css({width:imgw+"px",height:imgh+"px",marginLeft:0,marginTop:0});
+			                            $("#preview2").attr("src","{url /misc/avatar/uid/$uid/size/50?}"+Math.random()).css({width:"50px",height:"50px",marginLeft:0,marginTop:0});
+			                            $("#preview3").attr("src","{url /misc/avatar/uid/$uid/size/30?}"+Math.random()).css({width:"30px",height:"30px",marginLeft:0,marginTop:0});
+
+			                            $("img.myavatar_30").attr("src","{url /misc/avatar/uid/$uid/size/30}"+'?random='+Math.random());
+	                                    $("img.myavatar_50").attr("src","{url /misc/avatar/uid/$uid/size/50}"+'?random='+Math.random());
+	                                    $("img.myavatar_150").attr("src","{url /misc/avatar/uid/$uid/size/150}"+'?random='+Math.random());
+	                                    if(typeof imgcut_obj.cancelSelection == "function")imgcut_obj.cancelSelection();
+	                                }
+                        		},
+                        		loading_txt:"正在处理……",
+                        		data:{'do':'del',"in_ajax":1}
+                        	});
+              	  }
+              });
+            });
+</script>
+<!--end avatar js-->
+{/block}

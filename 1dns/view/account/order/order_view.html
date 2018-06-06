@@ -1,0 +1,247 @@
+{block main}
+<div class="dis10"></div>
+<div class="order-shopping">
+	<div class="nav">
+		<ul>
+			<li class="un-use use1">
+				<div class="icon">
+					<span style="border: 1px solid #1BA208"><i class="am-icon-check" style="color:#1BA208;"></i></span>
+					<font style="color:#1BA208;">查看购物车</font>
+					<i class="am-icon-angle-right am-icon-lg" style="color:#E2E2E3;"></i>
+				</div>
+			</li>
+			<li class="un-use use2">
+				<div class="icon">
+					<span style="border: 1px solid #1BA208"><i class="am-icon-check" style="color:#1BA208;"></i></span>
+					<font style="color: #1BA208;">确认订单</font>
+					<i class="am-icon-angle-right am-icon-lg" style="color:#E2E2E3;"></i>
+				</div>
+			</li>
+			<li class="un-use use3">
+				<div class="icon">
+					<span style="border: 1px solid #1BA208;"><i class="am-icon-check" style="color:#1BA208;"></i></span>
+					<font style="color:#1BA208;">支付</font>
+					<i class="am-icon-angle-right am-icon-lg" style="color:#E2E2E3;"></i>
+				</div>
+			</li>
+			{if $orderinfo['pay_status'] == 1}
+			<li class="un-use use4">
+				<div class="icon">
+					<span style="border: 1px solid #1BA208;"><i class="am-icon-check" style="color:#1BA208;"></i></span>
+					<font style="position: relative;top:3px;color:#1BA208;">支付完成</font>
+				</div>
+			</li>
+			{else}
+			<li class="un-use use4">
+				<div class="icon">
+					<span style="color:gray;">4</span>
+					<font style="position: relative;top:3px;color:gray;">支付完成</font>
+				</div>
+			</li>
+			{/if}
+
+		</ul>
+		<div class="dis10"></div>
+	</div>
+	<div class="content">
+		<div class="dis30"></div>
+		<div class="content-shop">
+			<div class="order-detail">
+				<div class="cart-type" style="border-left: 2px solid #5D9FD6;padding-left: 10px;font-size: 20px;">订单详情</div>
+				<div class="dis10"></div>
+				<span style="color: gray;margin-left: 12px;">购买域名解析等 {echo count($orderinfo['order_item'])} 件商品 共<font style="color: #FA7821;font-size: 18px;">{$orderinfo['amount']}</font>元</span><span style="color: #0077CC;margin-left: 50px;cursor:pointer" class="detail-show">查看详情 <i class="am-icon-angle-down"></i></span>
+				<div class="dis10"></div>
+				<table class="am-table am-table-bordered table-detail"  style="margin-left: 10px;">
+					<thead>
+					<tr style="background-color: #F6F8FA">
+						<th>订单编号</th>
+						<th>产品名称</th>
+						<th>产品内容</th>
+						<th>数量</th>
+						<th>金额</th>
+					</tr>
+					</thead>
+					<tbody>
+					{foreach items=$orderinfo['order_item']}
+					<tr>
+						{if $key == 0}
+						<td rowspan="{echo count($orderinfo['order_item'])}" class="am-text-middle">{$orderinfo['order_no']}</td>
+						{/if}
+						<td>
+							{if $item['type'] == 0}域名服务套餐
+							{else}短信服务套餐
+							{/if}
+						</td>
+						<td>{if empty($item['goods_name'])}{$item['goods_no']}{else}{$item['goods_name']} ({echo isset($domain_service[$item['goods_no']])?$domain_service[$item['goods_no']]['name']:"免费版"}){/if}</td>
+						<td>{if empty($item['goods_name'])}{$item['num']}{else}{if $item['num']<10}{$item['num']}个月{else}{echo $item['num']/10}年{/if}{/if}</td>
+						<td><font class="am-text-warning">{$item['amount']} </font> 元</td>
+					</tr>
+					{/foreach}
+					</tbody>
+				</table>
+			</div>
+
+			{if $orderinfo['amount_coupon'] > 0}
+			<div class="cart-type" style="border-left: 2px solid #5D9FD6;padding-left: 10px;font-size: 18px">代金券</div>
+			<div class="dis10"></div>
+			<div class="coupon-c">
+				代金券共优惠<font class="am-text-warning">{$orderinfo['amount_coupon']}</font>元
+			</div>
+			{/if}
+
+			<div class="dis30"></div>
+			<div class="order-type">
+				<div class="cart-type" style="border-left: 2px solid #5D9FD6;padding-left: 10px;font-size: 20px;display: none;">支付方式</div>
+				<div class="dis10"></div>
+				<div class="records-nav profile_information" >
+					<ul>
+						<li class="yu cur"><a href="javascript:void (0);">支付方式</a></li>
+						<li class="outline"><a href="javascript:void (0);" style="display:none">支付宝在线支付</a></li>
+					</ul>
+				</div>
+				<div class="dis10"></div>
+				<div style="margin-left: -5px;" class="type-yu">
+					<div class="dis10"></div>
+					<div>
+						<ul class="paysel">
+						{set $payment_list = C("payment")->get_payment();}
+						{if $orderinfo['pay_status'] == 0}
+							{if $orderinfo['status'] == 0}
+                            <span class="am-text-danger">订单已取消</span>
+                            {else}
+							<li><input type="radio"  value="0" name="paytype"  {if $this->userinfo['account']['balance'] < $orderinfo['amount']}disabled{else}checked="checked"{/if} /> 余额支付   <span style="color:#999;">您当前余额:<font class="am-text-warning">{$this->userinfo['account']['balance']}</font></span> 
+
+							{if $this->userinfo['account']['balance'] < $orderinfo['amount']}
+							&nbsp;&nbsp;您的余额不足,请<a href="{url /finance/recharge?}order_no={$orderinfo['order_no']}&order_type=order&balance={echo ($orderinfo['amount']-$this->userinfo['account']['balance'])}"> <b>立即充值</b></a>
+							{/if}
+							</li>
+
+							{set $kkey = 0;}
+							{foreach items=$payment_list}
+							{if $item['id']!=7}
+							<li><input type="radio" {if $this->userinfo['account']['balance'] < $orderinfo['amount'] && $kkey==0}checked="checked"{/if} value="{$item['id']}" name="paytype"  /> <img src="{url static@/public/images}{$item['logo']}" alt="{$item['name']}" /> </li>
+							{/if}
+							{set $kkey = $kkey +1;}
+							{/foreach}
+							{/if}
+						{elseif $orderinfo['pay_status'] == 2}
+                            <li><span class="text-danger">已退款余额</span> <a href="/finance/recharge_detail" class="text-primary">查看资金</a></li>
+						{else}
+						   <li>
+						   {if empty($orderinfo['pay_type'])}
+						   <span class="am-text-success">余额支付</span>
+						   {else}
+							   {foreach items=$payment_list}
+							   {if $orderinfo['pay_type'] == $item['id']}
+							   <img src="{url static@/public/images}{$item['logo']}" />  <span class="am-text-success">{$item['name']}</span>
+							   {/if}
+							   {/foreach}
+						   {/if}
+						   </li>
+						{/if}
+						</ul>
+					</div>
+				</div>
+				<div class="dis10"></div>
+			</div>
+			</div>
+			<div class="dis30"></div>
+			<div class="order-pay" style="border-top: 1px solid silver;text-align: right;">
+				<div class="dis10"></div>
+				订单商品：<span style="color: #FA7821;font-size: 16px;"><strong>  {echo count($orderinfo['order_item'])} </strong></span>件&nbsp;&nbsp;&nbsp;应付总价：<span class="total-sum" style="color: #FA7821;font-size: 34px;"><strong>{$orderinfo['amount']}</strong></span>元&nbsp;&nbsp;&nbsp;&nbsp;
+				{if $orderinfo['pay_status'] == 0}
+					{if $orderinfo['status'] == 0}
+					<span class="am-text-danger">已取消订单</span>
+					{else}
+					<button type="button" class="am-btn am-btn-warning am-radius am-btn-sm btn-pay" style="position: relative;top:-12px;">立即支付</button>
+					{/if}
+				{elseif $orderinfo['pay_status'] == 1}
+				    <span class="am-text-success" style="">订单已支付,支付时间:{echo tTime::get_datetime('Y-m-d H:i:s',$orderinfo['pay_dateline'])}</span>
+				    {if ($orderinfo['send_status'] == 0)}
+					<script src="{url /order/order_retry_send?order_no}={$orderinfo['order_no']}" language="JavaScript"></script>
+					{else}
+                      <span class="am-text-primary">订单已完成</span>
+					{/if}
+				{else $orderinfo['pay_status'] == 2}
+                    <span class="am-text-danger">已退款余额</span> <a href="/finance/recharge_detail" class="font-blue">查看资金</a>
+                {/if}
+				<br/>
+			</div>
+			<div class="my-pay-success"></div>
+		</div>
+	</div>
+</div>
+<div class="dis30"></div>
+{/block}
+
+{block javascript}
+<!--支付成功-->
+<script type="text/template" id="tpl_pay_success">
+	<#macro rowedit data>
+		<div class="am-modal am-modal-no-btn" tabindex="-1" id="doc-modal-1">
+			<div class="am-modal-dialog">
+				<div class="am-modal-hd">
+					<i class="am-icon-check-circle" style="color: #5EB95E;"></i>&nbsp;&nbsp;恭喜您，支付成功！
+					<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+				</div>
+				<div class="dis20"></div>
+				<div class="am-modal-bd">
+					<a href="{url /domains}" ><button type="button" class="am-btn am-btn-default">返回域名列表</button></a>&nbsp;&nbsp;&nbsp;
+					<a href="{url /order/order}"><button type="button" class="am-btn am-btn-warning">查看订单列表</button></a>
+				</div>
+				<div class="dis30"></div>
+			</div>
+		</div>
+	</#macro>
+</script>
+<script type="text/javascript">
+	$(function(){
+			$(".btn-pay").unbind("click").bind("click",function(){
+				var order_no =" {$orderinfo['order_no']}";
+				var paytype = $("input[name='paytype']:checked").val();
+				if (typeof paytype == "undefined") {
+					$.ui.error("请选择支付方式！");
+					return false;
+				}
+				$.ui.loading();
+				$.ajaxPassport({
+					url:"{url /api/Order.Pay}",
+					data:{order_no:order_no,pay_id:paytype},
+					success:function(res){
+						$.ui.close_loading();
+						if (res.status == 1) {
+							if(!$.is_empty(res.data.surl)){
+								$.ui.success(res.msg);
+								setTimeout(function(){
+									$.redirect(res.data.surl);
+								},300);								
+								return false;
+							}else{
+								setTimeout(function(){
+									var html = "" + easyTemplate($("#tpl_pay_success").html());
+									$(".my-pay-success").html(html);
+									$(".my-pay-success").find('#doc-modal-1').modal({width: 350,closeViaDimmer:false});
+								},600);
+
+								$.exeJS(res.data.sendurl);
+							}
+						}else{
+							$.ui.error(res.msg);
+						}
+					}
+				})
+			});
+	});
+	//点击图标隐藏显示
+	$(".detail-show").unbind("click").bind("click",function(){
+		var obj = this;
+		if($(".table-detail").css('display') == 'none'){
+			$(".table-detail").show();
+			$(obj).find("i").removeClass("am-icon-angle-down").addClass("am-icon-angle-up");
+		}else{
+			$(".table-detail").hide();
+			$(obj).find("i").removeClass("am-icon-angle-up").addClass("am-icon-angle-down");
+		}
+	});
+</script>
+{/block}

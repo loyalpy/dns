@@ -1,0 +1,157 @@
+<!-- float qq -->
+<style type="text/css">
+html{-webkit-text-size-adjust:none;}
+.floatqq {position:fixed;top:168px;right:5px;background:#fff;border:solid 1px #cecece;width:122px;z-index:999;}
+.floatqq .in {padding:20px 8px 0 8px;}
+.floatqq dl dt {height:24px;line-height:18px;font-family:"微软雅黑";color:#000;background-image:url({theme images/onlineqq/online.gif});background-repeat:no-repeat;text-indent:20px;font-size:16px;}
+.floatqq dl dt.t0 {background-position:left -6px;}
+.floatqq dl dt.t1 {background-position:left -164px;}
+.floatqq dl dd {padding:3px 0;}
+.floatqq dl dd a.open {display:inline-block;width:98px;height:40px;line-height:40px;font-family:"微软雅黑";background:#fff;background-image:url({theme images/onlineqq/online.gif});background-repeat:no-repeat;text-indent:33px;font-size:14px;border:solid 1px #ccc;border-bottom:solid 2px #ccc;border-right:solid 2px #ccc;color:#515151;}
+.floatqq dl dd a.open1 {background-position:left -41px;}
+.floatqq dl dd a.open2 {background-position:left -90px;}
+.floatqq dl dd.tel {padding:0;height:28px;line-height:28px;color:#8a2626;font-family:"微软雅黑";font-size:15px;}
+.floatqq dl dd.time {-webkit-text-size-adjust:none;padding-top:10px;height:22px;text-align:center;line-height:16px;color:#777;font-family:"微软雅黑";font-size:12px;}
+
+.floatqq .in a.close {display:block;width:17px;height:17px;position:absolute;top:-3px;right:0px;background:url(../images/kf.gif) -41px top no-repeat;}
+.open-qqbox {padding:0px 0px;background:#fff;min-height:100px;}
+.open-qqbox .h {background:#4e9fce;}
+.open-qqbox .h .in {height:86px;}
+.open-qqbox .h .in div.h1 {background:url({theme front/images/floatqq_h.gif}) 11px 9px no-repeat;font-family:"微软雅黑";font-size:18px;font-weight:700;color:#fff;text-indent:50px;height:52px;line-height:46px;}
+.open-qqbox .h .in div.nav {height:34px;padding-left:12px;}
+.open-qqbox .h .in div.nav ul li {float:left;width:102px;height:34px;line-height:34px;text-align:center;font-family:"微软雅黑";font-size:18px;margin-right:12px;background:#f3f3f3;}
+.open-qqbox .h .in div.nav ul li.cur {background:#fff;}
+.open-qqbox .h .in div.nav ul li a {color:#666;font-size:14px;}
+.open-qqbox .h .in div.nav ul li.cur a {color:#4e9fce;}
+
+.open-qqbox .b {background:#fff;width:600px;padding:20px 18px 8px 18px;}
+
+.open-qqbox .b dl dt {font-size:14px;height:22px;line-height:14px;width:120px;font-family:"微软雅黑";color:#a90000;}
+.open-qqbox .b dl dd {width:480px;float:left}
+.open-qqbox .b dl dd p {display:block;width:240px;height:36px;line-height:36px;float:left;}
+.open-qqbox .b dl dd p a {color:#0281b9;font-size:14px;}
+.open-qqbox .b dl dd p a span img.qq {position:relative;top:11px;width:23px;height:16px;}
+.open-qqbox .b dl dd p.colspan2 {width:400px;}
+.open-qqbox .b dl dd p.colspan2 a{display:block;width:180px;height:36px;line-height:36px;float:left;}
+.open-qqbox .b dl dd.clear {height:1px;width:100%;clear:both;margin:5px 0;}
+.open-qqbox .tel {background:#f7f7f6;border-top:solid 1px #efefef;padding:18px 20px;}
+</style>
+<div class="floatqq" style="display:none;">
+</div>
+
+<div class="floatdiv" id="Dfloatdiv" style="display:none;">
+  <div class="item"><cite class="ftel"></cite>
+  <div class="in" style="width:0px;" _w="120"><a href="javascript:void(0)" class="open open1" data-t="front"  title="售前QQ">售前QQ</a></div>
+  </div>
+  <div class="line"></div>
+  <div class="item"><cite class="fqq"></cite>
+  <div class="in" style="width:0px;" _w="120"><a href="javascript:void(0)" class="open open2" data-t="back"  title="售后QQ">售后QQ</a></div>
+  </div>
+  <div class="line"></div>
+  <div class="item"><cite class="fedit"></cite>
+  <div class="in" style="width:0px;" _w="170"><font class="f18" style="padding-top:6px;white-space:nowrap;display:inline-block;">{$site_config['tel']}</font> <br/><font class="f12" style="white-space:nowrap;display:inline-block;"> (7 x 24小时)</font></div>
+  </div>
+</div>
+
+
+{set $online_qq = array(
+ 1=>array("name"=>"","qqs"=>array(
+ 	array("qq"=>"79541281","name"=>"业务咨询1"),
+ 	array("qq"=>"79517943","name"=>"业务咨询2"),
+ 	array("qq"=>"79307164","name"=>"业务咨询3"),
+ 	array("qq"=>"21287","name"=>"渠道合作"),
+ )),
+ 51=>array("name"=>"","qqs"=>array(
+ 	array("qq"=>"79235469","name"=>"7x24小时客服QQ "),
+ )),
+);}
+<script  id="online_qqfront" type='text/template'>
+<dl>
+{foreach items=$online_qq}
+{if $key <50}
+{if $item['name']}<dt>>&nbsp; {$item['name']}</dt>{/if}
+<dd>
+{foreach items=$item['qqs'] item=$qq key=$k2}
+<p>
+<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={$qq['qq']}&site=qq&menu=yes" class="txt-black"><span class="fl"><img border="0" src="http://wpa.qq.com/pa?p=2:{$qq['qq']}:4" class="qq" alt="点击这里给{$qq['name']}发消息" title="点击这里给{$qq['name']}发消息"></span><span class="fl f14">&nbsp;&nbsp;{$qq['name']}</span></a>
+</p>
+{/foreach}
+<div class='cl'></div></dd><dd class='clear'></dd><div class='cl'></div>
+{/if}
+{/foreach}
+</dl>
+</script>
+<script id="online_qqback" type='text/template'>
+<dl>
+{foreach items=$online_qq}
+{if $key >50}
+{if $item['name']}<dt>>&nbsp; {$item['name']}</dt>{/if}
+<dd>
+{foreach items=$item['qqs'] item=$qq key=$k2}
+<p class="colspan2">
+<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={$qq['qq']}&site=qq&menu=yes" class="txt-black"><span class="fl"><img border="0" src="http://wpa.qq.com/pa?p=2:{$qq['qq']}:4" class="qq" alt="点击这里给{$qq['name']}发消息" title="点击这里给{$qq['name']}发消息"></span><span class="fl f14">&nbsp;&nbsp;{$qq['name']}</span></a>
+<a href="javascript:void(0);" class="txt-gray f14">{$qq['desc']}</a>
+</p>
+{/foreach}
+<div class='cl'></div></dd><dd class='clear'></dd><div class='cl'></div>
+{/if}
+{/foreach}
+</dl>
+</script>
+
+<script language="javascript">
+var POPS = {};
+var open_qq = function(t){
+	var html = "<div class='open-qqbox'>";
+  	html += "<div class='h'><div class='in'><div class='h1'>客户服务中心</div>";
+  	html += "<div class='nav'><ul><li class='"+(t == "front"?"cur":"")+"'><a href='javascript:void(0);' onclick='open_qq(\"front\")' title=''>售前咨询</a></li><li class='"+(t == "back"?"cur":"")+"'><a href='javascript:void(0);' onclick='open_qq(\"back\")' title=''>售后服务</a></li></ul></div>";
+  	html += "</div></div>";
+  	html += "<div class='b'>";
+  	//html += t == "back"?back_qq:front_qq;
+  	html += t == "back"?$("#online_qqback").html():$("#online_qqfront").html();
+  	
+    html += "<div class='dis10'></div>";
+    html += '';
+  	html += "</div>";
+  	html += "<div class='tel'><font class='f14 font-gray2'>7x 24小时服务热线：</font><font class='f24 font-gray'>{$site_config['tel']}</font></div></div>";
+  	if(POPS['onlineqq']){
+  		POPS['onlineqq'].close();
+  	}
+  	POPS['onlineqq'] = $.dialog({title:false,content:html});
+}
+$(function(){
+  $("a.open").click(function(){
+  	var obj = this;
+  	var t = $(obj).attr("data-t");
+  	if(t)	open_qq(t);
+  })
+});
+
+$(function(){
+	{if $inc == "site" && $act == "index"}
+	/*$("#Dfloatdiv").css('display','none');
+	$(window).scroll(function(){
+			if($(window).scrollTop()>180){
+				$("#Dfloatdiv").fadeIn();
+				
+			}else{
+			   $("#Dfloatdiv").fadeOut();
+			}
+	});*/
+	   $("#Dfloatdiv").fadeIn();
+	{else}
+	   $("#Dfloatdiv").fadeIn();
+	{/if}
+	$("#Dfloatdiv").find(".item").hover(function(){
+		var sIn_obj = $(this).find(".in");
+		$(this).addClass("item-over");
+		sIn_obj.stop(true,false).animate({"width":sIn_obj.attr("_w")},300);
+	},function(){
+		$(this).removeClass("item-over");
+		$(this).find(".in").stop(true,false).animate({"width":0},300);
+	}
+	);
+})
+
+</script>
+<!--end float qq-->

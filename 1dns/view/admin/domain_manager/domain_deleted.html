@@ -1,0 +1,157 @@
+{block head_menu}
+<div class="menu">
+    <ul>
+        {if $this->check_purview("/domain_manager/domain")}
+        <li><a href="{url  /domain_manager/domain}" >域名列表</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_qy")}
+        <li><a href="{url  /domain_manager/domain_qy}">域名牵引</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log")}
+        <li><a href="{url  /domain_manager/domain_log}">域名操作日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log_switch")}
+        <li><a href="{url  /domain_manager/domain_log_switch}" >域名切换日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_black")}
+        <li><a href="{url  /domain_manager/domain_black}" >黑白名单</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_deleted")}
+        <li><a href="{url  /domain_manager/domain_deleted}" class="cur">已删除域名</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_find")}
+        <li><a href="{url  /domain_manager/domain_find}" >域名找回</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_diyline")}
+        <li><a href="{url  /domain_manager/domain_diyline}" >自定义线路</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_bind")}
+        <li><a href="{url  /domain_manager/domain_bind}">别名绑定</a></li>
+        {/if}
+    </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+    <div class="name">已删除域名</div>
+    <div class="navbtn">
+        <!--button-->
+        <!--end button-->
+    </div>
+    <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_manager/domain_deleted?do=get_url}">
+    <div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+    <div class="list-box">
+        <table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+            <col width="80px"/>
+            <col width="200px"/>
+            <col width="200px"/>
+            <col width="200px"/>
+            <col />
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>域名</th>
+                <th>用户</th>
+                <th>删除时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="tpl"></tbody>
+        </table>
+    </div>
+    <div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script type="text/template" id="tpl_list_row">
+    <#macro row data>
+        <tr>
+            <td class="font-black">${data.id}</td>
+            <td class="font-blue"><span class="keybox"><#if (data.is_cn==1)>${data.domain_cn}<#else>${data.domain}</#if></span></td>
+            <td>${data.uid}</td>
+            <td class="font-gray">${data.dateline}</td>
+            <td>
+                -
+            </td>
+        </tr>
+    </#macro>
+</script>
+<script language="javascript">
+    var del_func = function (obj) {
+        if (confirm("你确定要彻底删除该数据吗?删除后数据不可恢复！")) {
+            var url = $(obj).attr("data-url");
+            $.ajaxPassport({
+                url: url,
+                success: function (res) {
+                    if (res.error == 1) {
+                        $.tips(res.message, "error");
+                    } else {
+                        $.tips(res.message, "success");
+                        loadlist();
+                    }
+                }
+            })
+        }
+    }
+</script>
+<!-- edit ddd -->
+<script language="javascript">
+    var pageurl = "{$pageurl}";
+    var search_formdata = {
+    startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+    enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+    };
+    var loadlist = function(page){
+        $.ajaxLoadlist(page,pageurl,function(){
+            var keyword = $(".the_searchform input[name='keyword']").val();
+            if(keyword != ""){
+                $(".thelistform").find(".tpl .keybox").each(function(){
+                    var obj = this;
+                    var html = $(obj).html();
+                    $(obj).html($.replace_keyword(html,keyword))
+                });
+            };
+            $(".delbtn").click(function () {
+                del_func(this);
+            });
+        });
+    }
+    $(function(){
+        //加载搜索
+        $.loadform(search_formdata,"",function(res){
+            pageurl = res.pageurl;
+            loadlist();
+            return true;
+        },null,".the_searchform");
+        //加载列表
+        $(".date-ymd").datetimepicker({
+            language:  'zh-CN',
+            autoclose: 1,
+            startView: 2,
+            minView: 2,
+            maxView: 4,
+            format:"yyyy-mm-dd",
+            pickerPosition: "bottom-right"
+        });
+        loadlist();
+    })
+</script>
+{/block}

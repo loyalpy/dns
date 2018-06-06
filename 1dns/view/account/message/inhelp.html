@@ -1,0 +1,90 @@
+{block main}
+<div class="main-nav">
+  <div class="name">帮助消息</div>
+  <div class="navbtn"></div>
+  <div class="cl"></div>
+</div>
+<div class="form-content">
+<form action="" method="post" class="theform form" role="form">
+<input type="hidden" value="" name="uid" />
+<div class="tpl"></div>
+</form>
+</div>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          常见问题
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel">
+    {foreach $items = $datalist['list']}
+      <div class="panel-body">
+        <a href="javascript:void(0);" class="viewbtn" data-url="{url /message/inhelp?do=view&id=$item[tid]}">{$item['subject']}</a>
+      </div>
+    {/foreach}
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          软件问题
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel">
+    {foreach $items = $baselist['list']}
+      <div class="panel-body">
+        <a href="#">{$item['subject']}</a>
+      </div>
+    {/foreach}
+    </div>
+  </div>
+</div>
+
+
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_view">
+<#macro row data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">查看帮助文档-${data.subject}</h4>
+</div>
+<div class="modal-body">
+   ${data.description}
+</div>
+<div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
+</#macro>
+</script>
+                                                                                                                                                  
+
+
+<script language="javascript">
+$(function(){
+	$("a.viewbtn").bind("click",function(){
+		var obj = this;
+		var url = $(obj).attr("data-url");
+
+		$.ajax({
+			url:url,
+			success:function(res){
+				
+				if(res.error == 1){
+					alert(res.message);
+				}else{
+					$('#myModal').modal().find(".modal-content").html(""+easyTemplate($("#tpl_view").html(),res));
+				}
+			},
+			data:{}
+		});
+	})
+})
+</script>
+{/block}

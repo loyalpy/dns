@@ -1,0 +1,197 @@
+{block title}{if isset($cate['name']) && $cate['name']}{$cate['name']}{else}八戒DNS{/if}-{$site['seo_title']}{/block}
+{block seo}
+<meta name="keywords" content="{$cate['name']},八戒DNS,{$site_config['seo_keyword']}" />
+<meta name="description" content="{$cate['name']},八戒DNS,{$site_config['seo_description']}" />
+{/block}
+{block header}{/block}
+{block main}
+<div class="news-wrap">
+	<div class="artview">
+		<!--sidebar-->
+		<div class="sidebar">
+			<h1>{$data['threads']['subject']}</h1>
+			<div class="review">
+				{foreach items=$data['list']}
+				{if $item['first'] == 1}
+				<div class="threads_html_box">{echo htmlspecialchars_decode($item['message'])}</div>
+				{/if}
+				{/foreach}
+			</div>
+			<div class="dis20"></div>
+			<div class="artinfo">
+				<!--<span>来源：{$site['site_name']}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>时间：{echo tTime::get_datetime('Y年m月d日 H:i',$data['threads']['dateline'])}</span>-->
+				<span>来源：{$site['site_name']}</span>
+				{if $data['list']}
+					{foreach items=$data['list']}
+					{if $item['first'] == 1}
+					<ul class="share">
+						<li>分享到：</li>
+						<li class="sina"><a href="javascript:void(0);"  onclick="return go_share(this,'sina');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/sina.jpg}"></a></li>
+						<li class="tengx"><a  href="javascript:void(0);"  onclick="return go_share(this,'tengx');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/tengx.jpg}"></a></li>
+						<li class="kaixin"><a  href="javascript:void(0);"  onclick="return go_share(this,'kaixin');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/kaixin.jpg}"></a></li>
+						<li class="douban"><a  href="javascript:void(0);"  onclick="return go_share(this,'douban');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/douban.jpg}"></a></li>
+						<li class="sohu"><a  href="javascript:void(0);" onclick="return go_share(this,'sohu');" target="_blank" title="{$item['subject']}"><img src="{skin images/index/sohu.jpg}"></a></li>
+					</ul>
+					{/if}
+					{/foreach}
+				{/if}
+			</div>
+			<div class="dis20"></div>
+			<div class="pnlink">
+				{if $prevnext['prev'] || $prevnext['next']}
+				<div class="prevnext">
+					{if $prevnext['prev']}
+					<p class="f14"><span class="txt-gray">下一篇：</span><a class="font-blue" href="{echo U('/cms/topic/tid/'.$prevnext['prev']['tid'])}" title="{$prevnext['prev']['subject']}">{$prevnext['prev']['subject']}</a></p>
+					{/if}
+					{if $prevnext['next']}
+					<p class="f14"><span class="txt-gray">上一篇：</span><a class="font-blue" href="{echo U('/cms/topic/tid/'.$prevnext['next']['tid'])}" title="{$prevnext['next']['subject']}">{$prevnext['next']['subject']}</a></p>
+					{/if}
+				</div>
+				{/if}
+			</div>
+			<div class="dis40"></div>
+			<div class="reply">
+				<h5><span></span>({echo count($blog);})最新回复</h5>
+				{if count($blog)>0}
+					{foreach $items=$blog}
+						<div class="con">
+							<div class="advator"><img src="{if $item['attachment']}{$item['attachment']}{else}{skin images/index/advator.jpg}{/if}"/></div>
+							<div class="contenta">
+								<div class="t1">
+									<div class="t1l"><span class="name">{$item['uname']}</span> <span class="del" data-pid="{$item['pid']}">删除</span></div>
+									<div class="t1r">{echo $key+1;}F</div>
+								</div>
+								<div class="dis10"></div>
+								<div class="t2">{$item['message']}</div>
+								<div class="dis10"></div>
+								<div class="t3">{$item['dateline']}</div>
+							</div>
+							<div class="dis20"></div>
+						</div>
+					{/foreach}
+				{/if}
+				<div class="appen"></div>
+			</div>
+			<div class="dis20"></div>
+			<div class="bott">
+				<p>走过路过，留下点干粮 (请登录发言，并遵守相关规定) <span class="n">{if $uid}{echo M("user")->get_one("uid=$uid","uname");}{/if}</span></p>
+				<p>
+					<textarea name="message" id="message"></textarea>
+					<input type="hidden" name="pid" value="{if $data['list']}{foreach items=$data['list']}{if $item['first'] == 1}{$item['pid']}{/if}{/foreach}{/if}">
+				</p>
+				<p class="h">回复 </p>
+				<div class="dis10"></div>
+			</div>
+		</div>
+		<!--sidebar end-->
+		<!--mainbar-->
+		<div class="mainbar">
+			<div class="search-form">
+				<form action="{url /cms/blog/fid/$fid}" method="POST">
+					<input type="hidden" name="hash" value="{hash}" />
+					<img class="img" src="{skin images/helper/search.jpg}">
+					<input type="text" name="keyword" value="{if isset($keyword)}{$keyword}{else}{/if}"  class="key" />
+					<button type="submit" style="display: none">提交</button>
+				</form>
+			</div>
+			<div class="dis30"></div>
+			<h1>官方博客目录</h1>
+			<div class="dis10"></div>
+			<div class="cmslist-nav">
+				<ul>
+					{foreach items = $cates}
+					<li><a class="{if isset($cate['id']) && $cate['id'] == $item['id']}curr{/if}" href="{url /cms/blog/fid/$item[id]}">{$item['name']}<font class="font-org">({$item['threads']})</font></font></a></li>
+					{/foreach}
+				</ul>
+			</div>
+			<div class="dis30"></div>
+			<h1>推荐</h1>
+			<div class="dis10"></div>
+			<div class="siderand">
+				{if $tuinews}
+				<ul>
+					{foreach items=$tuinews}
+					<li><a href="{url /cms/topic/tid/$item[tid]}" title="{$item['subject']}" >{$item['subject']}</a></li>
+					{/foreach}
+				</ul>
+				{/if}
+			</div>
+		</div>
+		<!--mainbar end-->
+</div>
+	<div class="dis60"></div>
+{/block}
+{block javascript}
+<script language="javascript" src="{url static@/javascript/utils/share.js}"></script>
+<script type="text/javascript">
+	var uid = "{$uid}";
+	$(function(){
+		$(".img").click(function(){
+			$("button").click();
+		});
+		var frm_submit=false;   //纪录提交状态,js端防止重复提交
+		//回复博客
+		$(".h").click(function(){
+			var msg = $(this).parent().find("#message").val();
+			var pid = $("input[name='pid']").val();
+
+			if (uid == 0) {
+				alert("您未登录，请先登录！")
+				return false;
+			}
+			if (frm_submit==true) {
+				alert("请勿重复提交!");
+				return false;
+			}
+			if ($.is_empty(msg) || msg.length<2) {
+				alert("内容不能为空或者太短！");
+				return false;
+			}
+			$.ajaxPassport({
+				url:"{url cms/blog_reply}",
+				success:function(res){
+					if (res.error == 1) {
+						alert(res.message);
+					}else{
+						var html = "<div class='con'> " +
+												"<div class='advator'><img src='{skin images/index/advator.jpg}'/></div>" +
+												"<div class='contenta'>" +
+													"<div class='t1'>" +
+														"<div class='t1l'><span class='name'>{$uname}</span> </div>" +
+														"<div class='t1r'></div>" +
+													"</div>" +
+													"<div class='dis10'></div>" +
+													"<div class='t2'>"+msg+"</div>" +
+													"<div class='dis10'></div>" +
+													"<div class='t3'>1秒前</div>" +
+												"</div>" +
+												"<div class='dis20'></div>" +
+										"</div>";
+						$(".appen").append(html);
+						$("#message").val('');
+						frm_submit=true;  //改变提交状态
+					}
+				},
+				data:{message:msg,pid:pid}
+			});
+		});
+		//删除博客
+		$(".del").click(function(){
+			var pid = $(this).data("pid");
+			var obj = this;
+			$.ajaxPassport({
+				url:"{url cms/blog_del}",
+				success:function(res){
+					if (res.error == 1) {
+						alert(res.message);
+					}else{
+						$(obj).parent().parent().parent().parent().remove();
+					}
+				},
+				data:{pid:pid}
+			});
+		});
+	});
+</script>
+{/block}
+{block friendlink}{/block}

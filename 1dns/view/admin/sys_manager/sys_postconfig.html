@@ -1,0 +1,89 @@
+{code
+$cls_category = new cls_category("postcate");
+$this->datalist = $cls_category->get(0);
+}
+{/code}
+<div class="headbar">
+    <div class="operating">&nbsp;&nbsp;
+	<button class="operating_btn" id="operation_1" type="button">清除缓存</button>
+	<button class="operating_btn" onclick="$.redirect('{url /sysadmin/sys_postconfig_edit}')" type="button">添加分类</button>
+	</div>
+	<div  class="field">
+		<table class="list_table">
+				<col width="80px" />
+				<col width="360px" />
+				<col width="80px" />
+				<col width="80px" />
+				<col width="80px" />
+				<col width="80px" />
+				<col width="80px" />
+				<col />
+				<thead>
+					<tr id="headth">
+					<th>序号</th>
+					<th>名称</th>
+					<th>编码</th>
+					<th>首显</th>
+					<th class="t_c">热点</th>
+					<th>加粗</th>
+					<th>状态</th>
+					<th>操作</th>
+					</tr>
+				</thead>
+		</table>
+	</div>
+</div>
+<div class="list content">
+<table id="list_table" class="list_table">
+		<tbody id="conth">
+		    {foreach items=$this->datalist}
+			<tr id="{$item['id']}" parent={$item['pid']} style="{if $item['level'] != 0}display:none;{/if}">
+			<td><span class="ajax_edit txt-gray" onclick="T.ext.edit('{url /sysadmin/sys_ajaxedit}',{t:'postcate',id:'{$item['id']}',f:'sort'},this)">{if $item['sort']}{$item['sort']}{else}0{/if}</span></td>
+			<td class="f14 switch" style='padding-left:{echo $item['level']*20}px'>
+			<img class="operator" src="{theme front/images/admin/}{if $item['level'] == 0}open{else}close{/if}.gif" alt="关闭" /><span class="ajax_edit" onclick="T.ext.edit('{url /sysadmin/sys_ajaxedit}',{t:'postcate',id:'{$item['id']}',f:'name'},this)">{if $item['name']}{$item['name']}{else}点击编辑{/if}</span></td>
+			<td><span class="ajax_edit txt-gray" onclick="T.ext.edit('{url /sysadmin/sys_ajaxedit}',{t:'postcate',id:'{$item['id']}',f:'code'},this)">{if $item['code']}{$item['code']}{else}点击编辑{/if}</span></td>
+			<td><span onClick="T.ext.toggle('{url /sysadmin/sys_ajaxedit}',{t:'postcate',id:'{$item['id']}',f:'isindex'},this)"><img id="img_isindex_{$item['id']}" title='' src="{theme front/images/admin/}status{$item['isindex']}.gif" /></span></td>
+			<td class="txt-gray"><span onClick="T.ext.toggle('{url /sysadmin/sys_ajaxedit}',{t:'postcate',id:'{$item['id']}',f:'ishot'},this)"><img id="img_ishot_{$item['id']}" title='' src="{theme front/images/admin/}status{$item['ishot']}.gif" /></span></td>
+			<td><span onClick="T.ext.toggle('{url /sysadmin/sys_ajaxedit}',{t:'postcate',id:'{$item['id']}',f:'isbold'},this)"><img id="img_isbold_{$item['id']}" title='' src="{theme front/images/admin/}status{$item['isbold']}.gif" /></span></td>
+			<td><span onClick="T.ext.toggle('{url /sysadmin/sys_ajaxedit}',{t:'postcate',id:'{$item['id']}',f:'status'},this)"><img id="img_status_{$item['id']}" title='' src="{theme front/images/admin/}status{$item['status']}.gif" /></span></td>
+			<td>
+			<a href="{url /sysadmin/sys_postconfig_edit?id=$item[id]}"><img class="operator" src="{theme front/images/admin/icon_edit.gif}" alt="修改" title="修改" /></a>
+			<a href="javascript:void(0);" id="delbtn_{$item['id']}" onclick="ui.confirm(this,'您确定要删除信息吗?<div class=\'dis5\'></div>');" callback="util.get('{url /sysadmin/sys_postconfig?do=del&id=$item[id]}',$('#delbtn_{$item['id']}').get(0))"><img class="operator" src="{theme front/images/admin/icon_del.gif}" alt="删除" title="删除" /></a>
+			</td>
+			</tr>
+			{/foreach}
+		</tbody>
+</table>
+</div>
+<script language="javascript">
+ $("#operation_1").bind("click",function(){
+   	  	 util.get('{url /sysadmin/sys_postconfig}',this,{'do':'makecache'});
+})
+   	  
+function jqshow(id,isshow) {
+	var obj = $("#list_table tr[parent='"+id+"']");
+	if (obj.length>0){
+		obj.each(function(i) {
+			jqshow($(this).attr('id'), isshow);
+		});
+		if (isshow=='hide'){
+			obj.hide();
+		}else{
+			obj.show();
+		}
+	}
+}
+
+$(function(){
+	$("td.switch .operator").each(function(i){
+		$(this).toggle(function(){
+			jqshow($(this).parent().parent().attr('id'), 'show');
+			$(this).attr("src", "{theme front/images/admin/close.gif}");
+		},function(){
+			jqshow($(this).parent().parent().attr('id'), 'hide');
+			$(this).attr("src", "{theme front/images/admin/open.gif}");
+		});
+	});
+})
+
+</script>

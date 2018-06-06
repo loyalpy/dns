@@ -1,0 +1,170 @@
+{block main}
+<div class="main-nav">
+  <div class="name">在线提现</div>
+  <div class="navbtn0">
+  {set $status_s = array("ing"=>"待审核","fail"=>"失败","concel"=>"已撤销","success"=>"成功")}
+  <a class="btn {if $t == 'all'}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /order_manager/withdraw?t=all}"><cite class="glyphicon glyphicon-th"></cite> 所有</a> 
+  {foreach items=$status_s}
+  <a class="btn {if $t == $key}btn-info{else}btn-default{/if} btn-sm" title="{$item}" href="{url /order_manager/withdraw?t=$key}"><cite class="glyphicon glyphicon-th"></cite> {$item}</a> 
+  {/foreach}
+  </div>
+  <div class="navbtn">
+  <!--button-->
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /order_manager/withdraw?t=$t}">
+<div class="tpl">
+<!--form start-->
+<div class="form-item form-item-date ">
+	<label>时间：</label> 
+	<div class="item-v">
+	<input class="nhigh date-ymd shigh" value="{$startdate}" readOnly type="text" name="startdate" /> <cite class="glyphicon glyphicon-calendar"></cite>
+	</div><div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-date ">
+	<label>-</label> 
+	<div class="item-v">
+	<input class="nhigh date-ymd shigh" value="{$enddate}" readOnly type="text" name="enddate" /> <cite class="glyphicon glyphicon-calendar"></cite>
+	</div><div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-text "><label>UID/关键词：</label>
+	<div class="item-v"><input class="nhigh" value="{$keyword}" type="text" name="keyword" /></div>
+	<div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-button undefined"><label></label>
+	<div class="item-v"><input value="{hash}" type="hidden" name="hash"><button class="btn btn-success btn-sm" type="submit">搜索</button></div>
+	<div class="cl"></div>
+</div>
+<!--form end-->
+<div class=cl></div>
+</div>
+</form>
+<!--end search box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class='table table-bordered table-responsive' cellpadding="0" cellspacing="0">
+		        <col width="90px" />
+				<col width="152px" />
+					<col width="190px" />
+					<col />
+					<col width="200px" />
+					<col width="110px" />
+				<thead>
+					<tr class="active">
+					<th>申请人</th>
+					<th class="tl">申请时间</th>
+					<th class="tl">提现编号</th>
+					<th class="tl">银行流水单号</th>
+					<th class="tl">结算金额</th>
+					<th class="tl">结算状态</th>
+					</tr>
+				</thead>
+		<tbody>
+		{foreach items=$this->datalist}
+				{set $u = C("user")->get_cache_userinfo($item['uid']);}
+				    <tr class="list-item" id="list_{$item['id']}">
+					<td><span class="font-blue">{$u['name']}</span></td>
+					<td>{echo tTime::get_datetime("Y-m-d H:i",$item['dateline'])}</td>
+					<td>{echo tFun::keyword_replace($keyword,$item['withdraw_no']);}</td>
+					<td>-</td>
+					<td class="font-org">{$item['amount']}</td>
+					<td>
+						-			
+					</td>
+					</tr>
+				{/foreach}
+		</tbody>
+</table>
+</div>
+<div class="pagebar">
+{$this->pagebar}
+</div>
+</form>
+{/block}
+
+{block css}
+<link href="{url static/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+<!--查看并审核-->
+<script type="text/template" id="tpl_sh">
+<#macro row data>
+<form action="{url /order_manager/withdraw_sh}" method="post" class="t-ajax-form form" role="form">
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">${data.title} <font class="font-red"></font></h4>
+</div>
+<div class="modal-body">
+    <div class="form-item"><label class="fb">申请人:</label><div class="item-v"><span class="ivalue">${data.to_name} - 当前余额：<font class="font-org">${data.to_balance}</font></span></div></div>
+	<div class="form-item"><label class="fb">申请金额:</label><div class="item-v"><span class="ivalue"><font class="f18 font-org">${data.amount}</font></span></div></div>
+	<div class="form-item"><label class="fb">申请时间:</label><div class="item-v"><span class="ivalue">${data.date}</span></div></div>
+	<div class="form-item"><label class="fb">交易编号:</label><div class="item-v"><span class="ivalue">${data.trade_no}</span></div></div>
+	<div class="form-item"><label class="fb">银行交易流水单号:</label><div class="item-v"><span class="ivalue"><input type="text" name="bank_trade_no" class="high" /></span></div></div>
+	<div class="form-item"><label class="fb">银行卡信息:</label><div class="item-v"><span class="ivalue"><font class="f12">${data.bank}(${data.bank_no})/${data.bank_name}</font></span></div></div>
+	<div class="form-item"><label class="fb text-danger">选择&nbsp;</label><div class="item-v"><span class="ivalue"><select name="status"><option class="text-danger" value="2">审核失败</option><option class="text-success"  value="1">审核成功</option></select></span></div></div>
+</div>
+<div class="modal-footer">
+      <input type="hidden" value="${data.id}" name="id" />
+      <input type="hidden" value="${data.trade_no}" name="trade_no" />
+	  <input type="hidden" value="{hash}" name="hash" />
+      <font class="font-red">审核不可取消,请谨慎操作</font>&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary" data-loading-text="处理中……">确定审核</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
+</form>
+</#macro>
+</script>
+<!--end查看并审核-->
+<script language="javascript" src="{url /static/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url /static/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+
+<script language="javascript" >
+$(".date-ymd").datetimepicker({
+	language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"   
+}); 
+$(function(){
+	//查看证件操作
+		$(".table-item-op-sh").click(function(){
+			var obj = this;
+			$.ajaxPassport({
+				url:"{url /order_manager/withdraw_sh}",
+				success:function(res){
+					if(res.error == 1){
+						$.ajaxTips(obj,res.message,"error");
+					}else{
+						var tpl_s = $("#tpl_sh").html();
+					  	var tpl_v = res;
+					  	tpl_v['title'] = "审核 "+res.to_name+ "的提现申请";
+					  	$("#myModal").find(".modal-content").html(""+easyTemplate(tpl_s,tpl_v)).width(780);
+					  	$('#myModal').modal();
+					  	 //初始化表单
+						$("#myModal form.t-ajax-form").each(function(i){
+							$(this).submit(function(){
+									return $.ajaxForm(this,i);
+								});
+						});
+					}
+				},
+				data:{"id":$(this).attr("_id")}
+			});
+		});
+})
+</script>
+{/block}

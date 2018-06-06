@@ -1,0 +1,179 @@
+{block head_menu}
+<div class="menu">
+ <ul>
+	 {if $this->check_purview('/cms_manager/threads')}
+ <li><a href="{url /cms_manager/threads}" class="{if '/'.$inc.'/'.$act == '/cms_manager/threads'}cur{/if}">内容列表</a></li>
+	 {/if}
+	 {if $this->check_purview('/cms_manager/threads_forums')}
+ <li><a href="{url /cms_manager/threads_forums}" class="{if '/'.$inc.'/'.$act == '/cms_manager/threads_forums'}cur{/if}">内容分类</a></li>
+	 {/if}
+ </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+  <div class="name">内容分类</div>
+  <div class="navbtn0">
+  </div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview('/cms_manager/threads_forums_refresh')}
+  <button type="button" data-url="{url /cms_manager/threads_forums?do=refresh}" class="btn btn-default btn-sm t-ajax-button" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button>
+  	{/if}
+	  <!--end button-->
+  <!--button-->
+	  {if $this->check_purview('/cms_manager/threads_forums_edit')}
+  <a href="javascript:void(0)" data-url="{url /cms_manager/threads_forums?do=edit}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增分类</a>
+	  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form action=""></form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+    <col width="30px" />	
+	<col />
+	<col width="100px" />
+	<col width="100px" />
+	<col width="100px" />
+	<thead>
+	<tr>
+	<th>ID</th>
+	<th>分类名称</th>
+	<th>标识</th>
+	<th>文章数</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+</form>
+<!-- end list box       http://127.0.0.100/cms_manager/threads?do=get&keyword=&fid=26&page=1&_=1411958130248 {url /cms_manager/threads?do=get&fid=}${data.id}--> 
+{/block}
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class="font-gray">${data.id}</td>
+    <td><a href="{url /cms_manager/threads?fid}=${data.id}" class="font-blue f14">${data.space}${data.name}<#if ($.is_empty(data.enname))> <#else><font class="font-gray">(${data.enname})</font></#if> </a></td>
+    <td>${data.ident}</td>    
+    <td class="font-gray"><#if ($.is_empty(data.threads))> 0 <#else><font class="font-org f14 ">${data.threads}</font></#if></td>
+    <td>
+	<p class="table-item-op">
+		{if $this->check_purview('/cms_manager/threads_forums_edit')}
+    	<a href="javascript:void(0);" class="editbtn" data-url="{url /cms_manager/threads_forums?do=edit&id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a>
+		{/if}
+		{if $this->check_purview('/cms_manager/threads_forums_copy')}
+		<a href="javascript:void(0);" class="copybtn" data-url="{url /cms_manager/threads_forums?do=copy&id=}${data.id}"><span class="glyphicon glyphicon-repeat"></span></a>
+		{/if}
+		{if $this->check_purview('/cms_manager/threads_forums_del')}
+		<a href="javascript:void(0);" class="delbtn" data-url="{url /cms_manager/threads_forums?do=del&id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a>
+		{/if}
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /cms_manager/threads_forums?do=edit}" method="post" class="theform form form-2" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var formdata = {
+	pid:{type:"select",label:"上级模块",name:"pid",value:"",data_sr:{echo JSON::encode($catlist)},css:"",require:"",desc:"",item_css:"col-md-6"},
+	sort:{type:"text",label:"显示序号",name:"sort",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+	name:{type:"text",label:"分类名",name:"name",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"分类名必须",item_css:"col-md-6"},
+	ident:{type:"text",label:"标识",name:"ident",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-6"},
+        html_space0:{type:"html",value:"<h5>&nbsp;</h5>"},
+
+	
+    description:{type:"textarea",label:"描述",name:"description",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    
+    id:{type:"hidden",label:"-",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+var load_list = function(){
+	$.loadlist([],function(res){
+		$(".editbtn").click(function(){
+			edit_func(this);
+		});
+		$(".copybtn").click(function(){
+			copy_func(this);
+		});
+		$(".delbtn").click(function(){
+			del_func(this);
+		});
+	},"{url /cms_manager/threads_forums?do=get}");
+}
+var copy_func = function(obj){
+	var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		});
+}
+
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改文章分类"});
+	$("#myModal").find(".modal-dialog").width(920);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 load_list();
+		 return true;
+	},function(res){
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		});
+	}
+}
+$(function(){
+	 load_list();
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+	 
+})
+</script>
+{/block}

@@ -1,0 +1,12 @@
+<?php
+return array (
+  'id' => '3',
+  'name' => '¹¤³Ì°¸Àý',
+  'specs' => 
+  array (
+  ),
+  'attrs' => 
+  array (
+  ),
+);
+?>

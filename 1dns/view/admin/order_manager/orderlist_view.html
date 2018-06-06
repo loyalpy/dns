@@ -1,0 +1,182 @@
+{block main}
+<div class="main-nav">
+  <div class="name">订单详情</div>
+  <div class="navbtn"></div>
+  <div class="cl"></div>
+</div>
+<div class="dis10"></div>
+<div class="list-box">
+<div class="order-view-h1"><font class="fb f14">订单号 : {$orderinfo['order_no']}</font></div>
+ <!-- tips -->
+ {if $orderinfo['status'] == 5}
+	<div class="alert alert-success" >订单已完成</div>
+ {elseif $orderinfo['status'] == 3}
+	<div class="alert alert-default" >该订单已作废</div>
+ {else}
+	{if $orderinfo['pay_status'] == 2}
+	<div class="alert alert-success" >已支付</div>>
+	{else}
+	<div class="alert alert-danger" >未支付</div>
+	{/if}
+ {/if}
+<form class="form" action="{url /order/orderlist_pay}" id="Fpay_form" method="POST" enctype="multipart/form-data">
+
+<div class="order-viewbox">
+ {if !empty($goods)}
+ <!-- 选择服务器信息 -->
+ <div class="order-info">
+   <div class="order-info-attrs">
+   {if $goods['attrs']}
+   {foreach items=$goods['attrs']}
+   <div class="item"><label>{$this->cate_model["attrs"][$key]['name']}</label> {echo implode(",",$item)}
+   <font class="font-org f14 attrs_{$key}">{if isset($specs[$key]) && $specs[$key]} + {$specs[$key]['label']}{/if}</font>
+   </div>
+   {/foreach}
+   {/if}
+   <div class="cl"></div>
+   {if $orderinfo['status'] < 3 && $orderinfo['pay_status'] < 2}
+   <div class="item"><label>有效期</label> <font class="font-org f14 attrs_{$key}">{if ($timestamp - $orderinfo['dateline'])> $order_expiry*60}已失效{else}{echo tTime::format_distime($order_expiry*60-($timestamp - $orderinfo['dateline']))} 后失效{/if}</font>
+   </div>
+   <div class="cl"></div>
+   {/if}
+   </div>
+ </div>
+ {/if}
+ <!-- end 服务器信息-->
+ <div class="table-x tab tab3">
+				   <h1>服务器详情</h1>
+                    <table class="list-table-3" border="0" cellspacing="0" cellpadding="0" width="100%">
+		<colgroup><col width="150" /><col width="180" /><col /><col  width="120" /></colgroup>
+		<thead>
+			<tr>
+			<th>编号</th>
+			<th>公网/内网IP</th>
+			<th>配置信息</th>
+			<th>到期时间</th>
+			</tr>
+		</thead>
+		<tbody>
+		    {if $serverlist['list']}
+		    {foreach items=$serverlist['list']}
+			<tr>
+			<td>{$item['server_no']}</td>
+			<td>{echo preg_replace('/,/',' /',$item['server_ips'])} /{$item['server_in_ips']}</td>
+			<td>{$item['server_cfg']}</td>
+			<td>{if $item['expiry']>$timestamp}<font class="font-green">{echo tTime::get_datetime("Y-m-d",$item['expiry'])}</font>{else}<font class="font-red">{echo tTime::get_datetime("Y-m-d",$item['expiry'])}</font>{/if}</td>
+			</tr>
+			{/foreach}
+			{/if}
+		</tbody>
+	</table>
+ </div>
+ 
+ <div class="order-info-amount">     
+     <div class="item"><label>时间：</label><font class="f18 font-green">{if in_array($orderinfo['pay_type'],array(1,3,6))}{$orderinfo['pay_type']}</font> 个月{else}{echo $orderinfo['pay_type']/12}</font> 年{/if}</div>
+     <div class="item"><label>数量：</label><font class="f18 font-green">{$orderinfo['nums']}</b></font> 台</div>
+     <div class="item"><label>费用：</label><b class="f18 font-org total_balance">{$orderinfo['amount']}</b>元</font></div>
+     <div class="dis10"></div>
+   </div>
+ <div class="cl"></div>
+
+ <div class="dis20"></div>
+ {if $orderinfo['status'] < 3 && $orderinfo['pay_status'] < 2}
+	<div class="tc" >
+	{if ($timestamp - $orderinfo['dateline'])< $order_expiry*60}
+	{if $this->userinfo['account']['balance'] < $orderinfo['amount']}
+	    <span class="f14 font-red">您的余额不够,请先 &nbsp;</span>
+	    <span style="display:inline-block;width:30%;">
+		<a class="btn-buy-green" href="{url /account/recharge?balance=}{$orderinfo['amount']}">
+        <cite class="icon-arrow-right"></cite>&nbsp;
+        立即充值</a>
+        </span>
+	{else}
+		<input type="hidden" value="{$goods['goods_no']}" name="goods_no" />
+		<input type="hidden" value="{$orderinfo['order_no']}" name="order_no" />
+    	<input type="hidden" value="{hash}" name="hash" />
+    	<input type="hidden" value="1" name="in_ajax" />
+    	<span class="f14 font-gray">您当前余额 <font class="font-green">{$this->userinfo['account']['balance']}</font> &nbsp;</span>
+	    <span style="display:inline-block;width:30%;">
+		<button type="submit" class="btn-buy-green">
+        <cite class="icon-arrow-right"></cite>&nbsp;
+        立即支付</button>
+        </span>
+    {/if}
+    {/if}
+    </div>
+ {/if}
+  <div class="dis30"></div>
+ </div>
+</form>
+<div class="dis30"></div>
+<div class="dis30"></div>
+</div>
+{/block}
+
+
+
+{block javascript}
+<script type="text/template" id="tpl_tip_result">
+<#macro row data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel"><cite class="font-gray f24 glyphicon glyphicon-volume-down"></cite>信息提示</h4>
+</div>
+<div class="modal-body">
+<div class="modal_tips">
+  <div class="icon">
+  <#if (parseInt(data.error) == 2)>
+  <cite class="icon-error"></cite>
+  <#else>
+  <cite class="icon-success"></cite>
+  </#if>
+  </div>
+  <div class="txts">
+  <p class="tit">${data.message}</p>
+  <#if (parseInt(data.error) == 0)>
+  <p class="font-gray">
+  联系我们在线QQ:<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={$site_config['qq']}&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:{$site_config['qq']}:41" width="77" height="22" alt="客服① 点击这里给我发消息" title="客服① 点击这里给我发消息"></a>
+<br/>
+  或者拨打客服热线:<font class="f30 font-red " style="font-size:24px;">{$site_config['top_tel']}</font>
+  </p>
+  <#else>
+  <p class="font-gray">
+  联系我们在线QQ:<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={$site_config['qq']}&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:{$site_config['qq']}:41" width="77" height="22" alt="客服① 点击这里给我发消息" title="客服① 点击这里给我发消息"></a><br/>
+  或者拨打客服热线:<font class="f30 font-red " style="font-size:24px;">{$site_config['top_tel']}</font>
+  </p>
+  </#if>
+  </div>
+  <div class="cl"></div>
+</div>
+</div>
+<div class="modal-footer tc">
+   <a href="{url /myservice/serverlist}" class="btn btn-success">我购买的服务器</a>
+   <a href="{url /account/account_log}" class="btn btn-primary">收支明细</a>
+   <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
+</#macro>
+</script>
+<script language="javascript" src="{webroot cache/static/dataconfig.js}"></script>
+<script language="javascript">
+$(function(){
+	$("#Fpay_form").data("data-before",function(){
+		return true;
+	});
+	
+	//提交
+	$.valid_form($("#Fpay_form"),function(res,thebtn){
+   	    if(res.error == 1){
+			$.ajaxTips(thebtn,res.message,"error");
+		}else{
+			//$.ajaxTips(thebtn,"充值订单提交成功！","hide");
+			$('#myModal').modal().find(".modal-content").html(""+easyTemplate($("#tpl_tip_result").html(),res));
+		}
+		return false;
+	});
+	$(".view-server").bind("click",function(){
+		var obj = this;
+		var server_no = $(obj).attr("data-server_no");
+		view_server(server_no);
+	})
+})
+</script>
+{/block}

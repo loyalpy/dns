@@ -1,0 +1,159 @@
+{block head_menu}
+    <div class="menu">
+    <ul>
+		<li><a href="{url /coupon_manager/email}" class="cur">邮件模板</a></li>
+    </ul>
+    </div>
+{/block}
+	    
+{block main}
+<div class="main-nav">
+  <div class="name">邮件模板</div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview('/coupon_manager/email')}
+	  <a href="javascript:void(0)" data-url="{url /coupon_manager/email?do=edit&id=0}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增邮件模板</a>
+	  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form action=""></form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+	<col width="200px" />
+	<col  />
+	<col width="150px" />
+	<col width="100px" />
+	<thead>
+	<tr>
+	<th>模板名称</th>
+	<th>邮件标题/内容</th>
+	<th>添加时间</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class="font-blue">${data.tpl_name}</td>
+    <td>
+		<span class="font-gray">${data.email_title}</span><br/>
+		${data.email_content}
+	</td>
+		<td class="font-gray">${data.dateline}</td>
+    <td>
+	<p class="table-item-op">
+		{if $this->check_purview('/coupon_manager/email')}
+	<a href="javascript:void(0);" class="editbtn" data-url="{url /coupon_manager/email?do=edit&id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;
+		{/if}
+		{if $this->check_purview('/coupon_manager/email')}
+		<a href="javascript:void(0);" class="delbtn" data-url="{url /coupon_manager/email?do=del&id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a>&nbsp;
+		{/if}
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /coupon_manager/email?do=edit}" method="post" class="theform form form-1" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var formdata = {
+	tpl_name:{type:"text",label:"模板名称",name:"tpl_name",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"模板名称必须填写",item_css:""},
+	email_title:{type:"text",label:"邮编标题",name:"email_title",value:"",data_sr:[],css:"high",require:"datatype='*'",desc:"邮件标题不能为空",item_css:""},
+	email_content:{type:"textarea",label:"邮件内容",name:"email_content",value:"",data_sr:[],css:"wide",require:"",desc:"",item_css:""},
+    id:{type:"hidden",label:"",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+var load_list = function(){
+	$.loadlist([],function(res){
+		$(".editbtn").click(function(){
+			edit_func(this);
+		});
+		$(".delbtn").click(function(){
+			del_func(this);
+		});
+		$(".btn-setting").click(function(){
+			edit_setting_func(this);
+		});
+	},"{url /coupon_manager/email?do=get}");
+}
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改"});
+	$("#myModal").find(".modal-dialog").width(760);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 load_list();
+		 return true;
+	},function(){
+		setTimeout(function(){
+		$("#myModal").find(".modal-content").find(".tpl").find("input.date-ymd").datetimepicker({
+				language:  'zh-CN',
+				autoclose: 1,
+				startView: 2,
+				minView: 2,
+				maxView: 4,
+				format:"yyyy-mm-dd",
+				pickerPosition: "bottom-right"   
+		});
+		},50);
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(res.message,"error");
+				}else{
+					$.tips(res.message,"success");
+					load_list();
+				}
+			}
+		})
+	}
+}
+$(function(){
+	 load_list();
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+</script>
+{/block}

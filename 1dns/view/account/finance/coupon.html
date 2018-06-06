@@ -1,0 +1,115 @@
+{block main}
+<div class="am-uc-left">
+	<div class="leftnav" id="Leftnav">
+		<ul>
+			<li><a href="{url /finance/index}">账户首页&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/recharge}" >在线充值&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="javascript:void(0);"  class="sms_recharge_btn">短信充值&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/recharge_detail}">收支明细&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/coupon}"  class="cur">代金券&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+			<li><a href="{url /finance/tg}">推广中心&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+		</ul>
+	</div>
+</div>
+<div class="am-uc-right">
+	<div>
+		<h1><span class="list_tit_name">我的代金券</span></h1>
+	</div>
+	<div class="am-finance-list-key" style="margin-left: 0px;">
+		<span>状态：</span>
+		<select name="status" class="s-status" style="width: 100px;height: 33px;font-size: 14px;line-height: 33px;">
+			<option value="0">全部</option>
+			<option value="2">已使用</option>
+			<option value="1">未使用</option>
+		</select>
+	</div>
+	<div class="am-finance-list-key" style="margin-left: 80px;">
+		<input type="text"  name="keyword" class="am-form-field  am-input-sm" placeholder="请输入关键词" size="35"/>
+	</div>
+	<div class="am-finance-list-key">
+		<button type="button" class="am-btn am-btn-success am-radius am-btn-sm finance-serch">搜索</button>
+	</div>
+	<div class="dis20" style="margin-bottom: -10px;"></div>
+	<div class="am-finance-content">	</div>
+</div>
+{/block}
+
+{block javascript}
+{include finance/sms_recharge}
+<script type="text/javascript">
+	$(function(){
+		load_account_list(1);
+		//搜索事件
+		$(".finance-serch").unbind("click").bind("click",function(){
+			var keyword  = $("input[name='keyword']").val();
+			var status = $(".s-status").val();
+			load_account_list(1,keyword,status);
+		});
+	});
+</script>
+<!--代金券明细-->
+<script type="text/template" id="tpl_accountlog_list">
+	<#macro rowedit data>
+		<table class="am-table">
+			<col width="180"/>
+			<col />
+			<col width="110"/>
+			<col width="130"/>
+			<col width="100"/>
+			<col width="130"/>
+			<col width="80"/>
+			<thead>
+			<tr>
+				<th>代金券编码</th>
+				<th>名称</th>
+				<th>面值(元)</th>
+				<th>使用范围</th>
+				<th>状态</th>
+				<th>有效期至</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			<#if (data.list.length > 0)>
+				<#list data.list as account>
+					<tr>
+						<td><font style="color: darkgray">${account.code}</font></td>
+						<td>${account.name}</td>
+						<td><font color="green">${account.balance}</font></td>
+						<td ><#if (account.type==1)>通用<#elseif (account.type == 2)>域名解析专用<#elseif (account.type == 3)>域名注册专用<#else> - </#if></td>
+						<td><#if (account.status==0)><font style="color: green">未使用</font><#else><font style="color: gray;">已使用</font></#if></td>
+						<td><font style="color: gray">${$.time_to_string(account.expiry,"Y-m-d")}</font></td>
+						<td><font style="color: gray"> - </font></td>
+					<tr>
+				</#list>
+				<#else>
+					<tr><td colspan="6"><a href="##" class="am-icon-exclamation-circle am-text-danger am-text-lg"></a> <a href="##" class="am-font-gray">没有符合条件的结果?</a></td></tr>
+			</#if>
+			</tbody>
+		</table>
+		<div class="pagebar">${data.pagebar}</div>
+	</#macro>
+</script>
+<script type="text/javascript">
+	var load_account_list = function(page,keyword,status){
+		var url = "{url /finance/coupon?do=get}";
+		var keyword  = $.is_empty(keyword)?'':keyword;
+		var status      = $.is_empty(status)?0:status;
+		$.ui.loading($(".am-table"));
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				$.ui.close_loading($(".am-table"));
+				var listhtml = ""+ easyTemplate($("#tpl_accountlog_list").html(),res.data);
+				$(".am-finance-content").html(listhtml);
+
+				$("button,a").bind("focus",function(){
+					$(this).blur();
+				});
+
+			},
+			data:{page:page,keyword:keyword,status:status},
+		});
+	}
+</script>
+{/block}

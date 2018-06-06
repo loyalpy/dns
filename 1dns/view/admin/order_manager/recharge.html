@@ -1,0 +1,313 @@
+{block main}
+<div class="main-nav">
+  <div class="name">在线充值</div>
+  <div class="navbtn0">
+  {set $status_s = array("ing"=>"待审核","fail"=>"失败","success"=>"成功")}
+  <a class="btn {if $t == 'all'}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /order_manager/recharge?t=all}"><cite class="glyphicon glyphicon-th"></cite> 所有</a> 
+  {foreach items=$status_s}
+  <a class="btn {if $t == $key}btn-info{else}btn-default{/if} btn-sm" title="{$item}" href="{url /order_manager/recharge?t=$key}"><cite class="glyphicon glyphicon-th"></cite> {$item}</a> 
+  {/foreach}
+  </div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview("/order_manager/recharge_add")}
+  <!--<a href="javascript:void(0)" data-utype="1" class="btn btn-primary btn-sm addbtn">-->
+  <!--<cite class="glyphicon glyphicon-plus"></cite> -->
+  <!--新增充值</a>-->
+	  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /order_manager/recharge?t=$t}">
+<div class="tpl">
+<!--form start-->
+<div class="form-item form-item-date ">
+	<label>时间：</label> 
+	<div class="item-v">
+	<input class="nhigh date-ymd shigh" value="{$startdate}" readOnly type="text" name="startdate" /> <cite class="glyphicon glyphicon-calendar"></cite>
+	</div><div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-date ">
+	<label>-</label> 
+	<div class="item-v">
+	<input class="nhigh date-ymd shigh" value="{$enddate}" readOnly type="text" name="enddate" /> <cite class="glyphicon glyphicon-calendar"></cite>
+	</div><div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-text "><label>UID/关键词：</label>
+	<div class="item-v"><input class="nhigh" value="{$keyword}" type="text" name="keyword" /></div>
+	<div class="cl"></div>
+</div>
+<!--form end-->
+<!--form start-->
+<div class="form-item form-item-button undefined"><label></label>
+	<div class="item-v"><input value="{hash}" type="hidden" name="hash"><button class="btn btn-success btn-sm" type="submit">搜索</button></div>
+	<div class="cl"></div>
+</div>
+<!--form end-->
+<div class=cl></div>
+</div>
+</form>
+<!--end search box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class='table table-bordered table-responsive' cellpadding="0" cellspacing="0">
+				<col width="260px" />
+				<col width="150px" />
+				<col />
+				<col width="230px" />
+				<col width="70px" />
+				<col width="130px" />
+				<thead>
+					<tr class="active">
+					<th>充值编号</th>
+					<th>充值人/创建时间</th>
+					<th>交易信息</th>
+					<th>开票信息</th>
+					<th>金额</th>
+					<th>状态</th>
+					</tr>
+				</thead>
+		<tbody id="conth">
+		   {foreach items=$this->datalist}
+				{set $u = C("user")->get_cache_userinfo($item['uid']);}
+				    <tr>
+					<td class="font-gray">
+	                <cite></cite>
+					<font class="font-green">{echo tFun::keyword_replace($keyword,$item['recharge_no']);}<font class="font-gray2">[{$item['id']}]</font></font><br/>
+					{$item['payment_name']}
+					</td>
+					<td class="e">
+					<a href="{url /order_manager/recharge?t=$t&keyword=}{$item['uid']}" class="font-blue">{$u['name']}</a><font class="font-gray">({$item['uid']})</font><br/>
+					{echo tTime::get_datetime("Y-m-d H:i",$item['dateline'])}</td>
+					<td>
+					{if $item['order_no']}
+						<span class="font-gray">
+						{if $item['trade_date']}转账日期：{echo tTime::get_datetime('Y-m-d',$item['trade_date'])}<br/>{/if}
+						{if $item['order_no']}订单号：{$item['order_no']}<br/>{/if}
+						支付方式：{if $item['inpay'] == 1}充值并支付{else}仅充值,不支付{/if}</span>
+					{else}
+					-
+					{/if}
+					</td>
+					<td>
+					{if $item['kaipiao'] == 0}
+						不要开票
+					{else}
+						抬头:{$item['kaipiao_tou']}<br/>
+						{if empty($item['kaipiao_ship'])}
+							<font class="font-red">发票邮寄信息欠缺</font><br/>
+						{else}
+							{$item['kaipiao_ship']['linker']}/{$item['kaipiao_ship']['mobile']}/{$item['kaipiao_ship']['area']}/{$item['kaipiao_ship']['zcode']}<br/>
+							{$item['address']}
+						{/if}
+						
+						{if !empty($item['kaipiao_post'])}
+						    {$item['kaipiao_post']['name']}/单号:{$item['kaipiao_post']['no']}
+						{/if}
+					{/if}
+					</td>
+					<td class="font-org">{$item['amount']}
+					<br/><font class="font-gray">{$item['r_amount']}</font>
+					</td>
+					<td>
+					{if $item['status'] == 1}<span class="font-green">成功</span>
+					{elseif $item['status'] == -1}<span class="font-red">失败</span>
+						{if $this->check_purview("/order_manager/recharge_sh")}
+					<button type="button" class="btn btn-danger btn-xs table-item-op-sh" _name="" _id="{$item['id']}">审核</button>
+						{/if}
+					{elseif $item['status'] == 0}<span class="font-gray">待审</span>
+						{if $this->check_purview("/order_manager/recharge_sh")}
+					<button type="button" class="btn btn-danger btn-xs table-item-op-sh" _name="" _id="{$item['id']}">审核</button>
+						{/if}
+					{/if}
+					{if $item['kaipiao'] > 0}
+						{if $this->check_purview("/order_manager/recharge_kaipiao")}
+					<button type="button" class="btn btn-success btn-xs table-item-op-kaipiao" _name="" _id="{$item['id']}">发票</button>
+						{/if}
+					{/if}
+					</td>
+					</tr>
+				{/foreach}
+		</tbody>
+</table>
+</div>
+<div class="pagebar">
+{$this->pagebar}
+</div>
+</form>
+{/block}
+
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+<!--查看并审核-->
+<script type="text/template" id="tpl_sh">
+<#macro row data>
+<form action="{url /order_manager/recharge_sh}" method="post" class="t-ajax-form form" role="form">
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">${data.title} <font class="font-red"></font></h4>
+</div>
+<div class="modal-body">
+    <div class="form-item"><label class="fb">充值人:</label><div class="item-v"><span class="ivalue">${data.to_name} - 当前余额：${data.to_balance}</span></div></div>
+	<div class="form-item"><label class="fb">充值金额:</label><div class="item-v"><span class="ivalue"><font class="f18 font-org">${data.amount}</font> /<font class="f18 font-green">${data.r_amount}</font></span></div></div>
+	<div class="form-item"><label class="fb">创建时间:</label><div class="item-v"><span class="ivalue">${data.date}</span></div></div>
+	<div class="form-item"><label class="fb">银行转账日期:</label><div class="item-v"><span class="ivalue">${data.trade_date}</span></div></div>
+	<div class="form-item"><label class="fb">转出银行:</label><div class="item-v"><span class="ivalue">${data.trade_bank}</span></div></div>
+	<div class="form-item"><label class="fb">银行交易流水单号:</label><div class="item-v"><span class="ivalue">${data.trade_no}</span></div></div>
+	<div class="form-item"><label class="fb">充值方式:</label><div class="item-v"><span class="ivalue">${data.payment_name}</span></div></div>
+</div>
+<div class="modal-footer">
+      <input type="hidden" value="${data.id}" name="id" />
+      <input type="hidden" value="${data.recharge_no}" name="recharge_no" />
+	  <input type="hidden" value="{hash}" name="hash" />
+      <font class="font-red">审核成功后不可取消,请谨慎操作</font>&nbsp;&nbsp;&nbsp;
+      <label class="fb text-danger">选择&nbsp;</label><select name="status"><option class="text-danger" value="-1">审核失败</option><option class="font-gray"  value="0">待审核</option><option class="text-success"  value="1">审核成功</option></select>&nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary" data-loading-text="处理中……">确定审核</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
+</form>
+</#macro>
+</script>
+<!--end查看并审核-->
+
+<!--修改开票信息-->
+<script type="text/template" id="tpl_kaipiao">
+<#macro row data>
+<form action="{url /order_manager/recharge_kaipiao}" method="post" class="t-ajax-form form" role="form">
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">${data.title} <font class="font-red"></font></h4>
+</div>
+<div class="modal-body">
+    <div class="form-item"><label class="fb">充值人:</label><div class="item-v"><span class="ivalue">${data.to_name} - 当前余额：${data.to_balance}</span></div></div>
+	<div class="form-item"><label class="fb">发票抬头：</label>
+    <div class="item-v"><input type="text" value="${data.kaipiao_tou}" name="kaipiao_tou" class="hign" /></div><div class="cl"></div>
+    </div>
+	<div class="form-item"><label class="fb">快递联系人：</label>
+    <div class="item-v"><input type="text" value="<#if (!$.is_empty(data.kaipiao_ship.linker))>${data.kaipiao_ship.linker}</#if>" name="kaipiao_ship[linker]" class="hign" /></div><div class="cl"></div>
+    </div>
+	<div class="form-item"><label class="fb">快递联系手机：</label>
+    <div class="item-v"><input type="text" value="<#if (!$.is_empty(data.kaipiao_ship.mobile))>${data.kaipiao_ship.mobile}</#if>" name="kaipiao_ship[mobile]" class="hign" /></div><div class="cl"></div>
+    </div>
+	<div class="form-item"><label class="fb">快递地区：</label>
+    <div class="item-v"><input type="text" value="<#if (!$.is_empty(data.kaipiao_ship.area))>${data.kaipiao_ship.area}</#if>" name="kaipiao_ship[area]" class="hign" /></div><div class="cl"></div>
+    </div>
+	<div class="form-item"><label class="fb">快递详细地址：</label>
+    <div class="item-v"><input type="text" value="<#if (!$.is_empty(data.kaipiao_ship.address))>${data.kaipiao_ship.address}</#if>" name="kaipiao_ship[address]" class="hign" /></div><div class="cl"></div>
+    </div>
+	<div class="form-item"><label class="fb">快递邮编：</label>
+    <div class="item-v">
+	<input type="text" name="kaipiao_ship[zcode]" value="<#if (!$.is_empty(data.kaipiao_ship.zcode))>${data.kaipiao_ship.zcode}</#if>" class="hign" />
+    </div>
+    <div class="cl"></div>
+</div>
+<div class="form-item"><label class="fb">物流名称：</label>
+    <div class="item-v">
+	<input type="text" name="kaipiao_post[name]" value="<#if (!$.is_empty(data.kaipiao_post.name))>${data.kaipiao_post.name}</#if>" class="hign" />
+    </div>
+    <div class="cl"></div>
+</div>
+<div class="form-item"><label class="fb">物流编号：</label>
+    <div class="item-v">
+	<input type="text" name="kaipiao_post[no]" value="<#if (!$.is_empty(data.kaipiao_post.no))>${data.kaipiao_post.no}</#if>" class="hign" />
+    </div>
+    <div class="cl"></div>
+</div>
+</div>
+<div class="modal-footer">
+      <input type="hidden" value="${data.id}" name="id" />
+      <input type="hidden" value="${data.recharge_no}" name="recharge_no" />
+	  <input type="hidden" value="{hash}" name="hash" />
+      <font class="font-red">请谨慎操作</font>&nbsp;&nbsp;&nbsp;
+      <label class="fb text-danger">选择&nbsp;</label><select name="kaipiao"><option <#if (data.kaipiao == 0)>selected="selected"</#if> class="text-danger" value="0">不开票了</option><option <#if (data.kaipiao == 1)>selected="selected"</#if> class="text-danger" value="1">开票(未开票)</option><option <#if (data.kaipiao == 2)>selected="selected"</#if> class="font-gray"  value="2">开票(已开票)</option><option <#if (data.kaipiao == 3)>selected="selected"</#if> class="text-success"  value="3">开票(已邮票)</option><option class="text-success" <#if (data.kaipiao == 4)>selected="selected"</#if>  value="4">已完成</option></select>&nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary" data-loading-text="处理中……">确定修改</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
+</form>
+</#macro>
+</script>
+<!--end查看并修改开票信息-->
+
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+{include tpl/form}
+<script language="javascript" >
+$(".date-ymd").datetimepicker({
+	language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"   
+}); 
+$(function(){
+	//查看证件操作
+		$(".table-item-op-sh").click(function(){
+			var obj = this;
+			$.ajaxPassport({
+				url:"{url /order_manager/recharge_sh}",
+				success:function(res){
+					if(res.error == 1){
+						$.ajaxTips(obj,res.message,"error");
+					}else{
+						var tpl_s = $("#tpl_sh").html();
+					  	var tpl_v = res;
+					  	tpl_v['title'] = "审核 "+res.to_name+ "的充值订单";
+					  	$("#myModal").find(".modal-content").html(""+easyTemplate(tpl_s,tpl_v));
+					  	$('#myModal').modal();
+					  	 //初始化表单
+						$("#myModal form.t-ajax-form").each(function(i){
+							$(this).submit(function(){
+								return $.ajaxForm(this,i);
+							});
+						});
+					}
+				},
+				data:{"id":$(this).attr("_id")}
+			});
+		});
+		//发票操作
+		$(".table-item-op-kaipiao").click(function(){
+			var obj = this;
+			$.ajaxPassport({
+				url:"{url /order_manager/recharge_kaipiao}",
+				success:function(res){
+					if(res.error == 1){
+						$.ajaxTips(obj,res.message,"error");
+					}else{
+						var tpl_s = $("#tpl_kaipiao").html();
+					  	var tpl_v = res;
+					  	tpl_v['title'] = "操作 "+res.to_name+ "开票";
+					  	$("#myModal").find(".modal-dialog").width(760);
+					  	$("#myModal").find(".modal-content").html(""+easyTemplate(tpl_s,tpl_v));
+					  	$('#myModal').modal();
+					  	 //初始化表单
+						$("#myModal form.t-ajax-form").each(function(i){
+							$(this).submit(function(){
+								return $.ajaxForm(this,i);
+							});
+						});
+					}
+				},
+				data:{"id":$(this).attr("_id")}
+			});
+		});
+		
+		
+		///手动给用户充值
+		$(".addbtn").unbind("click").bind("click",function(){
+			edit_user_recharge(this);
+		})
+})
+</script>
+{/block}

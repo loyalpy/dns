@@ -1,0 +1,117 @@
+{block head_menu}
+<div class="menu">
+	<ul>
+		<li>
+			<a class="cur" title="下级推广员" href="{url /tg_manager/tg}">下级推广员</a>
+		</li>
+	</ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+  <div class="name">下级推广员</div>
+  <div class="navbtn0">
+
+  </div>
+  <div class="navbtn">
+  <!--button-->
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /tg_manager/tg?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+    <table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+        <col  />
+        <col width="180px" />
+        <col width="180px" />
+        <col width="180px" />
+        <col width="140px"/>
+        <thead>
+        <tr>
+        <th>上级推广人</th>
+        <th>注册用户</th>
+        <th>注册邮箱</th>
+			<th>注册手机</th>
+        <th>注册时间</th>
+        </tr>
+        </thead>
+        <tbody class="tpl"></tbody>
+    </table>
+    <div class="pagebar"></div>
+</div>
+</form>
+<!-- end list box -->
+{/block}
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+		<td class="font-blue f14">${data.up_name}</td>
+		<td class="font-green f14">${data.name}</td>
+		<td class=" f14 rl">${data.email}</td>
+		<td class=""> ${data.mobile} </td>
+        <td>${data.dateline}</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /tg_manager/tg}" method="post" class="theform form form-1" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var search_formdata = {
+	email: {type: "uid", label: "注册用户", name: "email", value: "", uname:"",disabled: 0, data_sr:[], css: "", require: "", desc: "", item_css: ""},
+    keyword:{type:"text",label:"关键词",name:"keyword",value:"{$result['keyword']}",data_sr:[],css:"",require:"",desc:"",item_css:"col-md-3"},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var pageurl = "{$pageurl}";
+var load_list = function(page){
+	$.ajaxLoadlist(page,pageurl,function(res){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_func(this);
+		});
+		$(".delbtn").click(function(){
+			del_func(this);
+		});
+	});
+}
+
+$(function(){
+	//加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+		 load_list(1);
+		return true;
+	 },function () {
+		 get_userlist(1,0,"",".the_searchform");
+	 },".the_searchform");
+	 load_list(1);
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+</script>
+{/block}

@@ -1,0 +1,77 @@
+{block title}{if isset($cate['name']) && $cate['name']}{$cate['name']}{else}万才帮助{/if}-{$site['seo_title']}{/block}
+{block seo}
+	<meta name="keywords" content="{$cate['name']},万才帮助,{$site_config['seo_keyword']}" />
+	<meta name="description" content="{$cate['name']},万才帮助,{$site_config['seo_description']}" />
+{/block}
+{block header}{/block}
+{block main}
+<div class="dis20"></div>
+<div class="wrap">
+<div class="cms-list-tit">
+  <h1>帮助中心</h1>  
+  <div class="cl"></div>
+</div>
+
+<div class="wrap" id="artview">
+    <!--mainbar-->
+	<div class="mainbar cf">
+	<div class="cmslist-nav">
+	  <ul>
+	    {foreach items = $cates}
+		<li><a class="{if isset($cate['id']) && $cate['id'] == $item['id']}curr{/if}" href="{url /cms/helper/fid/$item[id]}">{$item['name']}<font class="font-org">({$item['threads']})</font></font></a></li>
+		{/foreach}
+	  </ul>
+	</div>
+    	<div id="artarea">
+    	{if $data['list']}
+    	    {foreach items=$data['list']}
+            <dl class="art">
+            	<dd class="time">{echo tTime::get_datetime("Y",$item['dateline'])}<br>{echo tTime::get_datetime("m-d",$item['dateline'])}</dd>
+                <dt><a href="{url /cms/topic/tid/$item[tid]}">{echo tFun::keyword_replace($keyword,$item['subject'])}</a></dt>
+                <dd>{echo tFun::keyword_replace($keyword,tUtil::substr($item['description'],120,1))}..<a class="more" href="{url /cms/topic/tid/$item[tid]}">查看详情</a></dd>
+            </dl>
+            {/foreach}
+            {else}
+            <div class="f14 font-red"><img src="{url static@/images/noresult.png}" /> <span style="position:relative;top:-20px;">暂无信息</span></div>
+            {/if}
+        </div>
+        
+        <div class="dis30"></div>
+   </div>
+   <!--mainbar end-->
+   <!--sidebar-->
+	<div class="sidebar cf">
+	    <div class="search-form">
+		 <form action="{url /cms/helper/fid/$fid}" method="POST">
+	      <input type="hidden" name="hash" value="{hash}" />
+	      <input type="text" style="width:214px;" name="keyword" value="{if $keyword}{$keyword}{else}{/if}"  class="key txt-gray2" />
+	      <button type="submit" class="fbtn"></button>
+	     </form>
+	    </div>
+	    <div class="dis20"></div>
+    	<div class="block">
+        	<h3>推荐</h3>
+            <div class="siderand">
+            {if $tuinews}
+            <ul>
+            {foreach items=$tuinews}
+            <li><a href="{url /cms/topic/tid/$item[tid]}" title="{$item['subject']}">{$item['subject']}</a></li>
+            {/foreach}
+            </ul>
+            {/if}
+            </div>            
+    	</div>
+        <div class="sp10"></div>
+	</div>
+    <!--sidebar end-->
+</div>
+<div class="pagebar">
+  {$data['pagebar']}
+</div>
+</div>
+<div class="dis30"></div>
+{/block}
+{block javascript}
+<script language="javascript" src="{url static@/javascript/utils/share.js}"></script>
+{/block}
+{block friendlink}{/block}

@@ -1,0 +1,4 @@
+主机名(RRname)	值(RRvalue)	记录类型(RRtype)	线路(acl)	TTL
+www	2.2.2.2	A	默认	600
+www	3.3.3.3	A	默认	600
+ww	http://www.yunhelp.cn	URLY	默认	600

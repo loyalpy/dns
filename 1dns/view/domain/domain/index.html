@@ -1,0 +1,55 @@
+{block main}
+<div class="home">
+<div class="main clr" id="inner-main">
+    <div class="branding">
+        <div class="text">
+        <h1>域名注册服务</h1>
+        <h2>八戒DNS&nbsp;&nbsp;•&nbsp;&nbsp;新网</h2>
+        <h3>强势打造&nbsp;&nbsp;&nbsp;&nbsp;最可信赖</h3>
+        </div>
+    </div>
+    <div class="search-row">
+        <form  method="get" action="{url /domain/lists}" >
+            <div class="search-area">
+                <div class="single-search">
+                <input type="text" class="search" name="domain" value="" autocomplete="off" placeholder="输入您想注册的域名, 例如: 8jdns" />
+                </div>
+                <input type="submit" class="search-btn" value=""/>
+            </div>
+        </form>
+    </div>
+    <div class="benefits-wrap">
+        <div class="prices-entry"><a target="_blank" href="{url /domain/price_info}">全部价格后缀表</a><cite class="glyphicon glyphicon-paperclip"></cite></div>
+        <ul class="benefits sr-only">
+        </ul>
+
+</div>
+</div>
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="margin-top: 300px">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"> 温馨提示</h4>
+            </div>
+            <div class="modal-body" style="text-align: center;font-size: 18px;margin: 30px 0;">
+                <div class="" style="font-size: 16px"> 请输入想要注册的域名,如:8jdns</div>
+                <div class="dis30"></div>
+                <a href="" type="button" class="btn btn-warning" data-dismiss="modal">确定</a>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block javascript}
+<script type="text/javascript">
+    $(".search-btn").click(function () {
+        var domain = $("input[name='domain']").val();
+        if ($.is_empty(domain)) {
+            $('#myModal').modal();
+            $("#myModal").find(".modal-dialog").width(500);
+            return false;
+        }
+    });
+</script>
+{/block}

@@ -1,0 +1,61 @@
+{block main}
+<div class="page-inner">
+<ol class="breadcrumb">
+  <li><a href="{$url}?pid=0" class="txt-blue">顶级{$table_alias}</a></li>
+  {if $catpaths}
+  {foreach items=$catpaths}
+  <li><a href="{$url}?pid=$key" class="txt-blue">{$item}</a></li>
+  {/foreach}
+  {/if} 
+  <li>&nbsp;&nbsp;&nbsp;
+  <a href="{$url}?do=edit&pid={$pid}" class="btn btn-danger">
+  <span class="glyphicon glyphicon-plus"></span> 添加</a> 
+  <button type="button" data-url="{$url}?do=refresh" class="btn btn-success t-ajax-button" data-loading-text="处理中……">生成缓存</button></li>
+</ol>
+<div class="table-responsive" style='width:600px;'>
+<table class='table table-bordered' cellpadding="0" cellspacing="0" >
+				<col width="130px" />
+				<col width="230px" />
+				<col />
+				<col width="80px" />
+				<col width="80px" />
+				<thead>
+					<tr class="active">
+					<th>序号</th>
+					<th>{$table_alias}名称</th>
+					<th>类型</th>
+					<th>状态</th>
+					<th>操作</th>
+					</tr>
+				</thead>
+		<tbody>
+        {foreach items=$catlist}
+        {if $item['pid'] == $pid}
+			<tr>
+			<td>{$item['id']}&nbsp;&nbsp;<font class="font-gray">[{if $item['sort']}{$item['sort']}{else}0{/if}]</font></td>
+			<td><a href="{$url}?pid={$item['id']}" class="f18">{$item['name']}</a></td>
+			<td>{$item['type']}</td>
+			<td><img title='' src="{url static@/images/admin/}status{$item['status']}.gif" /></td>
+			<td>
+			<p class='table-item-op'>
+			<a href="{$url}?do=edit&id={$item['id']}"><img src="{url static@/images/btn_icon/icon_edit.gif}" /></a>
+			<a href="javascript:void(0);" data-url="{$url}?do=del&id={$item['id']}" class="t-ajax-button table-item-op-del"><img src="{url static@/images/btn_icon/icon_del.gif}" /></a>
+			</p>
+			</td>
+			</tr>
+		{/if}
+		{/foreach}
+		</tbody>
+</table>
+</div>
+</div>
+{/block}
+{block javascript}
+<script language="javascript">
+  $(".table-item-op-del").each(function(){
+  	$(this).data("data-before",function(){
+  		return confirm("您确定要删除该条信息吗?");
+  	})
+  })
+</script>
+{/block}

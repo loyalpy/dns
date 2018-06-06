@@ -1,0 +1,43 @@
+{block main}
+<div class="dns-tools">
+    <div class="content">
+
+        <div class="tools-top">
+            <p class="p1">WHOIS查询工具</p>
+            <p class="p2">此工具可以协助您查询域名注册商相关问题</p>
+        </div>
+
+        <div class="row">
+            <form class="the_searchform form" method="POST" action="{url /tools/ipwhois}" onsubmit="return loadresult();">
+                <div class="row-content c1">
+                    <span>请输入域名或IP:</span><input type="text" name="question" class="text" value="{$this->question}"/><span class="submit">提交查询</span><br/>
+                    <input type="hidden" name="hash" value="{hash}" />
+                    <button type="submit" style="display: none"></button>
+                </div>
+            </form>
+            <div class="dis10"></div>
+            <div class="row-top"></div>
+            <div class="dis40"></div>
+            <div class="result">
+                {if $this->result}
+                    <p>查询结果</p>
+                    <div class="query-res" style="width: 480px;"><pre>{$this->result}</pre></div>
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block javascript}
+<script type="text/javascript">
+    $(function(){
+        $(".submit").click(function(){
+            $(this).parent().find("button").click();
+        });
+    });
+    var loadresult = function(){
+        $.ui.loading();
+        return true;
+    }
+</script>
+{/block}

@@ -1,0 +1,120 @@
+{block head_menu}
+<div class="menu">
+    <ul>
+        {if $this->check_purview("/domain_manager/domain")}
+        <li><a href="{url  /domain_manager/domain}" >域名列表</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_qy")}
+        <li><a href="{url  /domain_manager/domain_qy}">域名牵引</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log")}
+        <li><a href="{url  /domain_manager/domain_log}" class="cur">域名操作日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log_switch")}
+        <li><a href="{url  /domain_manager/domain_log_switch}" >域名切换日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_black")}
+        <li><a href="{url  /domain_manager/domain_black}" >黑白名单</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_deleted")}
+        <li><a href="{url  /domain_manager/domain_deleted}" >已删除域名</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_find")}
+        <li><a href="{url  /domain_manager/domain_find}" >域名找回</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_diyline")}
+        <li><a href="{url  /domain_manager/domain_diyline}">自定义线路</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_bind")}
+        <li><a href="{url  /domain_manager/domain_bind}">别名绑定</a></li>
+        {/if}
+    </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+    <div class="name">域名操作日志</div>
+    <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_manager/domain_log?do=get_url}">
+    <div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+    <div class="list-box">
+        <table class="list-table table table-striped table-condensed table-responsive table-checkall" cellpadding="0" cellspacing="0">
+            <col width="50px"/>
+            <col width="150px"/>
+            <col width="120px"/>
+            <col/>
+            <thead>
+            <tr>
+                <th><input type="checkbox" data-name="logs[]" class="checkall"/></th>
+                <th>操作时间</th>
+                <th>操作IP</th>
+                <th>说明</th>
+            </tr>
+            </thead>
+            <tbody class="tpl"></tbody>
+        </table>
+    </div>
+    <div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+{include tpl/form}
+
+<script type="text/template" id="tpl_list_row">
+    <#macro row data>
+        <tr>
+            <td><input type="checkbox" name="logs[]" value=""/></td>
+            <td class="font-gray">${data.dateline}</td>
+            <td><span class="keybox font-gray">${data.ipaddr} </span></td>
+            <td>用户${data.email}[${data.uid}],${data.modi_item}[${data.domain}],${data.modi_log}</td>
+        </tr>
+    </#macro>
+</script>
+
+
+<script language="javascript">
+    var pageurl = "{$pageurl}";
+    var search_formdata = {
+        uname: {type: "uid", label: "域名", name: "uname", value: "", disabled: 0, data_sr:[], css: "", require: "", desc: "", item_css: ""},
+        keyword:{type:"text",label:"关键词",name:"keyword",value: "",data_sr:[],css:"",require:"",desc:"",item_css:""},
+        btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+    };
+    var loadlist = function(page){
+        $.ajaxLoadlist(page,pageurl,function(){
+            var keyword = $(".the_searchform input[name='keyword']").val();
+            if(keyword != ""){
+                $(".thelistform").find(".tpl .keybox").each(function(){
+                    var obj = this;
+                    var html = $(obj).html();
+                    $(obj).html($.replace_keyword(html,keyword))
+                });
+            };
+        });
+        //全选，全不选
+        $(".table-checkall").find("input.checkall").unbind("click").bind("click",function(){
+            $.check_all(this);
+        });
+    }
+    $(function(){
+        //加载搜索
+        $.loadform(search_formdata,"",function(res){
+            pageurl = res.pageurl;
+            loadlist();
+            return true;
+        },function(){
+            get_domainlist(1,'',"",".the_searchform");
+        },".the_searchform");
+        //加载列表
+        loadlist();
+    })
+</script>
+{/block}

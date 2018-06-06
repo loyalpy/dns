@@ -1,0 +1,174 @@
+{block main}
+<div class="main-nav">
+  <div class="name">解析订单</div>
+  <div class="navbtn0">
+	  <a class="btn {if $ftype == 1}btn-info{else}btn-default{/if} btn-sm"  href="{url /order_manager/parser?ftype=1}"><cite class="glyphicon glyphicon-th"></cite>已支付</a>
+	  <a class="btn {if $ftype == 2}btn-info{else}btn-default{/if} btn-sm"  href="{url /order_manager/parser?ftype=2}"><cite class="glyphicon glyphicon-th"></cite>待支付</a>
+	  <a class="btn {if $ftype == 3}btn-info{else}btn-default{/if} btn-sm"  href="{url /order_manager/parser?ftype=3}"><cite class="glyphicon glyphicon-th"></cite>已取消</a>
+	  <a class="btn {if $ftype == 4}btn-info{else}btn-default{/if} btn-sm"  href="{url /order_manager/parser?ftype=4}"><cite class="glyphicon glyphicon-th"></cite>已删除</a>
+  </div>
+  <div class="navbtn">
+  </div>
+  <div class="cl"></div>
+</div>
+
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /order_manager/parser?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+	<col width="150px" />
+	<col width="150px" />
+	<col width="90px" />
+	<col width="140px" />
+	<col />
+	<thead>
+	<tr class="active">
+		<th>订单编号&nbsp;<a href="javascript:void(0)" class="orderby" data-item="order_no" data-desc=""><cite></cite></a></th>
+		<th>用户&nbsp;<a href="javascript:void(0)" class="orderby" data-item="uid" data-desc=""><cite></cite></a></th>
+		<th>订单总金额&nbsp;<a href="javascript:void(0)" class="orderby" data-item="amount" data-desc=""><cite></cite></a></th>
+		<th>创建时间&nbsp;<a href="javascript:void(0)" class="orderby" data-item="dateline" data-desc=""><cite></cite></a></th>
+		<th>订单详情</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row order>
+	<tr>
+		<td>${order.order_no}</td>
+		<td class="font-blue">${order.uid}</td>
+		<td class="font-org">${order.amount}元</td>
+		<td class="font-gray">${order.dateline}</td>
+		<td>
+				<table class="list-table table table-striped table-condensed table-responsive table-bordered" cellpadding="0" cellspacing="0">
+					<col  />
+					<col width="60px" />
+					<col width="80px" />
+					<col width="100px" />
+					<col width="100px" />
+					<col width="100px"/>
+					<tbody class="tpl">
+					<#list order.order_item as order_item>
+					<tr style="text-align: center">
+						<td>
+							<#if (order_item.goods_name)>
+								${order_item.goods_name}
+								<#else>
+									${order_item.goods_no}
+							</#if>
+						</td>
+						<td><#if (order_item.buy_type == 1)><span class="font-green">新买</span><#else><span class="font-org">续费</span></#if></td>
+						<td>
+							<#if (order_item.type != 0)>短信套餐</#if>
+							<#if (order_item.goods_name)> ${service_group[order_item.goods_no].name}</#if>
+						</td>
+						<td><#if (order_item.goods_name)><#if (order_item.num < 10 )>${order_item.num}个月<#else>${order_item.num/10}年</#if><#else>${order_item.num}</#if></td>
+						<td ><font color="<#if (order.status != 4)> red <#else> #F37B1D </#if>">${order_item.amount}元</font></td>
+						<td class="status">
+							<#if (order.status >= 4)>
+								<#if (order.pay_status == 2)>
+									<font color="red">已退款</font>
+									<#else>
+										<font color="green">已完成</font>
+								</#if>
+								<#elseif (order.status == 3)>
+									<font color="green">已支付</font>
+									<#elseif (order.status == 0)>
+										已取消
+										<#else>
+											<font color="red">待付款</font>
+							</#if>
+						</td>
+					</tr>
+					</#list>
+					</tbody>
+				</table>
+		</td>
+	</tr>
+</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var service_group = {echo JSON::encode(M("@domain_service")->get_cache_list(0))};
+var search_formdata = {
+	startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+	enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+	keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"item-200"},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var loadlist = function(page,orderby){
+	$.ajaxLoadlist(page,pageurl+ (typeof orderby == "undefined" ? "" : ("&orderby=" + orderby)),function(res){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_func(this);
+		 });
+		$(".t-ajax-button").each(function(i){
+			$.t_ajax_button(this);
+		});
+		//排序
+		var orderby_arr = res.orderby.split("!");
+		$(".thelistform").find("a.orderby").each(function () {
+			var obj = this;
+			var or_item = $(obj).attr("data-item");
+			var or_v = "ASC";
+			$(obj).attr("data-desc", or_v);
+			$(obj).find("cite").attr("class", "glyphicon glyphicon-chevron-up");
+			if (or_item == orderby_arr[0]) {
+				or_v = orderby_arr[1];
+				$(obj).attr("data-desc", or_v);
+				if (or_v == "DESC") {
+					$(obj).find("cite").attr("class", "glyphicon glyphicon-chevron-down");
+				}
+			}
+			$(obj).unbind("click").bind("click", function () {
+				loadlist(1, (or_item + "!" + (or_v == "ASC" ? "DESC" : "ASC")));
+			});
+		});
+	});
+}
+$(function(){
+	//加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 //加载列表
+	 loadlist(1);
+	 //刷新按钮
+	 $(".refresh-btn").click(function(){
+	 	 loadlist(1);
+	 });
+	$(".date-ymd").datetimepicker({
+		language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"
+	});
+})
+</script>
+{/block}

@@ -1,0 +1,45 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /ucenter/profile_basic}">我的资料&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_passwd}">修改密码&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/safety_center}" class="cur">安全中心&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/profile_msg}">系统通知&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+     <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">微信绑定</strong></div>
+        </div>
+        <hr/>
+        <div class="dis20"></div>
+        <div class="am-msg-content">
+            <div class="weixin-img"><img src="{url /ucenter/qrcode}" width="300"></div>
+            <div class="weixin-intro">请使用微信扫描图中二维码<br/>
+                关注后账号即自动绑定成功<br/>
+                如果您已经关注“八戒DNS”，请再次扫描二维码完成绑定<br/>
+                如果您的微信号已经绑定平台其他账号,请先解除绑定，或者重新关注
+            </div>
+        </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+    var InterValObj;
+    $(function(){
+        InterValObj = window.setInterval(function(){
+            $.ajaxPassport({
+                url:"{url /ucenter/wxbd?do=check}",
+                success:function(res){
+                    if(res.error == 0){
+                        $.redirect("{url /ucenter/wxbd?do=success}");
+                    }
+                }
+            });
+        }, 2000);
+    })
+</script>
+{/block}

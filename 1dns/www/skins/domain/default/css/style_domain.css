@@ -1,0 +1,66 @@
+html,body{background: #f8f8f8 none repeat scroll 0 0;min-width: 1200px;}
+input::-webkit-input-placeholder,textarea::-webkit-input-placeholder{color:#000;opacity:.3}
+input::-moz-placeholder,textarea::-moz-placeholder{color:#000;opacity:.3}
+button::-moz-focus-inner{border:0}
+:focus{outline:0}
+@font-face{font-weight:400;font-style:normal;font-family:HelveNueThin;src:url(../font/HelveticaNeueThn.eot?) format("eot"),url(../font/HelveticaNeueThn.woff) format("woff"),url(../font/HelveticaNeueThn.ttf) format("truetype"),url(../font/HelveticaNeueThn.svg#HelveNueThin) format("svg")}
+.util-clearfix:after{clear:both;display:table;content:''}
+
+
+li > a,
+li > a:hover,
+li > a:focus {
+    text-decoration: none;
+}
+
+
+*{ margin:0; padding:0; font-family:"微软雅黑";font-size: 14px;}
+a{ text-decoration:none;color:#6b6b6b;font-size:14px;}
+p{font-size:12px;color:#6b6b6b;}
+li{ list-style:none;}
+em {font-style: normal;}
+img{border:0;}
+
+.dis3{height:3px;line-height:3px;clear:both;}
+.dis5{height:5px;line-height:5px;clear:both;}
+.dis7{height:7px;line-height:7px;clear:both;}
+.dis9{height:9px;line-height:9px;clear:both;}
+.dis10{height:10px;line-height:10px;clear:both;}
+.dis15{height:15px;line-height:15px;clear:both;}
+.dis17{height:17px;line-height:17px;clear:both;}
+.dis20{height:20px;line-height:20px;clear:both;}
+.dis25{height:25px;line-height:25px;overflow:hidden;clear:both;}
+.dis30{height:30px;line-height:30px;clear:both;}
+.dis40{height:40px;line-height:40px;clear:both;}
+.dis60{height:60px;line-height:60px;clear:both;}
+
+.font-gray{color:gray}
+
+/*.domain{min-width: 1200px}*/
+.aps{width: 1200px;margin: 0 auto;min-width: 1200px;}
+.aps1{width: 1050px;margin: 0 auto;min-width: 1050px;}
+.cl{clear: both}
+
+.modal-title {font-family: "微软雅黑" !important;}
+
+/*********************************************************************domain index top*******************************************************************************/
+.header{border-bottom: 0px solid #d9d7d7;box-shadow: 1px 1px #f0efef;  margin-bottom: 1px;  background-color: #fff;}
+.header .top{height: 48px;line-height: 50px}
+.header .header-left{float: left;}
+.header .header-left .l-a{text-decoration:none;color: #555;font-size: 16px;margin-left: 7px;font-weight: 400;border-left:solid 1px #efefef;padding-left:12px;}
+.header .header-right{float: right;}
+.header .header-right li{float: left;margin-left: 10px}
+.header .line {margin: 0 8px;  width: 1px;  height: 17px;  display: inline-block;  vertical-align: middle;  overflow: hidden;  background-color: #ddd;  }
+.header .header-right a{color: #0071ce;font-size: 14px;}
+.header .header-right a:hover{text-decoration:none;}
+.header .header-right .glyphicon-shopping-cart{font-size: 24px;position: relative;top:8px;}
+.header .header-right .num {  position: relative;  left: -10px;  top: 6px;  min-width: 14px;  line-height: 16px;  background-color: #ed711f;  color: #fff;  font-size: 12px;  text-indent: 0;  border-radius: 3px;  padding: 0 5px;  text-align: center;}
+.header .header-right .btn-group{border: 0;}
+
+ul.paysel {padding: 9px 0 0 0 !important;}
+ul.paysel li {height:50px !important; line-height:30px !important; border-right:none !important;}
+
+/*********************************************************************domain index bottom*******************************************************************************/
+.footer{bottom: 0;width: 100%;min-width:1200px;background-color: #1e1e1e;clear:both;border-top: 1px solid rgba(0, 0, 0, 0.05);color: #888;overflow:auto;text-align:center;}
+.footer .footer-bottom{background-color: #3c3c3c;border-top: 1px solid rgba(0, 0, 0, 0.05);color: #aaa;font-size: 12px;text-align: center;clear: both;padding: 14px 0;}
+.footer .footer-bottom a{color: gray;}

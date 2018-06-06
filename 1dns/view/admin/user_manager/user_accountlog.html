@@ -1,0 +1,130 @@
+{block main}
+<div class="main-nav">
+  <div class="name">账户日志</div>
+  <div class="navbtn0">
+  {set $ftype_s = array("balance"=>"账户余额","sms"=>"短信","point"=>"积分")}
+  {foreach items=$ftype_s}
+  <a class="btn {if $ftype == $key}btn-info{else}btn-default{/if} btn-sm" title="{$item}" href="{url /user_manager/user_accountlog?ftype=$key}"><cite class="glyphicon glyphicon-th"></cite> {$item}</a> 
+  {/foreach}
+  </div>
+  <div class="navbtn">
+   <!--button-->
+	  {if $this->check_purview("/user_manager/user_accountlog")}
+  <button type="button" class="btn btn-default btn-sm refresh-btn" data-loading-text="处理中……">&nbsp;<cite class="glyphicon glyphicon-refresh"></cite>&nbsp;</button> 
+  {/if}
+	  <!--end button-->
+  <!--button-->
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /user_manager/user_accountlog?do=get_url}">
+<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+	<col width="180px" />
+    <col width="150px" />
+	<col width="180px" />
+	<col width="100px" />
+	<col width="100px" />
+	<col />
+	<col width="170px" />
+	<thead>
+	<tr>
+	<th>流水号</th>
+	<th>时间</th>
+	<th>用户</th>
+	<th>变数</th>
+	<th>变后</th>
+	<th>描述</th>
+	<th>操作者</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+   <tr>
+   <td>${data.lsh}</td>
+   <td>${data.dateline}</td>
+   <td>${data.uname}</td>
+   <td><#if (data.type == 2)><font class="font-green">+ ${data.amount}</font>
+       <#elseif (data.type == 1)><font class="font-red">- ${data.amount}</font>
+       <#else>
+       <font class="font-gray">= ${data.amount}</font>
+       </#if>
+   </td>
+   <td>${data.amount_log}</td>
+   <td>${data.note}</td>
+	   <td> ${data.czz} </td>
+   </tr>
+</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
+<script language="javascript">
+var pageurl = "{$pageurl}";
+var search_formdata = {
+	auid: {type: "select", label: "操作者", name: "auid", value: "", disabled: 0, data_sr:[{v:"用户",key:1},{v:"管理员",key:2}], css: "", require: "", desc: "", item_css: ""},
+	startdate:{type:"date",label:"时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+	enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+	keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:"item-200"},
+	ftype:{type:"hidden",label:"",name:"ftype",value:"{$ftype}",data_sr:[],css:"",require:"",desc:"",item_css:"item-200"},
+	btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+};
+var loadlist = function(page){
+	$.ajaxLoadlist(page,pageurl,function(){
+		var keyword = $(".the_searchform input[name='keyword']").val();
+		if(keyword != ""){
+			var listhtml = $(".thelistform").find(".tpl").html();
+			$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+		};
+		$(".editbtn").click(function(){
+			edit_func(this);
+		 });
+		$(".t-ajax-button").each(function(i){
+			$.t_ajax_button(this);
+		});
+	});
+}
+$(function(){
+	//加载搜索
+	 $.loadform(search_formdata,"",function(res){
+	 	pageurl = res.pageurl;
+	 	loadlist(1);
+		return true;
+	 },null,".the_searchform");
+	 //加载列表
+	 loadlist(1);
+	 //刷新按钮
+	 $(".refresh-btn").click(function(){
+	 	 loadlist(1);
+	 });
+	$(".date-ymd").datetimepicker({
+		language:  'zh-CN',
+		autoclose: 1,
+		startView: 2,
+		minView: 2,
+		maxView: 4,
+		format:"yyyy-mm-dd",
+		pickerPosition: "bottom-right"
+	});
+})
+</script>
+{/block}

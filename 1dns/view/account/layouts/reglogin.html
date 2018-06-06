@@ -1,0 +1,76 @@
+<!doctype html>
+<html class="no-js">
+<head>
+<!--[if lt IE 10]>
+<![endif]-->
+<!--[if lt IE 7]>
+<script>location.href="/ie.html"</script>
+<![endif]-->
+<!-- page head -->
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="format-detection" content="telephone=no">
+<meta name="generator" content="">
+
+<title>{$site['seo_title']}</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+
+<link rel="stylesheet" href="{url /static/javascript/amazeui/css/amazeui.min.css}">
+<link rel="stylesheet" href="{skin /css/style_login.css}">
+{block css}{/block}
+</head>
+<body>
+<!--header 开始-->
+<div class="header" >
+  <div class="header_main mt0 aps">
+    <div class="logo fl"><a href="{url home@/}"><img src="{skin home@images/minilogo.png}"></a></div>
+    <div class="logotit fl">{block logotit}{/block}</div>
+    <div class="login fr">
+      {if empty($uid)}
+      <a class="button fl" href="{url account@/login}">登录</a>
+      <a class="button fl" href="{url account@/register}"> 注册</a>
+      {else}
+      <a class="button fl" href="">购物车</a>
+      <a class="button fl" href="{url account@/ucenter}">管理中心</a>
+      {/if}
+    </div>
+    <div class="menu fr"> 
+      <ul>
+        <li><a class="{if $inc == "site" && $act == 'index'}cur{/if}" href="{url home@/}">首页</a></li>
+        <li><a class="{if $inc == "product" && $act == 'index'}cur{/if}" href="{url home@/product/index}">产品中心</a></li>
+        <li><a class="{if $inc == "product" && $act == 'buy'}cur{/if}" href="{url home@/product/buy}">购买套餐</a></li>
+        <li><a href="{url home@/}">技术支持</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!--header 结束-->
+
+{block main}{/block}
+{block copyright}{/block}
+<div data-am-widget="gotop" class="am-gotop am-gotop-fixed" >
+    <a href="#top" title="">
+          <i class="am-gotop-icon am-icon-chevron-up"></i>
+    </a>
+</div>
+<script language="javascript" src="{url static@/javascript/jquery/jquery-1.10.2.min.js}"></script>
+<!--[if lte IE 8 ]>
+<script src="{url static/javascript/amazeui/js/modernizr.js}"></script>
+<script src="{url static/javascript/amazeui/js/amazeui.ie8polyfill.min.js}"></script>
+<![endif]-->
+<script src="{url static/javascript/amazeui/js/amazeui.min.js}"></script>
+<script src="{url static@/javascript/apps/app.new.js}"></script>
+{if $uid}
+<script language="javascript" src="{url static@/cache/dataconfig.js}"></script>
+{/if}
+<script language="javascript">var $ = jQuery.noConflict(),APP_URL = "{url }",tUser={};tCity="{$city}";
+{if $uid}
+tUser['uid'] = "{echo tUtil::numstr($uid)}";tUser['utype'] = "{$utype}";
+{else}
+tUser['uid'] = 0;tUser['utype'] = 0;{/if}
+</script>
+{block javascript}{/block}
+</body>
+</html>

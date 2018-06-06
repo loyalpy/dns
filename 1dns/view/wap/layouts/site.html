@@ -1,0 +1,202 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  {block seo}
+  <meta name="keywords" content="{$site['seo_keyword']}" />
+  <meta name="description" content="{$site['seo_description']}" />
+  {/block}
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>{block title}{$site['seo_title']}{/block}</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+  <link rel="icon" type="image/png" href="favicon.ico">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="assets/i/app-icon72x72@2x.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+  <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <link rel="stylesheet" href="{url /assets/css/amazeui.min.css}">
+  <link rel="stylesheet" href="{url static@/css/style_wap1.1.css}">
+  {block css}{/block}
+</head>
+<body>
+{if $inc=='site' && $act == "index"}
+<header data-am-widget="header" class="am-header am-header-default">
+      <div class="am-header-left am-header-nav">
+          <a href="{url /}" class="">
+		  <i class="am-header-icon am-icon-home"></i>
+          </a>
+      </div>
+      <h1 class="am-header-title">
+          <a href="#title-link" class="">
+           <img src="{url static@/images/ucenter/logo.png}">
+          </a>
+      </h1>
+      <div class="am-header-right am-header-nav">
+        <div class="am-dropdown" data-am-dropdown>
+		  <button class="am-btn am-btn-primary am-dropdown-toggle" data-am-dropdown-toggle><i class="am-header-icon am-icon-bars"></i></button>
+		  <ul class="am-dropdown-content">
+		    <li><a href="{url /job}">找工作</a></li>
+		    {if empty($uid)}
+		    <li><a href="{url /login}">登录</a></li>
+		    <li><a href="{url /register}">注册</a></li>
+		    
+		    {else}
+		    <li><a href="{url /ucenter/index}">会员中心</a></li>
+		    <li class="am-divider"></li>
+		    <li><a href="{url /login/logout}">退出</a></li>
+		    {/if}
+		    
+		  </ul>
+		</div>
+      </div>
+</header>
+{else}
+<header data-am-widget="header" class="am-header am-header-default  am-header-page">
+      <div class="am-header-left am-header-nav">
+      	  {if $refer}
+          <a href="{$refer}" class="am-btn am-btn-default">
+           	  <i class="am-header-icon am-icon-reply"></i>
+              <span class="am-header-nav-title">
+                返回
+              </span>               
+          </a>
+          {/if}
+      </div>
+      <h1 class="am-header-title">
+          <a href="#title-link" class="">
+          {$pagename}
+          </a>
+      </h1>
+      <div class="am-header-right am-header-nav">
+      	  <a href="{url /}" class="">
+		  <i class="am-header-icon am-icon-home"></i>
+          </a>
+          <div class="am-dropdown" data-am-dropdown>
+		  <button class="am-btn am-btn-primary am-dropdown-toggle" data-am-dropdown-toggle><i class="am-header-icon am-icon-bars"></i></button>
+		  <ul class="am-dropdown-content">
+		    <li><a href="{url /job}">找工作</a></li>
+		    {if empty($uid)}
+		    <li><a href="{url /login}">登录</a></li>
+		    <li><a href="{url /register}">注册</a></li>
+		    
+		    {else}
+		    <li><a href="{url /ucenter/index}">会员中心</a></li>
+		    <li class="am-divider"></li>
+		    <li><a href="{url /login/logout}">我要退出</a></li>
+		    {/if}
+		    
+		  </ul>
+		</div>         
+      </div>
+</header>
+{/if}
+
+{block main}{/block}
+<!-- 侧边栏内容 -->
+<div id="doc-oc-demo1" class="am-offcanvas">
+  <div class="am-offcanvas-bar am-offcanvas-bar-flip">
+    <div class="am-offcanvas-content">
+      <ul class="index-nav">
+      <li><a href="{url /login}">登录</a></li>
+      <li><a href="{url /register}">注册</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="dis30"></div>
+{if empty($uid)}
+<footer data-am-widget="footer"
+          class="am-footer am-footer-default"
+           data-am-footer="{  }">
+    <div class="am-footer-miscs ">
+        <p>Copyright © {$site['copyright']}</p>
+        <p>京ICP备13033158</p>
+    </div>
+</footer>
+{/if}
+{if $uid}
+<!--工具栏-->
+  <div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default"  id="">
+      <ul class="am-navbar-nav am-cf am-avg-sm-4">
+      {if $utype == 1}
+          <li data-am-navbar-share>
+            <a href="###" class="">
+                  <span class="am-icon-share-square-o"></span>
+                <span class="am-navbar-label">分享</span>
+            </a>
+          </li>
+     {elseif $utype ==2}
+          <li data-am-navbar-share>
+            <a href="###" class="">
+                  <span class="am-icon-share-square-o"></span>
+                <span class="am-navbar-label">分享</span>
+            </a>
+          </li>
+    {elseif $utype ==3}
+          <li>
+            <a href="{url /ucenter/index}" class="">
+                  <span class="am-icon-home"></span>
+                <span class="am-navbar-label">会员中心</span>
+            </a>
+          </li>
+          <li>
+            <a href="{url /medier_resume/add}" class="">
+                  <span class="am-icon-plus"></span>
+                <span class="am-navbar-label">添加工友</span>
+            </a>
+          </li>
+          <li>
+            <a href="{url /medier_resume/resumelist}" class="">
+                  <span class="am-icon-user"></span>
+                <span class="am-navbar-label">我的工友</span>
+            </a>
+          </li>
+    {/if}
+    </ul>
+  </div>
+  <!--//工具栏-->
+{/if}
+
+<div data-am-widget="gotop" class="am-gotop am-gotop-fixed" >
+    <a href="#top" title="">
+          <i class="am-gotop-icon am-icon-chevron-up"></i>
+    </a>
+</div>
+<script language="javascript" src="{url static@/javascript/jquery/jquery-1.10.2.min.js}"></script>
+<!--[if lte IE 8 ]>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="{url /assets/amazeui.ie8polyfill.min.js}"></script>
+<![endif]-->
+<script src="{url /assets/js/amazeui.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/utils/easyTemplate.js}"></script>
+{if $uid}
+<script language="javascript" src="{url static@/cache/dataconfig.js}"></script>
+{/if}
+<script src="{url static@/javascript/apps/app.mobile.js}"></script>
+<script language="javascript">var $ = jQuery.noConflict(),APP_URL = "{url }",tUser={};tCity="{$city}";
+{if $uid}
+tUser['uid'] = "{echo tUtil::numstr($uid)}";tUser['utype'] = "{$utype}";
+{else}
+tUser['uid'] = 0;tUser['utype'] = 0;{/if}
+</script>
+{block javascript}{/block}
+</body>
+</html>

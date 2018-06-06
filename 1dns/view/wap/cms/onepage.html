@@ -1,0 +1,14 @@
+{block title}{if $data['seo_title']}{$data['seo_title']}{else}{$data['name']}-{$site['seo_title']}{/if}{/block}
+{block seo}
+	<meta name="keywords" content="{if $data['seo_keyword']}{$data['seo_keyword']}{else}{$site_config['seo_keyword']}{/if}" />
+	<meta name="description" content="{if $data['seo_description']}{$data['seo_description']}{else}{$site_config['seo_description']}{/if}" />
+{/block}   
+{block main}
+<div class="am-container">
+  <h2 class="am-text-xl">{$data['name']}</h2>  
+  <div class="onepage-c">
+  {echo htmlspecialchars_decode($data['content']);}   
+  </div>
+</div>
+{/block}
+{block friendlink}{/block}

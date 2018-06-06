@@ -1,0 +1,195 @@
+{block head_menu}
+    <div class="menu">
+    <ul>
+    {foreach items=$navs}
+	<li><a href="{$item['url']}" class="{if $cr == $key}cur{/if}">{$item['label']}</a></li>
+    {/foreach}
+    </ul>
+    </div>
+{/block}
+    
+{block main}
+<div class="main-nav">
+  <div class="name">支付方式</div>
+  <div class="navbtn">
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form action=""></form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box ">
+{if $cr == "my"}
+<table class='table table-bordered table-responsive' cellpadding="0" cellspacing="0">
+		<colgroup>
+			<col width="200px">
+			<col width="150px">
+			<col width="350px">
+			<col width="100px">
+			<col />
+		</colgroup>
+		<thead>
+			<tr class="active">
+				<th>图标</th>
+				<th>支付名称</th>
+				<th>支付描述</th>
+				<th>禁用</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach items=$payment_list}
+				<tr>
+					<td><img src="{url static@/public/images}{$item['logo']}" /></td>
+					<td>{$item['name']}</td>
+					<td>{$item['description']}</td>
+					<td>
+					    {if $item['status']==1}
+						<span class="font-gray">已禁用</span>
+						{else}
+						<span class="text-success">已启用</span>
+						{/if}
+					</td>
+					<td>
+					<p class='table-item-op'>
+						{if $this->check_purview('/sys_manager/sys_payment_edit')}
+					<a href="{url /sys_manager/sys_payment_edit?payid=$item[id]}"><span class="glyphicon glyphicon-edit"></span></a>
+						{/if}
+						{if $this->check_purview('/sys_manager/sys_payment_del')}
+					<a href="javascript:void(0);" data-url="{url /sys_manager/sys_payment_del?payid=$item[id]}" confirm="1" class="t-ajax-button table-item-op-del"><span class="glyphicon glyphicon-remove "></span></a>
+						{/if}
+					</p>
+					</td>
+				</tr>
+			{/foreach}
+		</tbody>
+	</table>
+{else}
+<table class='table table-bordered table-responsive' cellpadding="0" cellspacing="0">
+		<colgroup>
+			<col width="200px">
+			<col width="150px">
+			<col width="350px">
+			<col width="100px">
+		</colgroup>
+		<thead>
+			<tr class="active">
+				<th>图标</th>
+				<th>支付名称</th>
+				<th>支付描述</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+		{query name= pay_plugin where=visibility eq 1}
+			<tr>
+				<td><img src="{url static@/public/images}{$item['logo']}" /></td>
+				<td>{$item['name']}</td>
+				<td>{$item['description']}</td>
+				<td>
+					{if $this->check_purview('/sys_manager/sys_payment_edit')}
+					<a href="{url /sys_manager/sys_payment_edit?id=$item[id]}">添加</a>
+					{/if}
+				</td>
+			</tr>
+		{/query}
+		</tbody>
+	</table>
+{/if}
+</div>
+</form>
+<!-- end list box -->
+{/block}
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+    <td class="font-black">${data.alias}</td>
+    <td class="font-gray">${data.ident}</td>
+    <td>
+    <#if (parseFloat(data.balance)<0)><font class="font-red">${data.balance}</font><#else><font class="font-green">+${data.balance}</font></#if>
+    </td>
+    <td>
+    <#if (parseInt(data.point)<0)><font class="font-red">${data.point}</font><#else><font class="font-green">+${data.point}</font></#if>
+    </td>
+    <td>
+    <#if (parseInt(data.exp)<0)><font class="font-red">${data.exp}</font><#else><font class="font-green">+${data.exp}</font></#if>
+    </td>
+    <td>
+    <#if (parseInt(data.sms)<0)><font class="font-red">${data.sms}</font><#else><font class="font-green">+${data.sms}</font></#if>
+    </td>
+    <td>
+	<p class="table-item-op">
+	<a href="javascript:void(0);" class="editbtn" data-url="{url /user_manager/account_active?do=edit&id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a> 
+	<a href="javascript:void(0);" class="delbtn" data-url="{url /user_manager/account_active?do=del&id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a> 
+	</p>
+	</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /user_manager/account_active?do=edit}" method="post" class="theform form form-1" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript">
+var formdata = {
+	alias:{type:"text",label:"活动名称",name:"alias",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"活动名称必须填写",item_css:""},
+	ident:{type:"text",label:"活动标识",name:"ident",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"活动标识不能为空且唯一",item_css:""},      balance:{type:"text",label:"余额",name:"balance",value:"0.00",data_sr:[],css:"",require:"",desc:"",item_css:"font-org"},
+	point:{type:"text",label:"积分",name:"point",value:"0",data_sr:[],css:"",require:"",desc:"",item_css:"font-org"},
+	exp:{type:"text",label:"经验",name:"exp",value:"0",data_sr:[],css:"",require:"",desc:"",item_css:"font-org"},
+	sms:{type:"text",label:"短信数",name:"sms",value:"0",data_sr:[],css:"",require:"",desc:"",item_css:"font-org"},
+	inlock:{type:"checkbox",label:"锁定",name:"inlock",value:"",disabled:0,data_sr:[{v:"锁定",key:1}],css:"",require:"",desc:"",item_css:""},
+	bz:{type:"textarea",label:"备注",name:"bz",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	ut:{type:"hidden",label:"",name:"ut",value:"{$ut}",data_sr:[],css:"",require:"",desc:"",item_css:""},
+    id:{type:"hidden",label:"",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+	btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+};
+
+var edit_func = function(obj){
+	var edit_c = $("#tpl_list_edit").html();
+	var url = $(obj).attr("data-url");
+	edit_c = "" + easyTemplate(edit_c,{title:"添加/修改"});
+	$("#myModal").find(".modal-dialog").width(760);
+	$("#myModal").find(".modal-content").html(edit_c);
+	$.loadform(formdata,url,function(res){
+		 load_list();
+		 return true;
+	});
+	$('#myModal').modal();
+}
+var del_func = function(obj){
+	if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+		var url = $(obj).attr("data-url");
+		$.ajaxPassport({
+			url:url,
+			success:function(res){
+				if(res.error == 1){
+					$.tips(obj,res.message,"error");
+				}else{
+					$.tips(obj,res.message,"success");
+					load_list();
+				}
+			}
+		})
+	}
+}
+$(function(){
+	 //load_list();
+	 $(".addbtn").click(function(){
+		edit_func(this);
+	 });
+})
+</script>
+{/block}

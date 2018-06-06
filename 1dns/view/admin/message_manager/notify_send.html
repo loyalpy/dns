@@ -1,0 +1,86 @@
+<script type="text/template" id="tpl_send_notify">
+<#macro row data>
+<form action="{url /message_manager/notify_send}" method="post" class="form-horizontal t-ajax-form" role="form">
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">${data.title}</h4>
+</div>
+<div class="modal-body">
+   <div class="form-group">
+		    <label class="col-sm-3 control-label" for="Mreceives">接收人ID:</label>
+		    <div class="col-sm-5">
+		    <input type="text" class="form-control" name="receives" value="${data.uids}" maxlength="500" id="receives" placeholder="" />
+		    </div>
+	</div>
+	<div class="form-group">
+		    <label class="col-sm-3 control-label" for="Mreceives">用户类型/等级:</label>
+		    <div class="col-sm-5">
+		    <select name="utl" class="form-control">
+		    <option value="0">请选择会员类型与等级</option>
+		    {set $utypes = C("user")->get_utype()}
+		    {foreach items=$utypes}
+		    {$ulevel = C("user")->get_ulevel($item['code'])}
+		    {foreach items=$ulevel item=$item2}
+		    <option value="{$item['code']}:{$item2['ident']}">{$item['name']} - {$item2['alias']}</option>
+		    {/foreach}
+		    {/foreach}
+		    </select>
+		    
+		    </div>
+	</div>
+    <div class="form-group">
+		    <label class="col-sm-3 control-label" for="Msubject">标题:</label>
+		    <div class="col-sm-5">
+		    <input type="text" class="form-control" name="subject"  value="" maxlength="300" id="Msubject" placeholder="" />
+		    </div>
+	</div>
+	<div class="form-group">
+		    <label class="col-sm-3 control-label" for="Mmessage">详情:</label>
+		    <div class="col-sm-7">
+		    <textarea class="form-control" style="width:500px;height:180px;" name="message" id="Mmessage"></textarea>
+		    </div>
+	</div>
+	<div class="form-group">
+		    <label class="col-sm-3 control-label" for="Msms"></label>
+		    <div class="col-sm-7">
+		    <label><input type="checkbox" name="insys" value="1" /> 站内 &nbsp;&nbsp;&nbsp;&nbsp;</label>
+		    <label><input type="checkbox" name="inemail" value="1" /> 邮件 &nbsp;&nbsp;&nbsp;&nbsp</label>
+		    <label><input type="checkbox" name="insms" value="1" /> 短信 &nbsp;&nbsp;&nbsp;&nbsp</label>
+		    </div>
+	</div>
+</div>
+<div class="modal-footer">
+	  <input type="hidden" value="{hash}" name="hash" />
+      <button type="submit" class="btn btn-success" data-loading-text="处理中……">确定</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+</div>
+</form>
+</#macro>
+</script>
+<script language="javascript">
+var send_notify = function(uids){
+  	var tpl_s = $("#tpl_send_notify").html();
+  	var tpl_v = {title:"发送通知",uids:uids};
+  	$("#myModal").find(".modal-dialog").width(860);
+  	$("#myModal").find(".modal-content").html("" + easyTemplate(tpl_s,tpl_v));
+  	
+  	KindEditor.basePath = "/static/kindeditor-4.1.7/";
+	var KE_workform_content = KindEditor.create("textarea[name='message']",{
+		uploadJson : '/interface_editor/upload_kindeditor',
+		fileManagerJson : '/interface_editor/file_manager_kindeditor',
+		allowFileManager : true,
+		items : ['fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+				 'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+				 'insertunorderedlist', '|', 'emoticons', 'image','link']
+		});
+
+  	 //初始化表单
+	$("#myModal form.t-ajax-form").each(function(i){
+		$(this).submit(function(){
+			return $.ajaxForm(this,i);
+		});
+	});
+	//弹出
+	$('#myModal').modal();
+}
+</script>

@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond $1 !^(index\.php|robots\.txt|static|admin|skins|mobile)
+	#RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+	#RewriteRule ^/?$ /%{HTTP_HOST} [NC]
+
+	RewriteCond %{HTTP_HOST} ^192.168.0.8 [NC]
+	RewriteRule ^/pcmall/index.php$ http://192.168.0.8/$1 [QSA,L,R=301]
+
+	#RewriteRule ^/([a-zA-Z]+)\.ceshi\.com/(.*)?$ http://www.ceshi.com/index.php/site/test/tg_url/$2 [QSA,L,R=301]
+
+RewriteCond %{REQUEST_METHOD} ^TRACE
+RewriteRule .* - [F]
+</IfModule>

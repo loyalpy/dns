@@ -1,0 +1,52 @@
+湖州三台  i5 两台
+
+dell一台 
+
+嘉兴两台 i5 
+
+用户名 root  端口22  密码都是 slidcwei  到时换ip或加ip再联系好了
+
+yum -y install firewalld
+firewall-cmd --permanent --zone=public --add-port=2002/tcp
+
+
+vi /etc/security/limits.conf
+在最后加上
+*           soft   nofile       655350
+*           hard   nofile       655350
+*           hard   nproc        655350
+*           soft   nproc        655350
+或者
+mysql hard nofile 655350
+mysql soft nofile 655350
+mysql hard nproc 655350
+mysql soft nproc 655350
+
+vi /usr/lib/systemd/system/mysqld.service
+LimitNOFILE=65535
+LimitNPROC=65535
+systemctl daemon-reload
+
+
+ntpdate cn.pool.ntp.org
+
+---------------------------------------------------------
+网站服务器
+www.bajiedns.com     115.231.26.213/101.64.182.4           root@ 2002 @baj##@@!236100k
+
+mysqld  root 232###!!wieoqw#   websqluser => 131787!@hzp909
+GRANT ALL PRIVILEGES ON *.* TO websqluser@"%" IDENTIFIED BY '131787!@hzp909' WITH GRANT OPTION;
+---------------------------------------------------------
+免费服务器组
+f1g1ns1.dnspig.com   115.231.26.217                        root@ 2002 @baj##@@!23688i
+f1g1ns2.dnspig.com   115.231.175.89                        root@ 2002 @baj##@@!17589s
+
+---------------------------------------------------------
+标准服务器组   -  豪华服务器组
+v1g1ns1.dnspig.com                      117.27.250.110     root@ 2002 @#8J#dns@fz!123
+v1g1ns2.dnspig.com                      122.226.163.197    root@ 2002 @#8J#dns@tz!197
+
+---------------------------------------------------------
+旗舰服务器组
+v3g1ns1.dnspig.com#v2g1ns1.dnspig.com   115.231.26.218     root@ 2002 @baj##@@!236105e
+v3g1ns2.dnspig.com#v2g1ns2.dnspig.com   115.231.174.58     root@ 2002 @baj##@@!23242t

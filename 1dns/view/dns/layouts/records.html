@@ -1,0 +1,90 @@
+<!doctype html>
+<html class="no-js">
+<head>
+<!--[if lt IE 10]>
+<![endif]-->
+<!--[if lt IE 7]>
+<script>location.href="/ie.html"</script>
+<![endif]-->
+<!-- page head -->
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="format-detection" content="telephone=no">
+<meta name="generator" content="">
+
+<title>{$site['seo_title']}</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+
+<link rel="stylesheet" href="{url static/javascript/amazeui/css/amazeui.min.css}">
+<link rel="stylesheet" href="{skin css/style_records.css}">
+{block css}{/block}
+</head>
+<body>
+{block topbar}
+<!-- topbar -->
+<div class="topbar">
+  <div class="aps">
+    <div class="top-left-nav">
+    <ul>
+    <li>
+    <a href="{url home@/}" class="logo"><img src="{skin home@images/minilogo.png}" alt="八戒DNS" /></a>
+    </li>
+    <li><a href="#">域名解析管理平台</a></li>
+    </ul>
+    </div>
+    <div class="top-domain-search">
+    </div>
+    <div class="top-right-nav">
+    <ul>
+
+      <li class="am-dropdown setting" data-am-dropdown>
+        <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+          <span class="am-icon-globe"></span> {$domain_row['domain']} <span class="am-icon-caret-down"></span>
+        </a>
+        <ul class="am-dropdown-content">
+          <li><a href="{url /records/logout}"><span class="am-icon-power-off"></span> 退出</a></li>
+        </ul>
+      </li>
+
+    </ul>
+    </div>
+  </div>
+</div>
+<!-- end topbar -->
+{/block}
+{block main}{/block}
+<div data-am-widget="gotop" class="am-gotop am-gotop-fixed" >
+    <a href="#top" title="">
+          <i class="am-gotop-icon am-icon-chevron-up"></i>
+    </a>
+</div>
+<script language="javascript" src="{url static@/javascript/jquery/jquery-1.10.2.min.js}"></script>
+<!--[if lte IE 8 ]>
+<script src="{url static/javascript/amazeui/js/modernizr.js}"></script>
+<script src="{url static/javascript/amazeui/js/amazeui.ie8polyfill.min.js}"></script>
+<![endif]-->
+<script src="{url static/javascript/amazeui/js/amazeui.min.js}"></script>
+<script src="{url static@/javascript/apps/app.new.js}"></script>
+<script language="javascript" src="{url static@/cache/dataconfig.js}"></script>
+<script language="javascript">var $ = jQuery.noConflict(),APP_URL = "{url }",tUser={};tCity="{$city}";
+{if $uid}
+tUser['uid'] = "{echo tUtil::numstr($uid)}";tUser['utype'] = "{$utype}";
+{else}
+tUser['uid'] = 0;tUser['utype'] = 0;{/if}
+$(function(){
+  $("#navSwitch").bind("click",function(){
+    if($("#MainNav").is(':hidden')){
+        $("body").css({"padding-left":"198px"});
+        $("#MainNav").show();
+    }else{
+        $("body").css({"padding-left":"10px"});
+        $("#MainNav").hide();
+    }
+  });
+})
+</script>
+{block javascript}{/block}
+</body>
+</html>

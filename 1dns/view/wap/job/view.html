@@ -1,0 +1,147 @@
+{block title}悬赏{echo intval($data['amount']*$data['tui_num'])}元招{$data['tui_name']}-{$data['company_name']}-万才网{/block}
+{block main}
+<div class="">
+		<dl class="am-padding-sm am-text-sm am-margin-bottom-sm">
+          <dt style="border-top:none;"><h2 class="am-text-xl">{$data['tui_name']}</h2></dt>         
+          <dd><span>{$data['company_name']}</span></dd>
+           <dd><span class="am-text-xs am-text-gray am-text-normal">更新时间：{echo tTime::format_dateline("Y-m-d H:i:s",$data['lastupdate']);}</span></dd>
+          <dd><div class="amount-box">
+					<div class="amount">￥{echo intval($data['amount']*$data['tui_num'])}</div>
+					<div class="name">悬赏 <b>{$data['tui_num']}</b>人</div>
+					</div></dd>
+		{if $data['tag_post']}
+          <dt><strong class="am-text-orange">标签:</strong></dt>
+          <dd>
+           <span class="am-btn am-btn-secondary am-btn-xs">{echo tFun::get_tag_more('tag_post',$data['tag_post'],'</span>&nbsp;<span class="am-btn am-btn-secondary am-btn-xs">');}</span>
+		   <div class="am-cf"></div>
+		  </dd>
+		  {/if}
+          <dt><strong class="am-text-orange">招聘信息:</strong></dt>
+          <dd><ul>
+			  <li><span class="am-text-gray">地点：</span>{echo tFun::get_conf('city',$data['job_area'])}  </li>
+			  <li><span class="am-text-gray">部门：</span>{if $data['depart_name']}{$data['depart_name']}{else}不限{/if}</li>
+              <li><span class="am-text-gray">学历：</span>{if $data['job_edu']}{echo App::get_conf("data_config.job_edu.".$data['job_edu'])}{else}不限{/if}</li>
+              <li><span class="am-text-gray">性别：</span>{if $data['sex'] == 1}男{elseif $data['sex'] == 2}女{else}男女不限{/if}</li>
+              <li><span class="am-text-gray">年龄：</span>{if $data['age_min'] && $data['age_max']}
+						{$data['age_min']} - {$data['age_max']}周岁
+						{else}年龄不限{/if}</li>
+              <li><span class="am-text-gray">经验：</span>{if $data['job_age']}{echo App::get_conf("data_config.job_age.".$data['job_age'])}{else}工作经验不限{/if}</li>
+              <li><span class="am-text-gray">薪资：</span>{echo App::get_conf("data_config.job_salary.".$data['job_salary'])}</li>
+              <li><span class="am-text-gray">岗位：</span>{echo tFun::get_conf("job_cate",$data['job_cate'])}</li>
+            </ul></dd>
+          
+		  <dt><strong class="am-text-orange">岗位描述:</strong></dt>
+		  <dd>{echo nl2br($data['about']);}</dd>
+		  {set $attach = M("@company")->get_attach($data['company_id'],'xingxiang');}
+          {if $attach}
+          <dt><strong class="am-text-orange">企业形象：</strong></dt>
+          <dd>
+            {foreach items=$attach}
+            <div class="img"><img src="{url static@/attach/company/}{$item['path']}/{$item['filename']}_480_480.{$item['ext']}" /></div>
+            {/foreach}
+          </dd>
+          {/if}
+          {set $attach = M("@company")->get_attach($data['company_id'],'huanjin');}
+          {if $attach}
+          <dt><strong class="am-text-orange">工作环境：</strong></dt>
+          <dd>
+            {foreach items=$attach}
+            <div class="img"><img src="{url static@/attach/company/}{$item['path']}/{$item['filename']}_480_480.{$item['ext']}" /></div>
+            {/foreach}
+          </dd>
+          {/if}
+          {set $attach = M("@company")->get_attach($data['company_id'],'shisu');}
+          {if $attach}
+          <dt><strong class="am-text-orange">食宿环境：</strong></dt>
+          <dd>
+            {foreach items=$attach}
+            <div class="img"><img src="{url static@/attach/company/}{$item['path']}/{$item['filename']}_480_480.{$item['ext']}" /></div>
+            {/foreach}
+          </dd>
+          {/if}
+        </dl>
+        <div data-am-widget="tabs"
+       class="am-tabs am-tabs-default"
+        >
+      <ul class="am-tabs-nav am-cf">
+          <li class="am-active"><a href="[data-tab-panel-0]">企业信息</a></li>
+          <li class=""><a href="[data-tab-panel-1]">企业介绍</a></li>
+          <li class=""><a href="[data-tab-panel-2]">地图</a></li>
+      </ul>
+      <div class="am-tabs-bd">
+          <div data-tab-panel-0 class="am-tab-panel am-active">
+            <a href="javascript:void(0)" target="_blank"><img src="{echo tFun::avatar($company_data['uid'],'logo')}"></a>
+          <p class="post-top-p">{$company_data['name']}</p>
+          <div class="content content-word">
+            <span>行业：</span>
+            <a title="{$company_data['trade']}" href="javascript:void(0);">{echo tFun::get_conf_more('trade_cate',$company_data['trade'])}</a>
+            <br>
+            <span>规模：</span>{echo App::get_conf("data_config.company_sp.".$company_data['company_sp'])}<br>
+            <span>性质：</span>{echo App::get_conf("data_config.company_tp.".$company_data['company_tp'])}<br>
+            
+            <span>地址：</span>{$company_data['address']}
+            
+          </div>
+          </div>
+          <div data-tab-panel-1 class="am-tab-panel ">
+            {echo nl2br($company_data['about']);}
+          </div>
+          <div data-tab-panel-2 class="am-tab-panel ">
+            <div data-am-widget="map" class="am-map am-map-default" data-name="{$company_data['company_name']}"
+			  data-address="{$company_data['address']}" data-telephone="{$site['tel']}"  data-longitude="{$company_data['pos']['lng']}" data-latitude="{$company_data['pos']['lat']}">
+			    <div id="bd-map"></div>
+			</div>
+          </div>
+      </div>
+  </div>
+</div>       
+
+<!-- List -->
+{if $tuilist['list']}
+<div data-am-widget="list_news" class="am-list-news am-list-news-default">
+  <!--列表标题-->
+  <div class="am-list-news-hd am-cf">
+    <!--带更多链接-->
+    <div>
+      <h2><span class="am-text-lg">该企业其他岗位</span></h2>
+      <span class="tips am-fr">找到 <font class="am-text-warning">+{$tuilist['total']}</font> 结果</span>
+    </div>
+  </div>
+  <div class="am-list-news-bd">
+    <ul class="am-list">      
+      {foreach items=$tuilist['list']}
+      <li class="am-g am-list-item-desced">
+       <div class="am-list-main">
+          <h3 class="am-list-item-hd">
+          <a class="am-text-lg " href="{echo tFun::build_url('/job/view',array('tui_id'=>tUtil::numstr($item['tui_id'])))}">{$item['tui_name']}<font class='am-text-sm am-link-muted'>({$item['company_name']})</font></a>
+          </h3>
+          <div class="am-list-item-text">
+          {echo tFun::get_conf('job_cate',$item['job_cate'])} - {$item['tui_name']}<em>&nbsp;&nbsp;|&nbsp;&nbsp;</em>
+          {if $item['sex'] == 1}男{elseif $item['sex'] == 2}女{else}男女不限{/if}<em>&nbsp;&nbsp;|&nbsp;&nbsp;</em>
+						{if $item['age_min'] && $item['age_max']}
+						{$item['age_min']} - {$item['age_max']}周岁
+						{else}
+						年龄不限{/if}<em>&nbsp;&nbsp;|&nbsp;&nbsp;</em>
+		{echo App::get_conf("data_config.job_salary.".$item['job_salary'])}<em>&nbsp;&nbsp;|&nbsp;&nbsp;</em>
+		<i class="ico-local"></i>{if $item['job_area']}{echo tFun::get_conf('city',$item['job_area'])}{else}杭州{/if}
+		</div>
+		<div class="am-list-item-text">
+						<div class="dis10"></div>
+						￥<span class="am-text-lg am-text-danger">{echo intval($item['amount']*$item['tui_num'])}</span>元
+					 <span class="name">悬赏 <b class="am-text-lg am-text-danger">{$item['tui_num']}</b>人</span>
+					 
+					 <a href="{echo tFun::build_url('/job/view',array('tui_id'=>tUtil::numstr($item['tui_id'])))}" class="am-text-success">查看详情 ></a>
+          
+          </div>
+        </div>        
+      </li>
+      {/foreach}     
+    </ul>
+  </div> 
+</div>
+{/if}
+{/block}
+{block javascript}
+
+{/block}
+{block friendlink}{/block}

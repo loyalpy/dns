@@ -1,0 +1,127 @@
+{block head_menu}
+<div class="menu">
+	<ul>
+		<li><a href="{url  /coupon_manager/coupon}" class="cur">代金券列表</a></li>
+	</ul>
+</div>
+{/block}
+{block main}
+<div class="main-nav">
+	<div class="name">代金券</div>
+	<div class="navbtn0">
+		<a class="btn {if $c == 0}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /coupon_manager/coupon?c=0}"><cite class="glyphicon glyphicon-th"></cite> 全部</a>
+		<a class="btn {if $c == 2}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /coupon_manager/coupon?c=2}"><cite class="glyphicon glyphicon-th"></cite> 已使用</a>
+		<a class="btn {if $c == 1}btn-info{else}btn-default{/if} btn-sm"  href="{url /coupon_manager/coupon?c=1}"><cite class="glyphicon glyphicon-th"></cite> 未使用</a>
+	</div>
+	<div class="cl"></div>
+</div>
+<!--search box-->
+<form enctype="multipart/form-data" class="the_searchform form" method="POST" action="{url /coupon_manager/coupon?do=get_url}">
+	<div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+	<div class="list-box">
+		<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+			<col width="160px"/>
+			<col  width="150px"/>
+			<col  width="70px"/>
+			<col  />
+			<col  width="100px"/>
+
+			<col width="140px" />
+			<col width="140px" />
+			<col width="140px" />
+			<col  width="70px"/>
+			<thead>
+			<tr>
+				<th>代金券编码</th>
+				<th>用户</th>
+				<th>金额</th>
+				<th>代金券名称</th>
+				<th>类型</th>
+
+				<th>生成时间</th>
+				<th>使用时间</th>
+				<th>到期时间</th>
+				<th>状态</th>
+			</tr>
+			</thead>
+			<tbody class="tpl"></tbody>
+		</table>
+	</div>
+	<div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+	<#macro row data>
+		<tr>
+			<td>${data.code}</td>
+			<td class="font-green">${data.uid}</td>
+			<td class="font-green">${data.balance}</td>
+			<td class="font-blue ">${data.name}</td>
+			<td class="font-gray"><#if (data.type == 1)>通用<#elseif (data.type == 2)>域名解析专用<#elseif (data.type == 3)>域名注册专用<#else></#if></td>
+
+			<td class="">${data.dateline}</td>
+			<td class="">${data.use_dateline}</td>
+			<td class="">${data.expiry}</td>
+			<td class="">
+				<#if (data.status==0)><span class="font-gray">未使用</span><#else><span class="font-green">已使用</span> </#if>
+			</td>
+		</tr>
+	</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script language="javascript">
+	var pageurl = "{$pageurl}";
+	var formdata = {
+		startdate:{type:"date",label:"到期时间",name:"startdate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:""},
+		enddate:{type:"date",label:"-",name:"enddate",value:"",data_sr:[],css:"shigh",require:"",desc:"",item_css:"date-dis"},
+		keyword:{type:"text",label:"关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+		btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+	};
+	var loadlist = function(page){
+		$.ajaxLoadlist(page,pageurl,function(res){
+			var keyword = $(".the_searchform input[name='keyword']").val();
+			if(keyword != ""){
+				var listhtml = $(".thelistform").find(".tpl").html();
+				$(".thelistform").find(".tpl").html($.replace_keyword(listhtml,keyword));
+			}
+			$('[data-toggle="tooltip"]').tooltip();
+		});
+	}
+	$(function(){
+		//加载搜索
+		$.loadform(formdata,"",function(res){
+			pageurl = res.pageurl;
+			loadlist(1);
+
+			return true;
+		},null,".the_searchform");
+		$(".date-ymd").datetimepicker({
+			language:  'zh-CN',
+			autoclose: 1,
+			startView: 2,
+			minView: 2,
+			maxView: 4,
+			format:"yyyy-mm-dd",
+			pickerPosition: "bottom-right"
+		});
+		loadlist(1);
+		$(".refresh-btn").click(function(){
+			loadlist(1);
+		});
+
+	})
+</script>
+{/block}

@@ -1,0 +1,222 @@
+{block head_menu}
+    <div class="menu">
+    <ul>
+		<li><a href="{url /coupon_manager/email_set}" class="cur">发送配置</a></li>
+    </ul>
+    </div>
+{/block}
+	    
+{block main}
+<div class="main-nav">
+  <div class="name">发送配置</div>
+  <div class="navbtn">
+  <!--button-->
+	  {if $this->check_purview('/coupon_manager/email_set')}
+	    <a href="javascript:void(0)" data-url="{url /coupon_manager/email_set?do=edit&id=0}" class="btn btn-primary btn-sm addbtn">
+  <cite class="glyphicon glyphicon-plus"></cite> 
+  新增发送配置</a>
+	  {/if}
+  <!--end button-->
+  </div>
+  <div class="cl"></div>
+</div>
+<!--search box-->
+<form action=""></form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+<div class="list-box">
+<table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+	<col />
+	<col width="150px" />
+	<col width="80px"/>
+	<col width="130px"/>
+	<col width="150px" />
+	<!--<col width="110px" />-->
+	<col width="120px" />
+	<col width="50px" />
+	<col width="80px" />
+	<thead>
+	<tr>
+	<th>任务名称</th>
+	<th>模板名称</th>
+	<th>发送数量</th>
+	<th>发送会员类型</th>
+	<th>开始/结束日期</th>
+	<!--<th>开始ID段</th>-->
+	<th>发送会员等级</th>
+	<th>锁定</th>
+	<th>操作</th>
+	</tr>
+	</thead>
+	<tbody class="tpl"></tbody>
+</table>
+</div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+{block javascript} 
+{include tpl/form}
+<script type="text/template" id="tpl_list_row">
+<#macro row data>
+    <tr>
+		<td class="font-black">${data.name}<span class="font-green"> [${data.ident}]</span></td>
+		<td>${data.tpl_id}</td>
+		<td>${data.num}封</td>
+		<td>
+			<#if (data.u_type == 0)>
+				全部
+				<#elseif (data.u_type == 1)> 个人
+				<#elseif (data.u_type == 2)> 企业
+					<#else>代理
+			</#if>
+		</td>
+		<td>${data.start_dateline}<br/>${$.time_to_string(data.end_dateline,"Y-m-d H:i:s")}</td>
+		<td><#if ($.is_empty(data.ulevels_name))> - <#else> ${data.ulevels_name} </#if></td>
+		<td class="font-gray"><#if (data.inlock==1)><cite class="glyphicon glyphicon-exclamation-sign font-red"></cite>锁<#else><cite class="glyphicon glyphicon-ok-sign font-green"></cite> </#if></td>
+		<td>
+		<p class="table-item-op">
+			{if $this->check_purview('/coupon_manager/email_set')}
+		<a href="javascript:void(0);" class="editbtn" data-url="{url /coupon_manager/email_set?do=edit&id=}${data.id}"><span class="glyphicon glyphicon-edit"></span></a>
+			{/if}
+			{if $this->check_purview('/coupon_manager/email_set')}
+			<a href="javascript:void(0);" class="delbtn" data-url="{url /coupon_manager/email_set?do=del&id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a>
+			{/if}
+		</p>
+		</td>
+	</tr>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_edit">
+<#macro rowedit data>
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">${data.title}</h4>
+</div>
+<div class="form-content">
+<form action="{url /coupon_manager/email_set?do=edit}" method="post" class="theform form form-1" role="form">
+<div class="tpl"></div>
+</form>
+</div>
+</#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script language="javascript">
+	var tpl_name = {echo JSON::encode($tpl_name)};
+
+	var userLevel_per = {echo JSON::encode($userlevel_per)};
+	var userLevel_J_per = new Array();
+	for(var i in userLevel_per){
+		userLevel_J_per.push({"key":userLevel_per[i]['ident'],"v":userLevel_per[i]['alias']});
+	}
+
+	var userLevel_com = {echo JSON::encode($userlevel_com)};
+	var userLevel_J_com = new Array();
+	for(var i in userLevel_com){
+		userLevel_J_com.push({"key":userLevel_com[i]['ident'],"v":userLevel_com[i]['alias']});
+	}
+
+	var userType = {echo JSON::encode($utypes)};
+	var userType_J = new Array();
+	for(var i in userType){
+		userType_J.push({"key":userType[i]['code'],"v":userType[i]['name']});
+	}
+
+	var formdata = {
+		name:{type:"text",label:"任务名称",name:"name",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"任务名称必须填写",item_css:""},
+		ident:{type:"text",label:"任务标识",name:"ident",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"任务标识不能为空且唯一",item_css:""},
+
+		html_space7:{type:"html",value:"<h5>&nbsp;</h5>"},
+		num:{type:"text",label:"发送数量",name:"num",value:"0",data_sr:[],css:"",require:"datatype='*'",desc:"发送数量10-500",item_css:"font-org"},
+		ids:{type:"hidden",label:"发送ID段",name:"ids",value:"0",data_sr:[],css:"",require:"datatype='*'",desc:"格式：0-100",item_css:"font-org"},
+		tpl_id: {type: "select", label: "邮件模板", name: "tpl_id", value: "", disabled: 0, data_sr:tpl_name, css: "", require: "datatype='*'", desc: "", item_css: "font-green"},
+		html_space6:{type:"html",value:"<h5>&nbsp;</h5>"},
+
+		start_dateline:{type:"date",label:"任务开始日期",name:"start_dateline",value:"",data_sr:[],css:"shigh date-ymdhi",require:"",desc:"",item_css:""},
+		end_dateline:{type:"date",label:"任务结束日期",name:"end_dateline",value:"",data_sr:[],css:"shigh date-ymdhi",require:"",desc:"",item_css:""},
+
+		u_type: {type: "select", label: "会员类型", name: "u_type", value: "", disabled: 0, data_sr:userType_J, css: "", require: "", desc: "", item_css: "click_sj"},
+		u_level:{type:"checkbox",label:"参与会员等级",name:"u_level[]",value:"",data_sr:userLevel_J_per,css:"",require:"",desc:"",item_css:"u_per"},
+		u_level_com:{type:"checkbox",label:"参与会员等级",name:"u_level_com[]",value:"",data_sr:userLevel_J_com,css:"",require:"",desc:"",item_css:"u_com"},
+		inlock:{type:"checkbox",label:"锁定",name:"inlock",value:"",disabled:0,data_sr:[{v:"锁定",key:1}],css:"",require:"",desc:"",item_css:""},
+		id:{type:"hidden",label:"",name:"id",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+		btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>',item_css:"submits"}
+	};
+	var load_list = function(){
+		$.loadlist([],function(res){
+			$(".editbtn").click(function(){
+				edit_func(this);
+			});
+			$(".delbtn").click(function(){
+				del_func(this);
+			});
+		},"{url /coupon_manager/email_set?do=get}");
+	}
+	var edit_func = function(obj){
+		var edit_c = $("#tpl_list_edit").html();
+		var url = $(obj).attr("data-url");
+		edit_c = "" + easyTemplate(edit_c,{title:"添加/修改"});
+		$("#myModal").find(".modal-dialog").width(760);
+		$("#myModal").find(".modal-content").html(edit_c);
+		$.loadform(formdata,url,function(res){
+			 load_list();
+			 return true;
+		},function (res) {
+			$("#myModal").find(".modal-content").find(".tpl").find("input.date-ymdhi").unbind("click").bind("click",function(){
+				laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})
+			});
+			hide_show_ch(res.u_type);
+			$(".click_sj").find(".item-v ul li .sel0").click(function () {
+				hide_show_ch($(this).data("v"));
+			});
+			$(".submits").find(".item-v button[type='submit']").click(function () {
+				var vl = $("input[name='u_type']").val();
+				if (vl == 1) {
+					$(".u_com").remove();
+				}else if (vl == 2){
+					$(".u_per").remove();
+				}
+			});
+		});
+		$('#myModal').modal();
+	}
+	var del_func = function(obj){
+		if(confirm("你确定要删除该数据吗?删除后数据不可恢复！")){
+			var url = $(obj).attr("data-url");
+			$.ajaxPassport({
+				url:url,
+				success:function(res){
+					if(res.error == 1){
+						$.ui.error(res.message);
+					}else{
+						$.ui.success(res.message);
+						load_list();
+					}
+				}
+			})
+		}
+	}
+	var hide_show_ch = function (type) {
+		if (type == 1) {
+			$(".u_per").show();
+			$(".u_com").hide();
+		}else if (type == 2){
+			$(".u_per").hide();
+			$(".u_com").show();
+		}else{
+			$(".u_per").hide();
+			$(".u_com").hide();
+		}
+	}
+	$(function(){
+		 load_list();
+		 $(".addbtn").click(function(){
+			edit_func(this);
+		 });
+	})
+</script>
+{/block}

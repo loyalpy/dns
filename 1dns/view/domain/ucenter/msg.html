@@ -1,0 +1,49 @@
+{block leftnav}{/block}
+{block main}
+		{code
+	        
+		    $type  = R("type","string");
+		    $type  = $type?$type:"error";
+
+		    $title = R("title","string");
+		    $info    = R("info","string");
+
+		    $btnstr = R("btnstr","string");
+		    $btninfo = $btnstr?explode("|",$btnstr):array();
+	    }
+	    {/code}
+	    
+	    <div class="uc-msg msg-{$type}">
+	    	   <div class="dis60"></div>
+	     	   <!--提示信息-->
+			   <div class="uc-msg-box">			      
+			      <div class="title">
+			      <cite class="icon"></cite>
+			      <span class="{if $type == 'success'}font-green{else}font-org{/if} f18 txt">{$title}</span>
+			      </div>
+			      {if $info}
+			      <div class="dis15"></div>
+			      <div class="info"><font class="font-gray f12">{$info}</font></div>
+			      {/if}
+			   </div>
+			   <div class="cl"></div>
+			   {if $btninfo}
+			   <div class="dis30"></div>
+			   <div class="uc-msg-btn">
+				{foreach items=$btninfo}
+				{set $tmp = explode("#",$item);}
+				<a href="{$tmp[0]}" class="am-btn {if $key == 0}{if $type == 'success'}am-btn-success{else}am-btn-danger{/if}{/if}">{$tmp[1]}</a>
+				{if $key == 0}
+				<script language="javascript">
+					setTimeout(function(){
+						$.redirect("{$tmp[0]}");
+					},3000);
+				</script>
+				{/if}
+				{/foreach}
+				</div>
+			   {/if}
+			   <div class="dis60"></div>
+			   <!--end提示信息-->
+		</div>
+{/block}

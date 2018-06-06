@@ -1,0 +1,67 @@
+{block main}
+<div class="dns-tools">
+    <div class="content">
+
+        <div class="tools-top">
+            <p class="p1">八戒DNS域名解析检测工具</p>
+            <p class="p2">此工具可以协助您检测和查询域名相关问题</p>
+        </div>
+        <form class="the_searchform form" method="POST" action="{url /tools/dnsquery}" onsubmit="return loadresult();">
+            <div class="row">
+                <div class="row-top">DNS查询工具</div>
+                <div class="row-content">
+                    <span>请输入域名:</span><input type="text" class="text" name="question"/><span class="submit">提交查询</span><br/>
+                    <input type="hidden" name="hash" value="{hash}" />
+                    <button type="submit" style="display: none"></button>
+
+                    <span class="dns-span">DNS服务器:</span><input type="text" class="text" name="server"/><input type="checkbox" name="extendanswer" value="1"/> 显示细节<br/>
+                    <input type="radio" checked="checked" name="type" value="A"/> 主机服务记录(A)&nbsp;&nbsp;
+                    <input type="radio" name="type" value="CNAME"/> 别名记录(CNAME)&nbsp;&nbsp;
+                    <input type="radio" name="type" value="NS"/> 名称服务记录(NS)&nbsp;&nbsp;
+                    <input type="radio" name="type" value="MX"/> 邮件交换记录(MX)
+                </div>
+                <div class="dis40"></div>
+            </div>
+        </form>
+        <form class="the_searchform form" method="POST" action="{url /tools/ipwhois}" onsubmit="return loadresult();">
+            <div class="row">
+                <div class="row-top">WHOIS查询工具</div>
+                <div class="row-content c1">
+                    <span>请输入域名或IP:</span><input type="text" name="question" class="text"/><span class="submit">提交查询</span><br/>
+                    <input type="hidden" name="hash" value="{hash}" />
+                    <button type="submit" style="display: none"></button>
+                </div>
+                <div class="dis40"></div>
+            </div>
+        </form>
+
+        <form class="the_searchform form" method="POST" action="{url /tools/httpstatus}" onsubmit="return loadresult();">
+            <div class="row">
+                <div class="row-top">HTTP状态查询</div>
+                <div class="row-content c2">
+                    <span>请输入域名：http://</span><input type="text" name="question" class="text"/><span class="submit">提交查询</span><br/>
+                    <input type="hidden" name="hash" value="{hash}" />
+                    <button type="submit" style="display: none"></button>
+                </div>
+                <div class="dis40"></div>
+                <div class="dis40"></div>
+                <div class="dis40"></div>
+            </div>
+        </form>
+
+    </div>
+</div>
+{/block}
+{block javascript}
+<script type="text/javascript">
+    $(function(){
+        $(".submit").click(function(){
+            $(this).parent().find("button").click();
+        });
+    });
+    var loadresult = function(){
+        $.ui.loading();
+        return true;
+    }
+</script>
+{/block}

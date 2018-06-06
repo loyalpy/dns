@@ -1,0 +1,164 @@
+{block head_menu}
+<div class="menu">
+    <ul>
+        {if $this->check_purview("/domain_manager/domain")}
+        <li><a href="{url  /domain_manager/domain}" >域名列表</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_qy")}
+        <li><a href="{url  /domain_manager/domain_qy}" class="cur">域名牵引</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log")}
+        <li><a href="{url  /domain_manager/domain_log}" >域名操作日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log_switch")}
+        <li><a href="{url  /domain_manager/domain_log_switch}" >域名切换日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_black")}
+        <li><a href="{url  /domain_manager/domain_black}" >黑白名单</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_deleted")}
+        <li><a href="{url  /domain_manager/domain_deleted}" >已删除域名</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_find")}
+        <li><a href="{url  /domain_manager/domain_find}" >域名找回</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_diyline")}
+        <li><a href="{url  /domain_manager/domain_diyline}">自定义线路</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_bind")}
+        <li><a href="{url  /domain_manager/domain_bind}">别名绑定</a></li>
+        {/if}
+    </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+    <div class="name">域名牵引</div>
+    <div class="navbtn0">
+        <a class="btn {if $c == 0}btn-info{else}btn-default{/if} btn-sm" title="" href="{url /domain_manager/domain_qy}"><cite class="glyphicon glyphicon-th"></cite> 待解封</a>
+        <a class="btn {if $c == 1}btn-info{else}btn-default{/if} btn-sm"  href="{url /domain_manager/domain_qy?c=1}"><cite class="glyphicon glyphicon-th"></cite> 解封历史</a>
+        <a class="btn {if $c == 2}btn-info{else}btn-default{/if} btn-sm"  href="{url /domain_manager/domain_qy?c=2}"><cite class="glyphicon glyphicon-th"></cite> 永久解封</a>
+    </div>
+    <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_manager/domain_qy?do=get_url}">
+    <div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+    <div class="list-box">
+        <table class="list-table table table-striped table-condensed table-responsive table-checkall" cellpadding="0" cellspacing="0">
+            <col width="130px"/>
+            <col width="80px"/>
+            <col width="100px"/>
+            <col width="100px"/>
+            <col width="150px"/>
+            <col width="150px"/>
+            <col width="150px"/>
+            <col />
+            <col width="100px"/>
+            <thead>
+            <tr>
+                <th>域名</th>
+                <th>添加者</th>
+                <th>添加方式</th>
+                <th>平均值/总量</th>
+                <th>增加牵引时间</th>
+                <th>预计解封时间</th>
+                <th>解封时间</th>
+                <th>备注</th>
+                <th>状态</th>
+            </tr>
+            </thead>
+            <tbody class="tpl"></tbody>
+        </table>
+    </div>
+    <div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+
+{block javascript}
+{include tpl/form}
+
+<script type="text/template" id="tpl_list_row">
+    <#macro row data>
+        <tr>
+            <td ><span class="font-blue"> ${data.domain}</span></td>
+            <td><span class="keybox ">${data.author}</td>
+            <td><#if (data.uid == 0)>系统添加<#else>手工添加</#if></span></td>
+            <td><span class="font-org">${data.total0}</span>/<span class="font-green">${data.total1}</span></td>
+            <td>${data.dateline}</td>
+            <td>${$.time_to_string(data.expiry,"Y-m-d H:i:s")}</td>
+            <td>${$.time_to_string(data.undateline,"Y-m-d H:i:s")}</td>
+            <td><#if (data.bz)><span data-toggle="tooltip" data-placement="top" title="${data.bz}"><p class="font-gray" style="width:153px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow:ellipsis;">${data.bz}</p></span><#else> - </#if></td>
+            <td>
+                <#if ((data.status == 0) || (data.status == 2))>
+                    {if $this->check_purview("/domain_manager/domain_qy_unlock")}
+                    <button type="button" class="btn btn-primary btn-xs domain-jf" data-qy_id="${data.qy_id}" data-domain="${data.domain}">解封</button>
+                    {/if}
+                    <#elseif (data.status == 1) ><span class="text-success">已解封</span>
+                        <#else>
+                </#if>
+            </td>
+        </tr>
+    </#macro>
+</script>
+
+
+<script language="javascript">
+    var pageurl = "{$pageurl}";
+    var search_formdata = {
+        uname: {type: "uid", label: "域名", name: "uname", value: "", disabled: 0, data_sr:[], css: "", require: "", desc: "", item_css: ""},
+        keyword:{type:"text",label:"关键词",name:"keyword",value: "",data_sr:[],css:"",require:"",desc:"",item_css:""},
+        btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+    };
+    var loadlist = function(page){
+        $.ajaxLoadlist(page,pageurl,function(res){
+            var keyword = $(".the_searchform input[name='keyword']").val();
+            if(keyword != ""){
+                $(".thelistform").find(".tpl .keybox").each(function(){
+                    var obj = this;
+                    var html = $(obj).html();
+                    $(obj).html($.replace_keyword(html,keyword))
+                });
+            };
+            $('[data-toggle="tooltip"]').tooltip();
+            //域名解封
+            $(".domain-jf").click(function () {
+                var qy_id = $(this).data("qy_id");
+                var domain = $(this).data("domain");
+                $.ui.loading();
+                $.ajaxPassport({
+                    url:"{url /domain_manager/domain_qy_unlock}",
+                    success:function (res) {
+                        $.ui.close_loading();
+                        if (res.error == 0) {
+                            $.ui.success(res.message);
+                            loadlist();
+                        }else{
+                            $.ui.error(res.message);
+                        }
+                    },
+                    data:{qy_id:qy_id,domain:domain}
+                })
+            });
+        });
+    }
+    $(function(){
+        //加载搜索
+        $.loadform(search_formdata,"",function(res){
+            pageurl = res.pageurl;
+            loadlist();
+            return true;
+        },function(){
+            get_domainlist(1,'',"",".the_searchform");
+        },".the_searchform");
+        //加载列表
+        loadlist();
+    })
+</script>
+{/block}

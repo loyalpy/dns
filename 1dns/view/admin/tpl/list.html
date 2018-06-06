@@ -1,0 +1,32 @@
+<script type="text/template" id="tpl_list">
+<#macro list data>
+<table class="list-table table table-striped table-condensed" cellpadding="0" cellspacing="0">
+${data.c}
+</table>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_head">
+<#macro listhead head>
+	<#list head as list>
+	<col <#if (list.w)>width="${list.w}px"</#if> />
+	</#list>
+	<thead>
+	<tr>
+	<#list head as list>
+	<th>${list.label}</th>
+	</#list>
+	</tr>
+	</thead>
+</#macro>
+</script>
+<script type="text/template" id="tpl_list_row">
+<#macro listrow data>
+    <tbody>
+    <tr>
+    <#list data as list>
+	<td>${list.value}</td>
+	</#list>
+	</tr>
+	</tbody>
+</#macro>
+</script>

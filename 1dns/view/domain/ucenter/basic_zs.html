@@ -1,0 +1,155 @@
+{block main}
+<div class="am-uc-top">
+    <i class="am-icon-wordpress"></i>&nbsp;
+    {$res['domain']}
+</div>
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav" style="padding-top: 20px">
+        <ul>
+            <li><a href="{url /ucenter/basic?domain=}{$res['domain']}" class="showtype ">基本信息&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_edit?domain=}{$res['domain']}" class="showtype ">域名信息修改&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_rz?domain=}{$res['domain']}" class="showtype ">域名实名认证&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_transfer?domain=}{$res['domain']}"  class="showtype">域名过户&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_dns?domain=}{$res['domain']}" class="showtype ">DNS修改创建&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_zs?domain=}{$res['domain']}" class="showtype cur">域名证书&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /ucenter/basic_status?domain=}{$res['domain']}"   class="showtype">安全设置&nbsp;&nbsp;<cite class="am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right" style="padding-top: 25px">
+    <div class="basic-top">&nbsp;&nbsp;&nbsp;域名证书</div>
+    <div class="int" {if $type == 1}style="display:none;"{/if}>
+        <img src="{skin images/logo-xinnet_icann.gif}" alt="" class="int-logo">
+        <img src="{skin images/int.png}"  alt="" class="int-title">
+        <div class="int-text">
+            <p class="int-p"><b>国际顶级域名权威机构ICANN</b>(The Internet Corporation for Assigned Names and Numbers)授权新网Xinnet.com制作并颁发此证。<b>证明：</b></p>
+            <p class="int-p">域名<span class="blue">{$res['domain']}</span>已通过<span class="blue">北京新网数码信息技术有限公司</span>完成注册，并已在国际顶级域名数据库中备案。</p>
+            <p class="int-p">This certificate was issued by xinnet.com, which is authorized by ICANN(The Internet Corporation for Assigned Names and Numbers).</p>
+            <p class="int-p">This is to certify that <span class="red">Xin Net Technology Corporation</span> has registered the domain name <span class="red">bajiedns7.xyz</span>
+                and the registration has taken effect since it was put on records in the database of gTLD(global Top Level Domain) in ICANN.</p>
+            <table class="int-tab" width="500" cellspacing="0" cellpadding="2" border="1" bordercolordark="#FFFFFF" bordercolorlight="#666666">
+                <tr>
+                    <td align="right" width="30%">域名：</td>
+                    <td>{$res['domain']}</td>
+                </tr>
+                <tr>
+                    <td align="right">Domain Name：</td>
+                    <td>{$res['domain']}</td>
+                </tr>
+                <tr>
+                    <td align="right">注册所有人：</td>
+                    <td>{$domain_info['aller_name_cn']}</td>
+                </tr>
+                <tr>
+                    <td align="right">Registrant：</td>
+                    <td>{$domain_info['aller_name']}</td>
+                </tr>
+                <tr>
+                    <td align="right">注册时间：</td>
+                    <td>{echo date("Y-m-d",$res['reg_time'])}</td>
+                </tr>
+                <tr>
+                    <td align="right">Registration Date：</td>
+                    <td>{echo date("Y-m-d",$res['reg_time'])}</td>
+                </tr>
+                <tr>
+                    <td align="right">到期时间：</td>
+                    <td>{echo date("Y-m-d",$res['exp_time'])}</td>
+                </tr>
+                <tr>
+                    <td align="right">Expiration Date：</td>
+                    <td>{echo date("Y-m-d",$res['exp_time'])}</td>
+                </tr>
+                <tr>
+                    <td align="right">通信地址：</td>
+                    <td>{$domain_info['addr_cn']}</td>
+                </tr>
+                <tr>
+                    <td align="right">Address：</td>
+                    <td>{$domain_info['addr']}</td>
+                </tr>
+            </table>
+            <p class="int-p2">本证书仅用于证明该域名是通过北京新网数码信息技术有限公司注册，且信息为当时域名信息。本证书并不做为其他证明文件之用！<br/>北京新网数码信息技术有限公司是北京首家获ICANN授权的国际域名注册服务商</p>
+            <img src="{skin images/zhang.gif}" height="144" width="200" alt="" class="int-seal">
+        </div>
+        <p class="int-p3">鉴别本证书的真伪，请访问<a href="http://www.xinnet.com" target="blank">http://www.xinnet.com</a>进行查询！</p>
+    </div>
+    <div class="dom" {if $type == 0}style="display:none;"{/if}>
+        <img src="{skin images/cnnic.png}" alt="" class="dom-logo" />
+        <img src="{skin images/domestic.png}" alt="" class="dom-title">
+        <div class="dom-text">
+            <p class="dom-p"><b>国内顶级域名权威机构CNNIC</b>(China Internet Network Information Center)授权新网Xinnet.com制作并颁发此证。<b>证明：</b></p>
+            <p class="dom-p">域名<span class="blue">{$res['domain']}</span>已通过<span class="blue">北京新网数码信息技术有限公司</span>完成注册，并已在国内顶级域名数据库中备案。</p>
+            <table class="dom-tab" width="500" cellspacing="0" cellpadding="2" border="1" bordercolordark="#FFFFFF" bordercolorlight="#666666">
+                <tr>
+                    <td align="right" width="30%">域名：</td>
+                    <td>{$res['domain']}</td>
+                </tr>
+                <tr>
+                    <td align="right">注册所有人：</td>
+                    <td>{$domain_info['aller_name_cn']}</td>
+                </tr>
+                <tr>
+                    <td align="right">注册时间：</td>
+                    <td>{echo date("Y-m-d",$res['reg_time'])}</td>
+                </tr>
+                <tr>
+                    <td align="right">到期时间：</td>
+                    <td>{echo date("Y-m-d",$res['exp_time'])}</td>
+                </tr>
+                <tr>
+                    <td align="right">通信地址：</td>
+                    <td>{$domain_info['addr_cn']}</td>
+                </tr>
+            </table>
+            <p class="dom-p2">本证书仅用于证明该域名是通过北京新网数码信息技术有限公司注册，且信息为当时域名信息。本证书并不做为其他证明文件之用！<br />北京新网数码信息技术有限公司是获CNNIC授权的国家顶级域名注册服务商</p>
+            <img src="http://dcp.xinnet.com/Modules/agent/domain/images/zhang.gif" height="144" width="200" alt="" class="dom-seal">
+        </div>
+        <p class="dom-p3">鉴别本证书的真伪，请访问<a href="http://www.xinnet.com" target="blank">http://www.xinnet.com</a>进行查询！</p>
+    </div>
+</div>
+<div class="dis30"></div>
+{/block}
+{block css}
+<style type="text/css">
+    a img, img {  border: 0;  vertical-align: middle;  }
+    a {  text-decoration: none;  color: #666;  }
+    a:hover {  color: #e53639;  }
+    a:focus {  outline-style: none;  }
+    .blue {  color: #18499d;  }
+    .red {  color: #bf1a20;  }
+    .int {  width: 616px;  height: 876px;  margin: 20px auto 0;  background: url("{skin images/bg1.png}") no-repeat 0 0;  position: relative;  }
+
+    /*international*/
+    .int-logo {  display: block;  margin: 0 auto;  padding: 80px 0px 40px 0px;  }
+    .int-title {  display: block;  margin: 0 auto;  }
+    .int-text {  width: 505px;  margin: 0 auto;  position: relative;  }
+    .int-p {  font-size: 12px;  line-height: 18px;  margin: 8px 0 0;  }
+    .int-p2 {  font-size: 12px;  line-height: 18px;  text-align: center;  padding: 10px 0 0;  }
+    .int-p span {  padding: 0 3px;  }
+    .int-tab {  margin: 10px auto;  }
+    .int-tab td {  padding: 0 0 0 3px; font-size: 14px }
+    .int-seal {  position: absolute;  bottom: 20px;  right: 0px;  }
+    .int-p3 {  width: 616px;  position: absolute;  bottom: 35px;  color: #bf1a20;  text-align: center;  }
+    .int-p3 a {  color: #bf1a20;  }
+
+    .dom{width:616px;height:876px;margin:20px auto 0;background:url("{skin images/bg1.png}") no-repeat 0 0;position:relative;}/*domestic*/
+    .dom-logo{display:block;margin:0 auto;padding:80px 0 30px 0px;}
+    .dom-title{display:block;margin:0 auto;}
+    .dom-text{width:505px;margin:60px auto 0;position:relative;}
+    .dom-p{font-size:14px;line-height:24px;margin:15px 0 0;}
+    .dom-p2{font-size:12px;line-height:24px;text-align:center;padding:10px 0 0;}
+    .dom-p span{padding:0 3px;}
+    .dom-tab{margin:50px auto;}
+    .dom-tab td{padding:0 0 0 3px; font-size: 14px}
+    .dom-seal{position:absolute;bottom:20px;right:0px;}
+    .dom-p3{width:616px;position:absolute;bottom:35px;color:#bf1a20;text-align:center;}
+    .dom-p3 a{color:#bf1a20;}
+</style>
+{/block}
+
+{block javascript}
+<script type="text/javascript">
+
+</script>
+{/block}

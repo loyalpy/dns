@@ -1,0 +1,37 @@
+{block main}
+<div class="am-continaer">
+<dl class="list">
+<dt>
+<div class="uinfo">
+	<div class="am-u-sm-3">
+	<img class="am-circle" src="{echo tFun::avatar($this->userinfo['uid'],'logo')}" width="50" height="50" />
+	</div>
+	<div class="am-u-sm-9">
+	{$this->userinfo['setting']['ulevel_name']}<font class="font-gray">({if $this->userinfo['ulevel'] >0}<font class="font-green">已认证</font>{else}<font class="font-red">等待认证</font>{/if})</font>
+<br/>
+<span class="am-text-xs am-text-gray">
+当前悬赏返比:<font class="am-text-warning">{$this->userinfo['setting']['rate']}</font>%
+</span>
+	</div>
+	<div class="am-cf"></div>
+</div>
+</dt>
+<dd class="space"></dd>
+<dd>
+<div class="am-u-sm-6"><span class="">账户余额</span></div>
+<div class="am-u-sm-6 am-text-right"><span class="am-text-warning">{$this->userinfo['account']['balance']}</span><font class="am-text-gray am-text-xs">&nbsp;元</font></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6"><a href="{url /medier_resume/resumelist}" class="">我的工友</a></div>
+<div class="am-u-sm-6 am-text-right"><span class="am-text-warning">{echo M("@medier_resume")->get_count("medier_id='$this->ext_id'")}</span><font class="am-text-gray am-text-xs">&nbsp;人</font></div>
+<div class="am-cf"></div>
+</dd>
+<dd>
+<div class="am-u-sm-6"><span class="">未处理订单</span></div>
+<div class="am-u-sm-6 am-text-right"><span class="am-text-warning">{echo M("job_tuiorder")->get_one("ship_st=0 AND medier_id='$this->ext_id'","count(order_no)")}</span><font class="am-text-gray am-text-xs">&nbsp;个</font></div>
+<div class="am-cf"></div>
+</dd>
+</dl>
+</div>
+{/block}

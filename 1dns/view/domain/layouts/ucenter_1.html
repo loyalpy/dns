@@ -1,0 +1,97 @@
+<!doctype html>
+<html class="no-js">
+<head>
+<!--[if lt IE 10]>
+<![endif]-->
+<!--[if lt IE 7]>
+<script>location.href="/ie.html"</script>
+<![endif]-->
+<!-- page head -->
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="format-detection" content="telephone=no">
+<meta name="generator" content="">
+
+<title>{$site['seo_title']}</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+
+<link rel="stylesheet" href="{url static/javascript/amazeui/css/amazeui.min.css}">
+<link rel="stylesheet" href="{skin css/account_style_uc.css}">
+<link rel="stylesheet" href="{skin css/account_style_uc_py.css}">
+{block css}{/block}
+</head>
+<body>
+<div class="topbar">
+  <div class="am-aps">
+  <div class="topnav">
+  <ul class="">
+      <li><a href="{url account@/login/logout}">退出</a></li>
+      <li><a href="javascript:void (0);">{if !empty($uid)} {$this->userinfo['name']} 欢迎回来{else} 欢迎来到八戒DNS{/if}</a></li>
+  </ul>
+  </div>
+  </div>
+</div>
+<header class="am-topbar am-topbar-inverse">
+  <div class="am-aps">
+    <h1 class="am-topbar-brand">
+    <a href="{url home@/}" class="logo"><img src="{skin images/logo.png}" alt="" /></a>
+      <span class="logotit">{block logotit}{/block}</span>
+    </h1>
+    <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-secondary am-show-sm-only"
+            data-am-collapse="{target: '#collapse-head'}"><span class="am-sr-only">导航切换</span> <span
+        class="am-icon-bars"></span></button>
+
+    <div class="am-collapse am-topbar-collapse" id="collapse-head">
+      <ul class="am-nav am-nav-pills am-topbar-nav">
+        <li><a  href="{url /ucenter/index}">我的域名</a></li>
+        <li><a  href="{url /ucenter/order}">我的订单</a></li>
+        <li><a  href="{url /domain/index}">域名注册</a></li>
+        <li><a  href="{url account@/domains}">域名解析</a></li>
+      </ul>
+      <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
+      <li>
+      <a href="{url /cart/cart}" style="padding:0 10px;"><span class="am-icon-cart-plus"></span>
+      <span class="am-badge am-badge-warning am-round">{echo M("domain_register_cart")->get_one("uid=$uid AND status=0 AND indel=0","count(*)")}</span> 购物车
+      </a>
+      </li>
+    </ul>      
+    </div>
+  </div>
+</header>
+<div class="am-container">
+<div class="dis30"></div>
+{block left}{/block}
+{block main}{/block}
+<div class="am-cf"></div>
+</div>
+{block copyright}
+<footer class="footer">
+  <p>© 2012-2016 <a href="http://www.8jdns.com" target="_blank">8JDNS.com.</a> by the 8JDNS Team.</p>
+</footer>
+{/block}
+<div data-am-widget="gotop" class="am-gotop am-gotop-fixed" >
+    <a href="#top" title="">
+          <i class="am-gotop-icon am-icon-chevron-up"></i>
+    </a>
+</div>
+<script language="javascript" src="{url static@/javascript/jquery/jquery-1.10.2.min.js}"></script>
+<!--[if lte IE 8 ]>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="{url /assets/amazeui.ie8polyfill.min.js}"></script>
+<![endif]-->
+<script src="{url static/javascript/amazeui/js/amazeui.min.js}"></script>
+<script src="{url static@/javascript/apps/app.new.js}"></script>
+{if $uid}
+<script language="javascript" src="{url static@/cache/dataconfig.js}"></script>
+{/if}
+<script language="javascript">var $ = jQuery.noConflict(),APP_URL = "{url }",tUser={};tCity="{$city}";
+{if $uid}
+tUser['uid'] = "{echo tUtil::numstr($uid)}";tUser['utype'] = "{$utype}";
+{else}
+tUser['uid'] = 0;tUser['utype'] = 0;{/if}
+</script>
+{block javascript}{/block}
+</body>
+</html>

@@ -1,0 +1,92 @@
+{block header}{/block}
+{block main}
+<div class="pricing-content">
+    <nav class="pricing-tab-title">
+        <a href="{url /product/buy}" class="{if empty($type)}active{/if}">个人套餐</a>
+        <a href="{url /product/buy/type/company}"  class="{if $type == 'company'}active{/if}">企业套餐</a>
+    </nav>
+    <section class="pricing-row pricing-row1">
+        <div class="wrap">
+            {foreach items=$domain_service}
+            <div class="pricing-row1-item list_{$key}">
+                <h2><span>{echo $item['cost1']*10}</span></h2>
+                <div class="member">{$item['name']}</div>
+                <div class="seat">{$item['data']['DDOS']['bz']}{$item['data']['DDOS']['cnname']}</div>
+                    <ul>
+                        <li>{$item['data']['loadBalanc']['bz']}{$item['data']['loadBalanc']['cnname']}</li>
+                        <li>{$item['data']['monitorTask']['cnname']},{$item['data']['monitorTask']['bz']}</li>
+                        <li>SLA {$item['data']['SLA']['bz']}</li>
+                    </ul>
+                    {if $item['service_group'] == 'free'}
+                    <a href="{url account@/}" class="btn">免费添加</a>
+                    {else}
+                    <a href="{url account@/}" class="btn1">立即选购</a>
+                    {/if}
+            </div>
+            {/foreach}
+            <div class="tips">如果您有更多需求请拨打电话 {$site['tel']}</div>
+        </div>
+    </section>
+    <section class="pricing-row pricing-row2">
+        <div class="wrap">
+            <div class="pricing-table-top">
+                <table class="pricing-table-left" style="margin-top: 0px;">
+                    <thead>
+                    <tr>
+                        <th><h3>功能对比</h3></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach items=$domain_service}
+                    {foreach items=$item['data'] item=$item2}
+                    <tr><td>{$item2['cnname']}</td></tr>
+                    {/foreach}
+                    {code
+                    break;
+                    }
+                    {/code}
+                    {/foreach}
+                    </tbody>
+                </table>
+                <table class="pricing-table-right">
+                    <thead>
+                    <tr>
+                        {foreach items=$domain_service}
+                        <th class="th_{$key}"><span>{$item['name']}</span></th>
+                        {/foreach}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach items=$domain_service}
+                    {foreach items=$item['data'] item=$item2 key=$key2}
+                    <tr>
+                        {foreach items=$domain_service item=$item3}
+                        <td>
+                            {if $item3['data'][$key2]['bz']}{$item3['data'][$key2]['bz']} {else}
+                            {if $item3['data'][$key2]['value'] == 1}<span class="yes"></span>
+                            {else} -
+                            {/if}
+                            {/if}
+                        </td>
+                        {/foreach}
+                    </tr>
+                    {/foreach}
+                    {code
+                    break;
+                    }
+                    {/code}
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="dis40"></div>
+{/block}
+{block javascript}
+<script type="text/javascript">
+    $(function(){
+    });
+</script>
+{/block}

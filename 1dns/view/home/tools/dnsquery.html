@@ -1,0 +1,53 @@
+{block main}
+<div class="dns-tools">
+    <div class="content">
+
+        <div class="tools-top">
+            <p class="p1">DNS查询工具</p>
+            <p class="p2">此工具可以协助您查询域名DNS相关问题</p>
+        </div>
+
+        <div class="row">
+            <form class="the_searchform form" method="POST" action="{url /tools/dnsquery}" onsubmit="return loadresult();">
+                <div class="row-content c1">
+                    <span>请输入域名:</span><input type="text" class="text" name="question" value="{$this->question}"/><span class="submit">提交查询</span><br/>
+
+                    <input type="hidden" name="hash" value="{hash}" />
+                    <button type="submit" style="display: none"></button>
+
+                    <span class="dns-span">DNS服务器:</span><input type="text" class="text" name="server" value="{$this->server}"/>
+                    <input type="checkbox" name="extendanswer" value="1" {if $this->detail == 1} checked="checked"{/if}/> 显示细节<br/>
+                    <input type="radio" {if $this->type == 'A'} checked="checked" {/if} name="type" value="A"/> 主机服务记录(A)&nbsp;&nbsp;
+                    <input type="radio" {if $this->type == 'CNAME'} checked="checked" {/if} name="type" value="CNAME"/> 别名记录(CNAME)&nbsp;&nbsp;
+                    <input type="radio" {if $this->type == 'NS'} checked="checked" {/if} name="type" value="NS"/> 名称服务记录(NS)&nbsp;&nbsp;
+                    <input type="radio" {if $this->type == 'MX'} checked="checked" {/if} name="type" value=""/> 邮件交换记录(MX)
+                </div>
+            </form>
+            <div class="dis10"></div>
+            <div class="row-top"></div>
+            <div class="dis40"></div>
+            <div class="result">
+                {if $this->result}
+                    <p>查询结果</p>
+                    <div class="query-res" style="color: #F74F06">
+                    {$this->result}
+                    </div>
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block javascript}
+<script type="text/javascript">
+    $(function(){
+        $(".submit").click(function(){
+            $(this).parent().find("button").click();
+        });
+    });
+    var loadresult = function(){
+        $.ui.loading();
+        return true;
+    }
+</script>
+{/block}

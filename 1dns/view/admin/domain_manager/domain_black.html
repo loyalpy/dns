@@ -1,0 +1,199 @@
+{block head_menu}
+<div class="menu">
+    <ul>
+        {if $this->check_purview("/domain_manager/domain")}
+        <li><a href="{url  /domain_manager/domain}" >域名列表</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_qy")}
+        <li><a href="{url  /domain_manager/domain_qy}">域名牵引</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log")}
+        <li><a href="{url  /domain_manager/domain_log}">域名操作日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_log_switch")}
+        <li><a href="{url  /domain_manager/domain_log_switch}" >域名切换日志</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_black")}
+        <li><a href="{url  /domain_manager/domain_black}" class="cur">黑白名单</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_deleted")}
+        <li><a href="{url  /domain_manager/domain_deleted}" >已删除域名</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_find")}
+        <li><a href="{url  /domain_manager/domain_find}" >域名找回</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_diyline")}
+        <li><a href="{url  /domain_manager/domain_diyline}" >自定义线路</a></li>
+        {/if}
+        {if $this->check_purview("/domain_manager/domain_bind")}
+        <li><a href="{url  /domain_manager/domain_bind}">别名绑定</a></li>
+        {/if}
+    </ul>
+</div>
+{/block}
+
+{block main}
+<div class="main-nav">
+    <div class="name">域名黑白名单</div>
+    <div class="navbtn">
+        <!--button-->
+        <a href="javascript:void(0)" class="btn btn-primary btn-sm addbtn">
+            <cite class="glyphicon glyphicon-plus"></cite>
+            新增黑白名单</a>
+        <!--end button-->
+    </div>
+    <div class="cl"></div>
+</div>
+<!--search box-->
+<form class="the_searchform form" method="POST" action="{url /domain_manager/domain_black?do=get_url}">
+    <div class="tpl"></div>
+</form>
+<!--end search box -->
+<!-- list box -->
+<form action="" class="thelistform">
+    <div class="list-box">
+        <table class="list-table table table-striped table-condensed table-responsive" cellpadding="0" cellspacing="0">
+            <col width="80px"/>
+            <col width="200px"/>
+            <col width="200px"/>
+            <col />
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>域名</th>
+                <th>类型</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="tpl"></tbody>
+        </table>
+    </div>
+    <div class="pagebar"></div>
+</form>
+<!-- end list box -->
+{/block}
+{block css}
+<link href="{url static@/javascript/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" type="text/css" rel="stylesheet">
+{/block}
+
+{block javascript}
+{include tpl/form}
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script language="javascript" src="{url static@/javascript/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js#utf-8}"></script>
+<script type="text/template" id="tpl_list_row">
+    <#macro row data>
+        <tr>
+            <td class="font-black">${data.id}</td>
+            <td><span class="keybox font-blue">${data.domain}</span></td>
+            <td><#if (data.type==0)>黑名单<#else><span class="font-gray">白名单</span></#if></td>
+            <td>
+                {if $this->check_purview("/domain_manager/domain_blackdel")}
+                <p class="table-item-op">
+                    <a href="javascript:void(0);" class="delbtn" data-url="{url /domain_manager/domain_blackdel?id=}${data.id}"><span class="glyphicon glyphicon-remove"></span></a>
+                </p>
+                {else} -
+                {/if}
+            </td>
+        </tr>
+    </#macro>
+</script>
+<!-- domain add -->
+<script type="text/template" id="tpl_list_add">
+    <#macro rowedit data>
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">${data.title}</h4>
+        </div>
+        <div class="form-content">
+            <form action="{url /domain_manager/domain_blackadd}" method="post" class="theform form form-2" role="form">
+                <div class="tpl"></div>
+            </form>
+        </div>
+    </#macro>
+</script>
+<script language="javascript">
+    var pageurl = "{$pageurl}";
+    var add_domain_formdata = {
+        domain:{type:"text",label:"新增域名",name:"domain",value:"",data_sr:[],css:"",require:"datatype='*'",desc:"格式(8jdns.com)",item_css:""},
+        type: {type: "select", label: "名单类型", name: "type", value: "",  data_sr:[{v: "黑名单", key: "1"}, {v: "白名单", key: "2"}], css: "", require: "datatype='*'", desc: "", item_css: ""},
+        btn:{type:"button",label:"",value:"保存修改",desc:'<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>'}
+    };
+    var edit_func = function(obj){
+        var edit_c = $("#tpl_list_add").html();
+        var url = $(obj).attr("data-url");
+        edit_c = "" + easyTemplate(edit_c,{title:"新增黑白名单"});
+        $("#myModal").find(".modal-dialog").width(500);
+        $("#myModal").find(".modal-content").html(edit_c);
+        $.loadform(add_domain_formdata,url,function(res){
+            setTimeout(function(){
+                loadlist();
+            },500);
+            return true;
+        });
+        $('#myModal').modal();
+    }
+</script>
+<script language="javascript">
+    var del_func = function (obj) {
+        if (confirm("你确定要删除该数据吗?删除后数据不可恢复！")) {
+            var url = $(obj).attr("data-url");
+            $.ajaxPassport({
+                url: url,
+                success: function (res) {
+                    if (res.error == 1) {
+                        $.tips(res.message, "error");
+                    } else {
+                        $.tips(res.message, "success");
+                        loadlist();
+                    }
+                }
+            })
+        }
+    }
+</script>
+<!-- edit ddd -->
+<script language="javascript">
+    var pageurl = "{$pageurl}";
+    var search_formdata = {
+        keyword:{type:"text",label:"域名关键词",name:"keyword",value:"",data_sr:[],css:"",require:"",desc:"",item_css:""},
+        btn:{type:"button",label:"",value:"搜索",desc:'',css:"btn-sm"}
+    };
+    var loadlist = function(page){
+        $.ajaxLoadlist(page,pageurl,function(){
+            var keyword = $(".the_searchform input[name='keyword']").val();
+            if(keyword != ""){
+                $(".thelistform").find(".tpl .keybox").each(function(){
+                    var obj = this;
+                    var html = $(obj).html();
+                    $(obj).html($.replace_keyword(html,keyword))
+                });
+            };
+            $(".addbtn").click(function () {
+                edit_func(this);
+            });
+            $(".delbtn").click(function () {
+                del_func(this);
+            });
+        });
+    }
+    $(function(){
+        //加载搜索
+        $.loadform(search_formdata,"",function(res){
+            pageurl = res.pageurl;
+            loadlist();
+            return true;
+        },null,".the_searchform");
+        //加载列表
+        $(".date-ymd").datetimepicker({
+            language:  'zh-CN',
+            autoclose: 1,
+            startView: 2,
+            minView: 2,
+            maxView: 4,
+            format:"yyyy-mm-dd",
+            pickerPosition: "bottom-right"
+        });
+        loadlist();
+    })
+</script>
+{/block}

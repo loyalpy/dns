@@ -1,0 +1,115 @@
+{block main}
+<div class="am-uc-left">
+    <div class="leftnav" id="Leftnav">
+        <ul>
+            <li><a href="{url /finance/index}">账户信息&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /finance/recharge}">在线充值&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /finance/recharge_list}">充值记录&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /finance/accountlog}" class="cur">收支明细&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /finance/smslog}">短信明细&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+            <li><a href="{url /finance/point_log}">积分明细&nbsp;&nbsp;<cite class="am-icon-btn am-icon-angle-right"></cite></a></li>
+        </ul>
+    </div>
+</div>
+<div class="am-uc-right">
+    <div>
+        <h1><span class="list_tit_name">收支明细</span></h1>
+    </div>
+    <div class="am-form-group am-finance-list-key" style="margin: 0px;">
+        <div class="am-form-group am-form-icon">
+            <input type="text"  class="am-form-field am-input-sm" name="startdate" onclick="laydate()" class="am-form-field" placeholder=" 开始日期">
+            <i class="am-icon-calendar"></i>
+        </div>
+    </div>
+    <div class="am-finance-list-key">
+        <div class="am-form-group am-form-icon">
+            <input type="text"  class="am-form-field am-input-sm" name="enddate" onclick="laydate()" class="am-form-field" placeholder=" 结束日期">
+            <i class="am-icon-calendar"></i>
+        </div>
+    </div>
+    <div class="am-finance-list-key" style="margin-left: 80px;">
+        <input type="text"  name="keyword" class="am-form-field infor-keyword am-input-sm" placeholder="请输入关键词" size="35" />
+    </div>
+    <div class="am-finance-list-key">
+        <button type="button" class="am-btn am-btn-success am-radius am-btn-sm account-serch">搜索</button>
+    </div>
+    <div class="dis10"></div>
+    <div class="am-finance-content">
+        <div class="listbody"></div>
+    </div>
+</div>
+{/block}
+
+{block javascript}
+<script type="text/template" id="tpl_accountlog_list">
+    <#macro rowedit data>
+        <table class="am-table">
+            <col width="210"/>
+            <col width="100"/>
+            <col width="100"/>
+            <col width="100"/>
+            <col />
+            <col width="160"/>
+            <thead>
+            <tr>
+                <th>流水号</th>
+                <th>收入</th>
+                <th>支出</th>
+                <th>余额</th>
+                <th>描述</th>
+                <th>时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#list data.list as account>
+                <tr>
+                    <td><font style="color: gray">${account.lsh}</font></td>
+                    <td><#if (account.type==2)><font style="color: green">+ ${account.amount}</font><#else><font style="color: gray;"> - </font></#if></td>
+                    <td><#if (account.type==1)><font style="color: red">- ${account.amount}</font><#else><font style="color: gray;"> - </font></#if></td>
+                    <td ><font color="#ff4500">${account.amount_log}</font></td>
+                    <td><font style="color: gray">${account.note}</font></td>
+                    <td><font style="color: gray">${$.time_to_string(account.dateline,"Y-m-d H:i:s")}</font></td>
+                <tr>
+            </#list>
+            <#if ($.is_string(data.list))>
+                <tr><td colspan="5"><i class="am-icon-exclamation-triangle" style="color: orange"></i> ${data.list}</td></tr>
+            </#if>
+            </tbody>
+        </table>
+        <div class="pagebar">${data.pagebar}</div>
+    </#macro>
+</script>
+<script language="javascript" src="{url static@/javascript/laydate/laydate.js}"></script>
+<script type="text/javascript">
+    $(function(){
+        //搜索事件
+        $(".account-serch").unbind("click").bind("click",function(){
+            var startdate = $("input[name='startdate']").val();
+            var enddate  = $("input[name='enddate']").val();
+            var keyword  = $("input[name='keyword']").val();
+            load_account_list(1,keyword,startdate,enddate);
+        });
+        load_account_list(1);
+    });
+    var load_account_list = function(page,keyword,startdate,enddate){
+        var url = "{url /finance/accountlog?do=get}";
+        var keyword  = $.is_empty(keyword)?'':keyword;
+        var startdate  = $.is_empty(startdate)?'':startdate;
+        var enddate  = $.is_empty(enddate)?'':enddate;
+        $.ui.loading($(".am-table"));
+        $.ajaxPassport({
+            url:url,
+            success:function(res){
+                $.ui.close_loading($(".am-table"));
+                var listhtml = ""+ easyTemplate($("#tpl_accountlog_list").html(),res.data);
+                $(".listbody").html(listhtml);
+
+                $("button,a").bind("focus",function(){
+                    $(this).blur();
+                });
+            },
+            data:{page:page,keyword:keyword,startdate:startdate,enddate:enddate},
+        });
+    }
+</script>
+{/block}
